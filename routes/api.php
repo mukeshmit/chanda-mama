@@ -530,7 +530,7 @@ Route::middleware('auth:api')->group(function () {
 
    
         Route::get('order_by_id', [\App\Http\Controllers\SellerController::class, 'getOrder']);
-        Route::post('cancel_order_item', [\App\Http\Controllers\API\OrdersApiController::class, 'cancelOrderItem'])->name('orders.cancel_order_item');
+        Route::post('cancel_order_item', [\App\Http\Controllers\API\OrdersApiController::class, 'cancelOrderItem'])->name('seller.cancel_order_item');
         Route::post('update_status', [\App\Http\Controllers\API\OrdersApiController::class, 'updateStatus'])->name('seller.update_status');
         Route::post('assign_delivery_boy', [\App\Http\Controllers\API\OrdersApiController::class, 'assignDeliveryBoy'])->name('seller.assign_delivery_boy');
 
