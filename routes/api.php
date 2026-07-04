@@ -563,22 +563,22 @@ Route::middleware('auth:api')->group(function () {
         Route::group(['prefix' => 'brands'], function () {
             Route::get('/', [\App\Http\Controllers\API\BrandsApiController::class, 'getBrands']);
             Route::post('save', [\App\Http\Controllers\API\BrandsApiController::class, 'save'])->name('seller.brands.save');
-            Route::post('update', [\App\Http\Controllers\API\BrandsApiController::class, 'update'])->name('brands.update');
-            Route::post('delete', [\App\Http\Controllers\API\BrandsApiController::class, 'delete'])->name('brands.delete');
+            Route::post('update', [\App\Http\Controllers\API\BrandsApiController::class, 'update'])->name('seller.brands.update');
+            Route::post('delete', [\App\Http\Controllers\API\BrandsApiController::class, 'delete'])->name('seller.brands.delete');
         });
 
         Route::group(['prefix' => 'units'], function () {
             Route::get('/', [\App\Http\Controllers\API\UnitApiController::class, 'getUnits']);
-            Route::post('save', [\App\Http\Controllers\API\UnitApiController::class, 'save'])->name('units.save');
-            Route::post('update', [\App\Http\Controllers\API\UnitApiController::class, 'update'])->name('units.update');
-            Route::post('delete', [\App\Http\Controllers\API\UnitApiController::class, 'delete'])->name('units.delete');
+            Route::post('save', [\App\Http\Controllers\API\UnitApiController::class, 'save'])->name('seller.units.save');
+            Route::post('update', [\App\Http\Controllers\API\UnitApiController::class, 'update'])->name('seller.units.update');
+            Route::post('delete', [\App\Http\Controllers\API\UnitApiController::class, 'delete'])->name('seller.units.delete');
         });
 
         Route::group(['prefix' => 'taxes'], function () {
             Route::get('/', [\App\Http\Controllers\API\TaxesApiController::class, 'getTaxes']);
-            Route::post('save', [\App\Http\Controllers\API\TaxesApiController::class, 'save'])->name('taxes.save');
-            Route::post('update', [\App\Http\Controllers\API\TaxesApiController::class, 'update'])->name('taxes.update');
-            Route::post('delete', [\App\Http\Controllers\API\TaxesApiController::class, 'delete'])->name('taxes.delete');
+            Route::post('save', [\App\Http\Controllers\API\TaxesApiController::class, 'save'])->name('seller.taxes.save');
+            Route::post('update', [\App\Http\Controllers\API\TaxesApiController::class, 'update'])->name('seller.taxes.update');
+            Route::post('delete', [\App\Http\Controllers\API\TaxesApiController::class, 'delete'])->name('seller.taxes.delete');
         });
 
         Route::group(['prefix' => 'mail_settings'], function () {
@@ -590,19 +590,19 @@ Route::middleware('auth:api')->group(function () {
             Route::get('/', [\App\Http\Controllers\API\ProductApisController::class, 'getProducts']);
             Route::get('active', [\App\Http\Controllers\API\ProductApisController::class, 'getActiveProducts']);
             Route::get('/product_by_id', [\App\Http\Controllers\API\ProductApisController::class, 'getProduct']);
-            Route::post('save', [\App\Http\Controllers\API\ProductApisController::class, 'save'])->name('products.save');
+            Route::post('save', [\App\Http\Controllers\API\ProductApisController::class, 'save'])->name('seller.products.save');
             Route::get('edit/{id}', [\App\Http\Controllers\API\ProductApisController::class, 'edit']);
-            Route::post('update', [\App\Http\Controllers\API\ProductApisController::class, 'update'])->name('products.update');
-            Route::post('delete', [\App\Http\Controllers\API\ProductApisController::class, 'delete'])->name('products.delete');
-            Route::post('multiple_delete', [\App\Http\Controllers\API\ProductApisController::class, 'multipleDelete'])->name('products.multiple_delete');
+            Route::post('update', [\App\Http\Controllers\API\ProductApisController::class, 'update'])->name('seller.products.update');
+            Route::post('delete', [\App\Http\Controllers\API\ProductApisController::class, 'delete'])->name('seller.products.delete');
+            Route::post('multiple_delete', [\App\Http\Controllers\API\ProductApisController::class, 'multipleDelete'])->name('seller.products.multiple_delete');
             Route::get('/brands', [\App\Http\Controllers\API\BrandsApiController::class, 'index']);
             Route::get('/taxes', [\App\Http\Controllers\API\TaxesApiController::class, 'index']);
             Route::get('ratings_list', [\App\Http\Controllers\API\Customer\ProductsApiController::class, 'productRatingsList']);
             Route::get('/tags', [\App\Http\Controllers\API\TagsApiController::class, 'search']);
-            Route::post('bulk_upload', [\App\Http\Controllers\API\ProductApisController::class, 'bulkUpload'])->name('products.bulk_upload');
+            Route::post('bulk_upload', [\App\Http\Controllers\API\ProductApisController::class, 'bulkUpload'])->name('seller.products.bulk_upload');
             Route::get('download_sample_file_excel', [\App\Http\Controllers\API\ProductApisController::class, 'downloadSampleFileExcel']);
             Route::get('download_product_data_excel', [\App\Http\Controllers\API\ProductApisController::class, 'downloadProductDataExcel']);
-            Route::post('bulk_update', [\App\Http\Controllers\API\ProductApisController::class, 'bulkUpdate'])->name('products.bulk_update');
+            Route::post('bulk_update', [\App\Http\Controllers\API\ProductApisController::class, 'bulkUpdate'])->name('seller.products.bulk_update');
             Route::get('get_product_variants', [\App\Http\Controllers\API\ProductApisController::class, 'getProductVariants']);
             Route::post('update_variant_stock', [\App\Http\Controllers\API\ProductApisController::class, 'updateVariantStock']);
         });
@@ -610,8 +610,8 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/delete_seller_account', [\App\Http\Controllers\API\Customer\BasicApiController::class, 'deleteSellerAccount'])->name('seller.delete_seller_account');
         Route::group(['prefix' => 'withdrawal_requests'], function () {
             Route::get('/', [\App\Http\Controllers\API\WithdrawalRequestsApiController::class, 'index']);
-            Route::post('update', [\App\Http\Controllers\API\WithdrawalRequestsApiController::class, 'update'])->name('withdrawal_requests.update');
-            Route::post('delete', [\App\Http\Controllers\API\WithdrawalRequestsApiController::class, 'delete'])->name('withdrawal_requests.delete');
+            Route::post('update', [\App\Http\Controllers\API\WithdrawalRequestsApiController::class, 'update'])->name('seller.withdrawal_requests.update');
+            Route::post('delete', [\App\Http\Controllers\API\WithdrawalRequestsApiController::class, 'delete'])->name('seller.withdrawal_requests.delete');
 
             Route::post('/add', [\App\Http\Controllers\API\WithdrawalRequestsApiController::class, 'addWithdrawalRequests']);
             Route::get('get', [\App\Http\Controllers\API\WithdrawalRequestsApiController::class, 'getWithdrawalRequests']);
