@@ -661,7 +661,7 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::get('set_seller_wallet_transaction', [\App\Http\Controllers\Controller::class, 'setSellerWalletTransaction']);
-    Route::get('database_backup_download', [App\Http\Controllers\DatabaseBackupController::class, 'download_db_backup'])->name('database_backup_download.download_db_backup');
+    Route::get('database_backup_download', [App\Http\Controllers\DatabaseBackupController::class, 'download_db_backup'])->name('api.database_backup_download.download_db_backup');
 });
 
 Route::prefix('oauth')->group(function () {
