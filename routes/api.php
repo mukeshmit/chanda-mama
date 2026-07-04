@@ -525,8 +525,10 @@ Route::middleware('auth:api')->group(function () {
         Route::get('categories/product_count', [\App\Http\Controllers\SellerController::class, 'countProductCategoryWise']);
         Route::get('orders', [\App\Http\Controllers\SellerController::class, 'getOrders']);
         Route::get('self_pickup_orders', [\App\Http\Controllers\SellerController::class, 'getSelfPickupOrders']);
-        Route::post('update_self_pickup_status', [\App\Http\Controllers\API\OrdersApiController::class, 'updateSelfPickupOrderStatus'])->name('orders.update_self_pickup_status');
+        Route::post('update_self_pickup_status', [\App\Http\Controllers\API\OrdersApiController::class, 'updateSelfPickupOrderStatus'])->name('seller.update_self_pickup_status');
+        //Route::post('update_self_pickup_status', [\App\Http\Controllers\API\OrdersApiController::class, 'updateSelfPickupOrderStatus'])->name('orders.update_self_pickup_status');
 
+   
         Route::get('order_by_id', [\App\Http\Controllers\SellerController::class, 'getOrder']);
         Route::post('cancel_order_item', [\App\Http\Controllers\API\OrdersApiController::class, 'cancelOrderItem'])->name('orders.cancel_order_item');
         Route::post('update_status', [\App\Http\Controllers\API\OrdersApiController::class, 'updateStatus'])->name('seller.update_status');
