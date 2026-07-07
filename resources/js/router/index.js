@@ -491,7 +491,7 @@ function configRoutes() {
                     name: "ManageProducts",
                     component: Products,
                     meta: {
-                        permission: 'order_list',
+                        permission: 'product_list',
                         role: adminRoles,
                         title: 'Manage Products'
 
@@ -502,7 +502,7 @@ function configRoutes() {
                     name: "ApproveRequests",
                     component: ApproveRequests,
                     meta: {
-                        permission: 'order_list',
+                        permission: 'approve_requests',
                         role: adminRoles,
                         title: 'Approve Requests'
 
@@ -513,7 +513,7 @@ function configRoutes() {
                     name: "Add Product",
                     component: EditProduct,
                     meta: {
-                        permission: 'order_list',
+                        permission: 'product_create',
                         role: adminRoles,
                         title: 'Add Product'
 
@@ -525,7 +525,7 @@ function configRoutes() {
                     component: EditProduct,
                     props: true,
                     meta: {
-                        permission: 'order_list',
+                        permission: 'product_update',
                         role: adminRoles,
                         title: 'Edit Product'
 
@@ -537,7 +537,7 @@ function configRoutes() {
                     component: ViewProduct,
                     props: true,
                     meta: {
-                        permission: 'order_list',
+                        permission: 'product_list',
                         role: adminRoles,
                         title: 'Product View'
 
@@ -549,7 +549,7 @@ function configRoutes() {
                     component: ProductRatings,
                     props: true,
                     meta: {
-                        permission: 'order_list',
+                        permission: 'product_ratings',
                         role: adminRoles,
                         title: 'Product View'
 
@@ -561,7 +561,7 @@ function configRoutes() {
                     component: CloneProduct,
                     props: true,
                     meta: {
-                        permission: 'order_list',
+                        permission: 'product_create',
                         role: adminRoles,
                         title: 'Clone Product'
 
@@ -1568,7 +1568,7 @@ function configRoutes() {
                     name: "SellerManageProducts",
                     component: SellerProducts,
                     meta: {
-                        permission: 'order_list',
+                        permission: 'product_list',
                         role: sellerRoles,
                         title: 'Products'
                     },
@@ -1579,7 +1579,7 @@ function configRoutes() {
                     name: "SellerCreateProduct",
                     component: SellerEditProduct,
                     meta: {
-                        permission: 'order_list',
+                        permission: 'product_create',
                         role: sellerRoles,
                         title: 'Add Product'
                     },
@@ -1591,7 +1591,7 @@ function configRoutes() {
                     component: SellerEditProduct,
                     props: true,
                     meta: {
-                        permission: 'order_list',
+                        permission: 'product_update',
                         role: sellerRoles,
                         title: 'Product Edit'
                     },
@@ -1602,7 +1602,7 @@ function configRoutes() {
                     component: SellerViewProduct,
                     props: true,
                     meta: {
-                        permission: 'order_list',
+                        permission: 'product_list',
                         role: sellerRoles,
                         title: 'Product View'
                     },
@@ -1613,7 +1613,7 @@ function configRoutes() {
                     component: SellerProductRatings,
                     props: true,
                     meta: {
-                        permission: 'order_list',
+                        permission: 'product_ratings',
                         role: sellerRoles,
                         title: 'Product View'
                     },
@@ -1624,7 +1624,7 @@ function configRoutes() {
                     component: SellerCloneProduct,
                     props: true,
                     meta: {
-                        permission: 'order_list',
+                        permission: 'product_create',
                         role: sellerRoles,
                         title: 'Clone Product'
 
@@ -2047,4 +2047,3 @@ function configRoutes() {
 
     ];
 }
-

@@ -468,7 +468,8 @@ export default {
     created: function () {
         if (!this.$can('product_list')) {
             this.showError("You do not have permission to view this page.");
-            this.$router.back();
+            this.$router.replace({ path: '/unauthorized' });
+            return;
         }
         if (this.$roleSeller === this.login_user.role.name) {
             this.fields.forEach((field, index) => {
