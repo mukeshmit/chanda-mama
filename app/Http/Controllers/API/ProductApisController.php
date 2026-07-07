@@ -660,7 +660,8 @@ class ProductApisController extends Controller
             'seller_id' => 'required',
 
             'id' => 'nullable|integer',
-            'image' => $request->id ? 'nullable' : 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => $request->id ? 'nullable' : 'required|image|mimes:jpeg,png,jpg,gif,webp|max:3072',
+            'other_images.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,mp4|max:3072',
             'description' => 'required',
 
             'type' => 'required',
@@ -704,6 +705,8 @@ class ProductApisController extends Controller
             'seller_id.required' => 'The seller name field is required.',
             'is_unlimited_stock.required' => 'The Stock Limit field is required.',
             'category_id.required' => 'The Category name field is required.',
+            'other_images.*.mimes' => 'Other product media must be JPG, JPEG, PNG, GIF, WEBP image or MP4 video.',
+            'other_images.*.max' => 'Each other product media file must be 3 MB or smaller.',
             'packet_measurement.*.required_if' => 'The Packet Measurement is required when the type is "Packet".',
             'packet_measurement.*.numeric' => 'The Packet Measurement  must be a number.',
             'packet_measurement.*.not_in' => 'The Packet Measurement must not be zero.',
@@ -1056,6 +1059,8 @@ class ProductApisController extends Controller
             'description' => 'required',
             'type' => 'required',
             'is_unlimited_stock' => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:3072',
+            'other_images.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,mp4|max:3072',
 
             'packet_measurement.*' => ['required_if:type,packet', 'numeric', Rule::notIn([0]),],
             'packet_price.*' => ['required_if:type,packet', 'numeric'],
@@ -1102,6 +1107,8 @@ class ProductApisController extends Controller
             'seller_id.required' => 'The seller name field is required.',
             'is_unlimited_stock.required' => 'The Stock Limit field is required.',
             'category_id.required' => 'The Category name field is required.',
+            'other_images.*.mimes' => 'Other product media must be JPG, JPEG, PNG, GIF, WEBP image or MP4 video.',
+            'other_images.*.max' => 'Each other product media file must be 3 MB or smaller.',
             'packet_measurement.*.required_if' => 'The Packet Measurement is required when the type is "Packet".',
             'packet_measurement.*.numeric' => 'The Packet Measurement  must be a number.',
             'packet_measurement.*.not_in' => 'The Packet Measurement must not be zero.',

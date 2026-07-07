@@ -519,16 +519,6 @@ __webpack_require__.r(__webpack_exports__);
           icon: 'grid-fill',
           url: '/seo-settings',
           permission: 'manage_store_settings'
-        }, {
-          name: __('system_registration'),
-          icon: 'grid-fill',
-          url: '/purchase_code',
-          permission: 'manage_system_registration'
-        }, {
-          name: __('system_updater'),
-          icon: 'grid-fill',
-          url: '/system_updater',
-          permission: 'manage_store_settings'
         }]
       }, {
         name: __('web_settings'),

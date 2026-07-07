@@ -21,7 +21,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Auth_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../Auth.js */ "./resources/js/Auth.js");
 /* harmony import */ var _mixins_TranslationHelper_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/TranslationHelper.js */ "./resources/js/mixins/TranslationHelper.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _readOnlyError(r) { throw new TypeError('"' + r + '" is read-only'); }
 function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
@@ -72,7 +71,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       manufacturer: '',
       made_in: '',
       tag: '',
-      fssai_lic_no: '',
+      allowedOtherMediaTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4'],
+      maxOtherMediaSize: 3 * 1024 * 1024,
       return_status: 0,
       return_days: 1,
       cancelable_status: 0,
@@ -113,8 +113,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       categoryOptions: '<option value="">' + __('select_category') + '</option>',
       deleteImageIds: [],
       loggedUser: _Auth_js__WEBPACK_IMPORTED_MODULE_4__["default"].user,
-      validationMessage: '',
-      isValid: '',
       isBarcodeValid: '',
       input: [],
       mainImageerror: null,
@@ -809,9 +807,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         this.main_image_name = "";
         return;
       }
-      var maxSize = 2 * 1024 * 1024; // 2MB
+      var maxSize = 3 * 1024 * 1024; // 3MB
       if (file.size > maxSize) {
-        this.mainImageerror = "File size exceeds the maximum allowed limit (2MB).";
+        this.mainImageerror = "File size exceeds the maximum allowed limit (3MB).";
         this.main_image_path = "";
         this.main_image_name = "";
         return;
@@ -838,26 +836,36 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     removeOtherImage: function removeOtherImage(index) {
       this.images.splice(index, 1);
     },
+    isVideoMedia: function isVideoMedia(path) {
+      return /\.(mp4)$/i.test(path || '');
+    },
     otherImage: function otherImage() {
       this.images = [];
+      this.otherImageerror = null;
       // Safely access file_other_images ref (can be array in v-for)
       var fileInput = Array.isArray(this.$refs.file_other_images) ? this.$refs.file_other_images[0] : this.$refs.file_other_images;
       if (!fileInput) return;
       var files = fileInput.files;
       for (var i = 0; i < files.length; i++) {
         var file = files[i];
-
-        // Check if the file is an image (you can extend the list of allowed file types)
-        if (!file.type.startsWith('image/')) {
-          this.otherImageerror = "Invalid file type. Please upload a JPEG, PNG, JPG,  GIF or WEBP image.";
-          "", _readOnlyError("file");
-        } else {
-          var image = {};
-          image.url = URL.createObjectURL(file);
-          image.name = file.name;
-          image.file = file; // Store the actual file object
-          this.images.push(image);
+        if (!this.allowedOtherMediaTypes.includes(file.type)) {
+          this.otherImageerror = "Invalid file type. Please upload JPG, JPEG, PNG, GIF, WEBP images or MP4 videos.";
+          fileInput.value = "";
+          this.images = [];
+          return;
         }
+        if (file.size > this.maxOtherMediaSize) {
+          this.otherImageerror = "Each product image or video must be 3 MB or smaller.";
+          fileInput.value = "";
+          this.images = [];
+          return;
+        }
+        var image = {};
+        image.url = URL.createObjectURL(file);
+        image.name = file.name;
+        image.file = file; // Store the actual file object
+        image.isVideo = file.type === 'video/mp4';
+        this.images.push(image);
       }
     },
     variantImagesChanges: function variantImagesChanges(index) {
@@ -1098,16 +1106,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         console.error('Error fetching text generation key:', error);
       });
     },
-    validateFSSAINumber: function validateFSSAINumber() {
-      var fssaiRegex = /^[0-9]{14}$/;
-      if (fssaiRegex.test(this.fssai_lic_no)) {
-        this.validationMessage = '';
-        this.isValid = true;
-      } else {
-        this.validationMessage = 'Invalid FSSAI Number.';
-        this.isValid = false;
-      }
-    },
     validateBarcode: function validateBarcode() {
       var barcodePattern = /^[A-Za-z0-9-]+$/;
       if (barcodePattern.test(this.barcode)) {
@@ -1221,7 +1219,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           _this27.is_unlimited_stock = _this27.record.is_unlimited_stock;
           _this27.main_image_path = _this27.$storageUrl + _this27.record.image;
           _this27.other_images = _this27.record.images;
-          _this27.fssai_lic_no = _this27.record.fssai_lic_no;
           _this27.image = _this27.record.image;
           _this27.meta_title = _this27.record.meta_title;
           _this27.meta_keywords = _this27.record.meta_keywords;
@@ -1387,7 +1384,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       formData.append('description', defaultTranslation.description || '');
       formData.append('type', this.type);
       formData.append('is_unlimited_stock', this.is_unlimited_stock);
-      formData.append('fssai_lic_no', this.fssai_lic_no);
       formData.append('barcode', this.barcode != null && this.barcode !== undefined ? String(this.barcode).trim() : '');
       formData.append('meta_title', defaultTranslation.meta_title || '');
       formData.append('meta_keywords', defaultTranslation.meta_keywords || '');
@@ -1625,7 +1621,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           description: this.description,
           type: this.type,
           is_unlimited_stock: this.is_unlimited_stock,
-          fssai_lic_no: this.fssai_lic_no,
           barcode: this.barcode,
           meta_title: this.meta_title,
           meta_keywords: this.meta_keywords,
@@ -1741,7 +1736,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         description: '',
         type: 'packet',
         is_unlimited_stock: 0,
-        fssai_lic_no: '',
         barcode: '',
         meta_title: '',
         meta_keywords: '',
@@ -1870,9 +1864,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       if (!this.id && !this.clone) this.debouncedSave();
     },
     is_unlimited_stock: function is_unlimited_stock() {
-      if (!this.id && !this.clone) this.debouncedSave();
-    },
-    fssai_lic_no: function fssai_lic_no() {
       if (!this.id && !this.clone) this.debouncedSave();
     },
     barcode: function barcode() {
@@ -2619,7 +2610,7 @@ var render = function render() {
       attrs: {
         type: "file",
         name: "other_images[]",
-        accept: "image/*",
+        accept: "image/jpeg,image/png,image/gif,image/webp,video/mp4",
         id: "other_images",
         multiple: ""
       },
@@ -2642,7 +2633,7 @@ var render = function render() {
       return _c("small", [_vm._v(_vm._s(image.name) + ", ")]);
     }), 0)]]], 2), _vm._v(" "), _c("span", {
       staticClass: "text text-primary"
-    }, [_vm._v(_vm._s(_vm.__("please_choose_square_image_of_larger_than_350px_350px_and_smaller_than_550px_550px")) + " *")]), _vm._v(" "), _vm.otherImageerror ? _c("p", {
+    }, [_vm._v("Allowed media: JPG, JPEG, PNG, GIF, WEBP images or MP4 videos. Max 3 MB per file.")]), _vm._v(" "), _vm.otherImageerror ? _c("p", {
       staticClass: "error"
     }, [_vm._v(_vm._s(_vm.otherImageerror))]) : _vm._e(), _vm._v(" "), _vm.images && _vm.images.length !== 0 ? _c("div", {
       staticClass: "row"
@@ -2651,7 +2642,19 @@ var render = function render() {
     }, [_vm._v("Seleted Other Image List.")]), _vm._v(" "), _vm._l(_vm.images, function (image, index) {
       return _vm.images.length !== 0 ? _c("div", {
         staticClass: "col-md-4 image-container"
-      }, [_c("img", {
+      }, [image.isVideo ? _c("video", {
+        staticClass: "img-thumbnail custom-image",
+        attrs: {
+          src: image.url,
+          controls: "",
+          muted: "",
+          playsinline: "",
+          title: "Selected Product Video"
+        },
+        domProps: {
+          muted: true
+        }
+      }) : _c("img", {
         staticClass: "img-thumbnail custom-image",
         attrs: {
           src: image.url,
@@ -2678,7 +2681,19 @@ var render = function render() {
     }, [_vm._v("Uploaded Other Image List.")]), _vm._v(" "), _vm._l(_vm.other_images, function (image, index) {
       return _vm.other_images.length !== 0 ? _c("div", {
         staticClass: "col-md-4 image-container"
-      }, [_c("img", {
+      }, [_vm.isVideoMedia(image.image) ? _c("video", {
+        staticClass: "img-thumbnail custom-image",
+        attrs: {
+          src: _vm.$storageUrl + image.image,
+          controls: "",
+          muted: "",
+          playsinline: "",
+          title: "Product Video"
+        },
+        domProps: {
+          muted: true
+        }
+      }) : _c("img", {
         staticClass: "img-thumbnail custom-image",
         attrs: {
           src: _vm.$storageUrl + image.image,
@@ -3895,45 +3910,7 @@ var render = function render() {
       expression: "made_in"
     }
   })], 1)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-4"
-  }, [_c("div", {
-    staticClass: "form-group mb-3"
-  }, [_c("label", {
-    attrs: {
-      "for": "fssai_lic"
-    }
-  }, [_vm._v(_vm._s(_vm.__("fssai_lic_no")))]), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.fssai_lic_no,
-      expression: "fssai_lic_no"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      type: "text",
-      id: "fssai_lic",
-      placeholder: _vm.__("fssai_lic_no")
-    },
-    domProps: {
-      value: _vm.fssai_lic_no
-    },
-    on: {
-      input: [function ($event) {
-        if ($event.target.composing) return;
-        _vm.fssai_lic_no = $event.target.value;
-      }, _vm.validateFSSAINumber]
-    }
-  }), _vm._v(" "), _vm.validationMessage ? _c("p", {
-    staticStyle: {
-      color: "red"
-    }
-  }, [_vm._v(_vm._s(_vm.validationMessage))]) : _vm.isValid ? _c("p", {
-    staticStyle: {
-      color: "green"
-    }
-  }, [_vm._v("FSSAI License Number is\n                                            valid!")]) : _vm._e()])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-4"
+    staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group mb-3"
   }, [_c("label", {
@@ -3971,7 +3948,7 @@ var render = function render() {
       color: "green"
     }
   }, [_vm._v("Barcode is valid!\n                                        ")]) : _vm._e()])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-4"
+    staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group mb-3"
   }, [_c("label", {

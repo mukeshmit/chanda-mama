@@ -548,7 +548,7 @@ class CommonHelper
     {
         foreach ($images as $file) {
             $fileName = time() . '_' . rand(1111, 99999) . '.' . $file->getClientOriginalExtension();
-            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4'];
             $extension = $file->getClientOriginalExtension();
             if (in_array(strtolower($extension), $allowedExtensions)) {
                 $image = Storage::disk('public')->putFileAs('products', $file, $fileName);

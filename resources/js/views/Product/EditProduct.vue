@@ -322,7 +322,7 @@
                                                                     __('other_images_of_the_product') }}</label>
 
                                                                 <input type="file" name="other_images[]"
-                                                                    accept="image/*" id="other_images"
+                                                                    accept="image/jpeg,image/png,image/gif,image/webp,video/mp4" id="other_images"
                                                                     v-on:change="otherImage" multiple=""
                                                                     ref="file_other_images" class="file-input">
 
@@ -350,7 +350,7 @@
                                                                         </template>
                                                                     </template>
                                                                 </div>
-                                                                <span class="text text-primary">{{ __('please_choose_square_image_of_larger_than_350px_350px_and_smaller_than_550px_550px') }} *</span>
+                                                                <span class="text text-primary">Allowed media: JPG, JPEG, PNG, GIF, WEBP images or MP4 videos. Max 3 MB per file.</span>
                                                                 <p v-if="otherImageerror" class="error">{{
                                                                     otherImageerror }}</p>
 
@@ -359,7 +359,10 @@
                                                                     <div class="col-md-4 image-container"
                                                                         v-if="images.length !== 0"
                                                                         v-for="(image, index) in images">
-                                                                        <img class="img-thumbnail custom-image"
+                                                                        <video v-if="image.isVideo" class="img-thumbnail custom-image"
+                                                                            :src="image.url" controls muted playsinline
+                                                                            title='Selected Product Video'></video>
+                                                                        <img v-else class="img-thumbnail custom-image"
                                                                             :src="image.url"
                                                                             title='Selected Other Image'
                                                                             alt='Selected Other Image' />
@@ -377,7 +380,10 @@
                                                                     <div class="col-md-4 image-container"
                                                                         v-if="other_images.length !== 0"
                                                                         v-for="(image, index) in other_images">
-                                                                        <img class="img-thumbnail custom-image"
+                                                                        <video v-if="isVideoMedia(image.image)" class="img-thumbnail custom-image"
+                                                                            :src="$storageUrl + image.image" controls muted playsinline
+                                                                            title='Product Video'></video>
+                                                                        <img v-else class="img-thumbnail custom-image"
                                                                             :src="$storageUrl + image.image"
                                                                             title='Other Image' alt='Other Image' />
                                                                         <button type="button"
@@ -848,19 +854,7 @@
                                     </div>
 
 
-                                    <!-- Row: FSSAI, Barcode, Total allowed quantity -->
-                                    <div class="col-md-4">
-                                        <div class="form-group mb-3">
-                                            <label for="fssai_lic">{{ __('fssai_lic_no') }}</label>
-                                            <input type="text" id="fssai_lic" class="form-control" :placeholder="__('fssai_lic_no')"
-                                                v-model="fssai_lic_no" @input="validateFSSAINumber">
-                                            <p style="color:red" v-if="validationMessage">{{ validationMessage
-                                                }}</p>
-                                            <p style="color:green" v-else-if="isValid">FSSAI License Number is
-                                                valid!</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group mb-3">
                                             <label for="barcode">{{ __('barcode') }}</label>
                                             <input type="text" id="barcode" class="form-control" :placeholder="__('barcode')"
@@ -871,7 +865,7 @@
                                             </p>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group mb-3">
                                             <label for="max_allowed_quantity">{{ __('total_allowed_quantity') }} ({{ __('keep_blank_if_no_such_limit')
                                                 }}) </label>
@@ -988,7 +982,14 @@ export default {
             manufacturer: '',
             made_in: '',
             tag: '',
-            fssai_lic_no: '',
+            allowedOtherMediaTypes: [
+                'image/jpeg',
+                'image/png',
+                'image/gif',
+                'image/webp',
+                'video/mp4',
+            ],
+            maxOtherMediaSize: 3 * 1024 * 1024,
 
             return_status: 0,
             return_days: 1,
@@ -1032,8 +1033,6 @@ export default {
             categoryOptions: '<option value="">' + __('select_category') + '</option>',
             deleteImageIds: [],
             loggedUser: Auth.user,
-            validationMessage: '',
-            isValid: '',
             isBarcodeValid: '',
             input: [],
             mainImageerror: null,
@@ -1736,9 +1735,9 @@ export default {
                 return;
             }
 
-            const maxSize = 2 * 1024 * 1024; // 2MB
+            const maxSize = 3 * 1024 * 1024; // 3MB
             if (file.size > maxSize) {
-                this.mainImageerror = "File size exceeds the maximum allowed limit (2MB).";
+                this.mainImageerror = "File size exceeds the maximum allowed limit (3MB).";
                 this.main_image_path = "";
                 this.main_image_name = "";
                 return;
@@ -1769,8 +1768,13 @@ export default {
             this.images.splice(index, 1);
         },
 
+        isVideoMedia(path) {
+            return /\.(mp4)$/i.test(path || '');
+        },
+
         otherImage() {
             this.images = [];
+            this.otherImageerror = null;
             // Safely access file_other_images ref (can be array in v-for)
             const fileInput = Array.isArray(this.$refs.file_other_images)
                 ? this.$refs.file_other_images[0]
@@ -1783,17 +1787,26 @@ export default {
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
 
-                // Check if the file is an image (you can extend the list of allowed file types)
-                if (!file.type.startsWith('image/')) {
-                    this.otherImageerror = "Invalid file type. Please upload a JPEG, PNG, JPG,  GIF or WEBP image.";
-                    file = "";
-                } else {
-                    let image = {};
-                    image.url = URL.createObjectURL(file);
-                    image.name = file.name;
-                    image.file = file; // Store the actual file object
-                    this.images.push(image);
+                if (!this.allowedOtherMediaTypes.includes(file.type)) {
+                    this.otherImageerror = "Invalid file type. Please upload JPG, JPEG, PNG, GIF, WEBP images or MP4 videos.";
+                    fileInput.value = "";
+                    this.images = [];
+                    return;
                 }
+
+                if (file.size > this.maxOtherMediaSize) {
+                    this.otherImageerror = "Each product image or video must be 3 MB or smaller.";
+                    fileInput.value = "";
+                    this.images = [];
+                    return;
+                }
+
+                let image = {};
+                image.url = URL.createObjectURL(file);
+                image.name = file.name;
+                image.file = file; // Store the actual file object
+                image.isVideo = file.type === 'video/mp4';
+                this.images.push(image);
             }
         },
 
@@ -2026,17 +2039,6 @@ export default {
                     console.error('Error fetching text generation key:', error);
                 });
         },
-        validateFSSAINumber() {
-            const fssaiRegex = /^[0-9]{14}$/;
-
-            if (fssaiRegex.test(this.fssai_lic_no)) {
-                this.validationMessage = '';
-                this.isValid = true;
-            } else {
-                this.validationMessage = 'Invalid FSSAI Number.';
-                this.isValid = false;
-            }
-        },
         validateBarcode() {
             const barcodePattern = /^[A-Za-z0-9-]+$/;
 
@@ -2158,7 +2160,6 @@ export default {
                         this.is_unlimited_stock = this.record.is_unlimited_stock;
                         this.main_image_path = this.$storageUrl + this.record.image;
                         this.other_images = this.record.images;
-                        this.fssai_lic_no = this.record.fssai_lic_no;
                         this.image = this.record.image;
                         this.meta_title = this.record.meta_title;
                         this.meta_keywords = this.record.meta_keywords;
@@ -2320,7 +2321,6 @@ export default {
             formData.append('description', defaultTranslation.description || '');
             formData.append('type', this.type);
             formData.append('is_unlimited_stock', this.is_unlimited_stock);
-            formData.append('fssai_lic_no', this.fssai_lic_no);
             formData.append('barcode', (this.barcode != null && this.barcode !== undefined) ? String(this.barcode).trim() : '');
             formData.append('meta_title', defaultTranslation.meta_title || '');
             formData.append('meta_keywords', defaultTranslation.meta_keywords || '');
@@ -2555,7 +2555,7 @@ export default {
                     name: this.name, slug: this.slug, seller_id: this.seller_id, tag_ids: this.tag_ids,
                     tax_id: this.tax_id, brand: this.brand ? { id: this.brand.id } : null,
                     description: this.description, type: this.type, is_unlimited_stock: this.is_unlimited_stock,
-                    fssai_lic_no: this.fssai_lic_no, barcode: this.barcode, meta_title: this.meta_title,
+                    barcode: this.barcode, meta_title: this.meta_title,
                     meta_keywords: this.meta_keywords, schema_markup: this.schema_markup,
                     meta_description: this.meta_description, category_id: this.category_id,
                     product_type: this.product_type, manufacturer: this.manufacturer,
@@ -2643,7 +2643,7 @@ export default {
             if (this.$refs['my-form']) this.$refs['my-form'].reset();
             Object.assign(this, {
                 name: '', slug: '', seller_id: 0, tag_ids: '', tax_id: 0, brand: null,
-                description: '', type: 'packet', is_unlimited_stock: 0, fssai_lic_no: '',
+                description: '', type: 'packet', is_unlimited_stock: 0,
                 barcode: '', meta_title: '', meta_keywords: '', schema_markup: '',
                 meta_description: '', category_id: '', product_type: '', manufacturer: '',
                 made_in: null, return_status: 0, return_days: 1, cancelable_status: 0,
@@ -2711,7 +2711,6 @@ export default {
         description: function () { if (!this.id && !this.clone) this.debouncedSave(); },
         type: function () { if (!this.id && !this.clone) this.debouncedSave(); },
         is_unlimited_stock: function () { if (!this.id && !this.clone) this.debouncedSave(); },
-        fssai_lic_no: function () { if (!this.id && !this.clone) this.debouncedSave(); },
         barcode: function () { if (!this.id && !this.clone) this.debouncedSave(); },
         meta_title: function () { if (!this.id && !this.clone) this.debouncedSave(); },
         meta_keywords: function () { if (!this.id && !this.clone) this.debouncedSave(); },

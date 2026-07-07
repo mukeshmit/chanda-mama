@@ -41,14 +41,14 @@
                             <router-link class="font-bold" to="/forgot-password"><span>{{ __('forgot_password') }}</span></router-link>
                         </div>
 
-                        <button class="btn btn-primary btn-block btn-lg shadow-lg mt-5 auth-btn">
+                        <button class="btn btn-promary-login btn-block btn-lg shadow-lg mt-5 auth-btn">
                             {{ __('login') }}
                             <b-spinner v-if="isLoading" small label="Spinning"></b-spinner>
                             <span v-else class="bi bi-arrow-right"></span>
                         </button>
 
                         <hr>
-                        <router-link to="/seller/login" class="btn btn-primary btn-block btn-lg shadow-lg mt-2">
+                        <router-link to="/seller/login" class="btn btn-promary-login btn-block btn-lg shadow-lg mt-2">
                             {{ __('seller_panel') }}</router-link>
                         <router-link to="/delivery_boy/login" class="btn btn-primary btn-block btn-lg shadow-lg mt-2">
                             {{ __('delivery_boy_panel') }}</router-link>
@@ -128,4 +128,20 @@ export default {
     }
 }
 </script>
-<style scoped></style>
+<style scoped>
+.auth .btn-promary-login,
+.auth .btn-primary {
+    background-color: #c5ad24 !important;
+    border-color: #c5ad24 !important;
+    color: #fff;
+}
+
+.auth .btn-promary-login:hover,
+.auth .btn-promary-login:focus,
+.auth .btn-primary:hover,
+.auth .btn-primary:focus {
+    background-color: #b39c20 !important;
+    border-color: #b39c20 !important;
+    color: #fff;
+}
+</style>

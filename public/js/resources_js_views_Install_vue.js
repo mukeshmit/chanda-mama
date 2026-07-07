@@ -170,7 +170,7 @@ var render = function render() {
     staticClass: "text-center"
   }, [_c("p", {
     staticClass: "display-4 py-3"
-  }, [_vm._v("🙌")]), _vm._v(" "), _c("p", [_vm._v("Thank you for choosing the eGrogcer script from WRTeam.")]), _vm._v(" "), _c("p", [_vm._v("This quick setup wizard will help you configure your new website.")]), _vm._v(" "), _c("p", [_vm._v("It should only take 3-5 minutes.")])])]), _vm._v(" "), _c("tab-content", {
+  }, [_vm._v("🙌")]), _vm._v(" "), _c("p", [_vm._v("Thank you for choosing the eGrogcer script from Koober.")]), _vm._v(" "), _c("p", [_vm._v("This quick setup wizard will help you configure your new website.")]), _vm._v(" "), _c("p", [_vm._v("It should only take 3-5 minutes.")])])]), _vm._v(" "), _c("tab-content", {
     attrs: {
       title: "Requirements",
       "before-change": _vm.validateAsync

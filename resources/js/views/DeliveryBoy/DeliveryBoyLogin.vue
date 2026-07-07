@@ -120,4 +120,17 @@ export default {
     }
 }
 </script>
-<style scoped></style>
+<style scoped>
+.auth .btn-primary {
+    background-color: #c5ad24 !important;
+    border-color: #c5ad24 !important;
+    color: #fff;
+}
+
+.auth .btn-primary:hover,
+.auth .btn-primary:focus {
+    background-color: #b39c20 !important;
+    border-color: #b39c20 !important;
+    color: #fff;
+}
+</style>
