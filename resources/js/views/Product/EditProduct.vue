@@ -338,24 +338,16 @@
                                                                             }}</label>
                                                                     </template>
                                                                     <template v-else>
-                                                                        <template v-if="images.length === 1">
-                                                                            <label>{{ __('selected_file_name') }}
-                                                                                {{ images[0].name }}</label>
-                                                                        </template>
-                                                                        <template v-else>
-                                                                            <label>{{ images.length }} files
-                                                                                Selected</label>
-                                                                            <span><small v-for="image in images">{{
-                                                                                image.name }}, </small></span>
-                                                                        </template>
+                                                                        <label>{{ images.length }} files selected</label>
+                                                                        <span><small>Use the + button below to add more.</small></span>
                                                                     </template>
                                                                 </div>
                                                                 <span class="text text-primary">Allowed media: JPG, JPEG, PNG, GIF, WEBP images or MP4 videos. Max 3 MB per file.</span>
                                                                 <p v-if="otherImageerror" class="error">{{
                                                                     otherImageerror }}</p>
 
-                                                                <div class="row" v-if="images && images.length !== 0">
-                                                                    <h6 class="mt-3">Seleted Other Image List.</h6>
+                                                                <div class="row other-media-list" v-if="images && images.length !== 0">
+                                                                    <h6 class="mt-3">Selected Other Image List.</h6>
                                                                     <div class="col-md-4 image-container"
                                                                         v-if="images.length !== 0"
                                                                         v-for="(image, index) in images">
@@ -370,6 +362,14 @@
                                                                             @click="removeOtherImage(images.indexOf(image))"
                                                                             class="btn btn-sm btn-danger btn-remove"> <i
                                                                                 class="fa fa-times-circle"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <button type="button"
+                                                                            class="add-more-media-btn"
+                                                                            @click="triggerRefClick('file_other_images')">
+                                                                            <i class="fa fa-plus"></i>
+                                                                            <span>Add More</span>
                                                                         </button>
                                                                     </div>
                                                                 </div>
@@ -1765,6 +1765,9 @@ export default {
             event.currentTarget.classList.remove('bg-green-300');
         },
         removeOtherImage(index) {
+            if (this.images[index] && this.images[index].url) {
+                URL.revokeObjectURL(this.images[index].url);
+            }
             this.images.splice(index, 1);
         },
 
@@ -1773,7 +1776,6 @@ export default {
         },
 
         otherImage() {
-            this.images = [];
             this.otherImageerror = null;
             // Safely access file_other_images ref (can be array in v-for)
             const fileInput = Array.isArray(this.$refs.file_other_images)
@@ -1790,14 +1792,12 @@ export default {
                 if (!this.allowedOtherMediaTypes.includes(file.type)) {
                     this.otherImageerror = "Invalid file type. Please upload JPG, JPEG, PNG, GIF, WEBP images or MP4 videos.";
                     fileInput.value = "";
-                    this.images = [];
                     return;
                 }
 
                 if (file.size > this.maxOtherMediaSize) {
                     this.otherImageerror = "Each product image or video must be 3 MB or smaller.";
                     fileInput.value = "";
-                    this.images = [];
                     return;
                 }
 
@@ -1808,6 +1808,8 @@ export default {
                 image.isVideo = file.type === 'video/mp4';
                 this.images.push(image);
             }
+
+            fileInput.value = "";
         },
 
         variantImagesChanges(index) {
@@ -2797,6 +2799,37 @@ export default {
 /* AI Text Animation - Pulsing effect */
 .ai-text-animate {
     animation: ai-pulse 1.5s ease-in-out infinite;
+}
+
+.other-media-list {
+    row-gap: 12px;
+}
+
+.add-more-media-btn {
+    align-items: center;
+    aspect-ratio: 1 / 1;
+    background: #f8fafc;
+    border: 1px dashed #8aa0b8;
+    border-radius: 6px;
+    color: #53677d;
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    gap: 8px;
+    justify-content: center;
+    min-height: 120px;
+    width: 100%;
+}
+
+.add-more-media-btn i {
+    font-size: 28px;
+}
+
+.add-more-media-btn:hover,
+.add-more-media-btn:focus {
+    background: #eef4fb;
+    border-color: #53677d;
+    color: #23364a;
 }
 
 @keyframes ai-pulse {
