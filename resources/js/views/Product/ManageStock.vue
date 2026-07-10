@@ -41,9 +41,7 @@
 
                                 <!-- ID column -->
                                 <template #cell(product_variant_id)="row">
-
-                                    {{ row.item.product_variant_id }}
-
+                                    {{ (currentPage - 1) * perPage + row.index + 1 }}
                                 </template>
 
                                 <!-- Product Name column with rowspan -->
@@ -139,18 +137,20 @@ export default {
     data() {
         return {
             fields: [
-                { key: 'product_variant_id', label: __('id'), class: 'text-center', sortable: true, sortDirection: 'desc' },
+                { key: 'product_variant_id', label: __('Sr. No.'), class: 'text-center', sortable: true, sortDirection: 'desc' },
                 { key: 'image_url', label: __('image'), class: 'text-center' },
                 { key: 'name', label: __('name'), class: 'text-center' },
                 { key: 'variant', label: __('measurement'), class: 'text-center' },
                 { key: 'type', label: __('type'), class: 'text-center' },
                 { key: 'stock', label: __('stock'), class: 'text-center' },
+                { key: 'stock_value', label: __('stock_value'), class: 'text-center' },
+                { key: 'sales_value', label: __('sales_value'), class: 'text-center' },
                 { key: 'pv_status', label: __('status'), class: 'text-center' },
                 { key: 'actions', label: __('actions') }
             ],
             totalRows: 0,
             currentPage: 1,
-            perPage: this.$perPage || 10,
+            perPage: 10,
             pageOptions: this.$pageOptions || [5, 10, 15, 20],
             sortBy: '',
             sortDesc: false,

@@ -247,6 +247,18 @@ export default {
                             permission: 'category_list',
                         },
                         {
+                            name: 'SubCategory',
+                            icon: 'grid-fill',
+                            url: '/manage_subcategories',
+                            permission: 'category_list',
+                        },
+                        {
+                            name: 'Sub SubCategory',
+                            icon: 'grid-fill',
+                            url: '/manage_sub_subcategories',
+                            permission: 'category_list',
+                        },
+                        {
                             name: __('categories_order'),
                             icon: 'grid-fill',
                             url: '/categories_order',

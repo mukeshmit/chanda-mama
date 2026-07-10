@@ -22,30 +22,6 @@
                 <!-- RIGHT SIDE -->
                 <div class="d-flex align-items-center gap-3">
 
-                    <!-- Language Dropdown -->
-                    <div class="dropdown">
-                        <div class="lang-selector d-flex align-items-center justify-content-between p-2"
-                            data-bs-toggle="dropdown" aria-expanded="false"
-                            style="cursor:pointer; font-size: 0.85rem;">
-                            <img :src="currentFlag" class="rounded-circle"
-                                style="width: 24px; height: 24px; object-fit: cover;" alt="flag">
-                            <span class="fw-bold text-dark fs-6 ms-1">{{ currentLanguageName }}</span>
-                            <i class="bi bi-chevron-down text-dark fw-bold ms-1" style="font-size: 0.8rem;"></i>
-                        </div>
-                        <ul class="dropdown-menu dropdown-menu-end lang-dropdown-menu shadow border-0 mt-2">
-                            <li v-for="language in languages" :key="language.code">
-                                <a class="dropdown-item d-flex align-items-center gap-2 py-2"
-                                    :class="{ 'active': lang === language.code }"
-                                    href="javascript:void(0)"
-                                    @click="selectLanguage(language.code)">
-                                    <img :src="getFlagByCode(language.code)" class="rounded-circle"
-                                        style="width: 18px; height: 18px; object-fit: cover;" alt="flag">
-                                    <span class="fw-semibold">{{ language.name.substring(0, 3) }}</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
                     <!-- Theme -->
                     <button class="btn p-0 border-0 d-flex align-items-center justify-content-center"
                         :class="userTheme === 'theme-dark' ? 'text-white' : 'text-dark'" @click="toggleTheme"

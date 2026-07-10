@@ -68,7 +68,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       type: 'packet',
       category_id: '',
       product_type: '',
-      manufacturer: '',
       made_in: '',
       tag: '',
       allowedOtherMediaTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4'],
@@ -77,7 +76,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       return_days: 1,
       cancelable_status: 0,
       till_status: "",
-      cod_allowed_status: 0,
+      cod_allowed_status: 1,
       max_allowed_quantity: 0,
       description: '',
       require_products_approval: 0,
@@ -136,7 +135,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       languages: [],
       currentLanguageId: null,
       activeLanguages: []
-    }, "categories", []), "translatableFields", ['name', 'description', 'manufacturer', 'meta_title', 'meta_keywords', 'schema_markup', 'meta_description', 'tags']), "translateSuccessMessage", ''), "loadingEmpty", false), "loadingOverwrite", false), "cacheTimer", null), "cachedData", null), "skipCache", false);
+    }, "categories", []), "translatableFields", ['name', 'description', 'meta_title', 'meta_keywords', 'schema_markup', 'meta_description', 'tags']), "translateSuccessMessage", ''), "loadingEmpty", false), "loadingOverwrite", false), "cacheTimer", null), "cachedData", null), "skipCache", false);
   },
   computed: {
     isSellerRoute: function isSellerRoute() {
@@ -380,7 +379,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         allTranslations[language.id] = {
           name: '',
           tags: '',
-          manufacturer: '',
           description: '',
           meta_title: '',
           meta_keywords: '',
@@ -567,7 +565,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         if (translation) {
           _this11.$set(_this11.translations[language.id], 'name', translation.name || '');
           _this11.$set(_this11.translations[language.id], 'tags', translation.tags || '');
-          _this11.$set(_this11.translations[language.id], 'manufacturer', translation.manufacturer || '');
           _this11.$set(_this11.translations[language.id], 'description', translation.description || '');
           _this11.$set(_this11.translations[language.id], 'meta_title', translation.meta_title || '');
           _this11.$set(_this11.translations[language.id], 'meta_keywords', translation.meta_keywords || '');
@@ -834,13 +831,15 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       event.currentTarget.classList.remove('bg-green-300');
     },
     removeOtherImage: function removeOtherImage(index) {
+      if (this.images[index] && this.images[index].url) {
+        URL.revokeObjectURL(this.images[index].url);
+      }
       this.images.splice(index, 1);
     },
     isVideoMedia: function isVideoMedia(path) {
       return /\.(mp4)$/i.test(path || '');
     },
     otherImage: function otherImage() {
-      this.images = [];
       this.otherImageerror = null;
       // Safely access file_other_images ref (can be array in v-for)
       var fileInput = Array.isArray(this.$refs.file_other_images) ? this.$refs.file_other_images[0] : this.$refs.file_other_images;
@@ -851,13 +850,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         if (!this.allowedOtherMediaTypes.includes(file.type)) {
           this.otherImageerror = "Invalid file type. Please upload JPG, JPEG, PNG, GIF, WEBP images or MP4 videos.";
           fileInput.value = "";
-          this.images = [];
           return;
         }
         if (file.size > this.maxOtherMediaSize) {
           this.otherImageerror = "Each product image or video must be 3 MB or smaller.";
           fileInput.value = "";
-          this.images = [];
           return;
         }
         var image = {};
@@ -867,6 +864,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         image.isVideo = file.type === 'video/mp4';
         this.images.push(image);
       }
+      fileInput.value = "";
     },
     variantImagesChanges: function variantImagesChanges(index) {
       var tempImages = [];
@@ -1199,7 +1197,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           _this27.type = _this27.record.type;
           _this27.category_id = _this27.record.category_id;
           _this27.product_type = (_this27$record$indica = _this27.record.indicator) !== null && _this27$record$indica !== void 0 ? _this27$record$indica : "";
-          _this27.manufacturer = _this27.record.manufacturer != null && _this27.record.manufacturer !== "null" ? _this27.record.manufacturer : "";
 
           // Load translations
           _this27.loadTranslations();
@@ -1240,7 +1237,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             } else {
               _this27.translations[_this27.defaultLanguageId].tags = '';
             }
-            _this27.translations[_this27.defaultLanguageId].manufacturer = _this27.manufacturer;
             _this27.translations[_this27.defaultLanguageId].description = _this27.description;
             _this27.translations[_this27.defaultLanguageId].meta_title = _this27.meta_title;
             _this27.translations[_this27.defaultLanguageId].meta_keywords = _this27.meta_keywords;
@@ -1444,7 +1440,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       formData.append('status', this.status != undefined ? this.status : 0);
       formData.append('category_id', this.category_id);
       formData.append('product_type', this.product_type);
-      formData.append('manufacturer', this.manufacturer || '');
       formData.append('made_in', this.made_in ? this.made_in.id : 0);
       formData.append('shipping_type', this.shipping_type);
       formData.append('pincode_ids_exc', this.pincode_ids_exc);
@@ -1462,11 +1457,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       for (var i = 0; i < this.images.length; i++) {
         var _file3 = this.images[i].file;
         formData.append('other_images[]', _file3);
-      }
-
-      // Sync manufacturer to default language translation before saving
-      if (this.defaultLanguageId && this.translations[this.defaultLanguageId]) {
-        this.translations[this.defaultLanguageId].manufacturer = this.manufacturer;
       }
 
       // Sync tags for all languages before saving (ensure translation.tags is up to date)
@@ -1521,16 +1511,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           // If no tagIds but translation.tags exists, use it (already converted)
           tagsValue = translation.tags;
         }
-
-        // For default language, use manufacturer from main field
-        if (language.is_default) {
-          translation.manufacturer = _this28.manufacturer || '';
-        }
         allTranslations.push({
           language_id: language.id,
           name: translation.name || '',
           tags: tagsValue,
-          manufacturer: translation.manufacturer || '',
           description: translation.description || '',
           meta_title: translation.meta_title || '',
           meta_keywords: translation.meta_keywords || '',
@@ -1628,7 +1612,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           meta_description: this.meta_description,
           category_id: this.category_id,
           product_type: this.product_type,
-          manufacturer: this.manufacturer,
           made_in: this.made_in ? {
             id: this.made_in.id
           } : null,
@@ -1743,14 +1726,13 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         meta_description: '',
         category_id: '',
         product_type: '',
-        manufacturer: '',
         made_in: null,
         return_status: 0,
         return_days: 1,
         cancelable_status: 0,
         categoryOptions: '<option value="">' + __('select_category') + '</option>',
         till_status: '',
-        cod_allowed_status: 0,
+        cod_allowed_status: 1,
         max_allowed_quantity: 0,
         is_approved: 1,
         tax_included_in_price: 0,
@@ -1885,13 +1867,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       if (!this.id && !this.clone) this.debouncedSave();
     },
     product_type: function product_type() {
-      if (!this.id && !this.clone) this.debouncedSave();
-    },
-    manufacturer: function manufacturer() {
-      // Sync manufacturer to default language translation
-      if (this.defaultLanguageId && this.translations[this.defaultLanguageId]) {
-        this.translations[this.defaultLanguageId].manufacturer = this.manufacturer;
-      }
       if (!this.id && !this.clone) this.debouncedSave();
     },
     made_in: {
@@ -2224,75 +2199,45 @@ var render = function render() {
           _vm.slug = $event.target.value;
         }
       }
-    })])]), _vm._v(" "), _vm.isSellerRole ? [_c("input", {
-      directives: [{
-        name: "model",
-        rawName: "v-model",
-        value: _vm.seller_id,
-        expression: "seller_id"
-      }],
-      attrs: {
-        type: "hidden",
-        required: ""
-      },
-      domProps: {
-        value: _vm.seller_id
-      },
-      on: {
-        input: function input($event) {
-          if ($event.target.composing) return;
-          _vm.seller_id = $event.target.value;
-        }
-      }
-    })] : [_c("div", {
+    })])]), _vm._v(" "), _c("div", {
       staticClass: "col-md-6"
     }, [_c("div", {
       staticClass: "form-group mb-3"
     }, [_c("label", {
-      staticClass: "control-label",
       attrs: {
-        "for": "seller_id"
+        "for": "barcode"
       }
-    }, [_vm._v(_vm._s(_vm.__("seller")) + " "), _c("i", {
-      staticClass: "text-danger"
-    }, [_vm._v("*")])]), _vm._v(" "), _c("select", {
+    }, [_vm._v(_vm._s(_vm.__("barcode")))]), _vm._v(" "), _c("input", {
       directives: [{
         name: "model",
         rawName: "v-model",
-        value: _vm.seller_id,
-        expression: "seller_id"
+        value: _vm.barcode,
+        expression: "barcode"
       }],
-      staticClass: "form-control form-select",
+      staticClass: "form-control",
       attrs: {
-        id: "seller_id",
-        name: "seller_id",
-        required: ""
+        type: "text",
+        id: "barcode",
+        placeholder: _vm.__("barcode")
+      },
+      domProps: {
+        value: _vm.barcode
       },
       on: {
-        change: [function ($event) {
-          var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-            return o.selected;
-          }).map(function (o) {
-            var val = "_value" in o ? o._value : o.value;
-            return val;
-          });
-          _vm.seller_id = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
-        }, function ($event) {
-          _vm.getSellerCategories();
-          _vm.getSeller();
-        }]
+        input: [function ($event) {
+          if ($event.target.composing) return;
+          _vm.barcode = $event.target.value;
+        }, _vm.validateBarcode]
       }
-    }, [_c("option", {
-      attrs: {
-        value: ""
+    }), _vm._v(" "), _vm.validationBarcodeMessage ? _c("p", {
+      staticStyle: {
+        color: "red"
       }
-    }, [_vm._v(_vm._s(_vm.__("select_seller")))]), _vm._v(" "), _vm._l(_vm.translatedSellers, function (seller) {
-      return _c("option", {
-        domProps: {
-          value: seller.id
-        }
-      }, [_vm._v(_vm._s(seller.name) + "\n                                                                    ")]);
-    })], 2)])])], _vm._v(" "), _c("div", {
+    }, [_vm._v(_vm._s(_vm.validationBarcodeMessage))]) : _vm.isBarcodeValid ? _c("p", {
+      staticStyle: {
+        color: "green"
+      }
+    }, [_vm._v("Barcode is valid!\n                                                            ")]) : _vm._e()])]), _vm._v(" "), _c("div", {
       staticClass: "col-md-6"
     }, [_c("div", {
       staticClass: "form-group mb-3"
@@ -2471,41 +2416,6 @@ var render = function render() {
       staticClass: "col-md-12"
     }, [_c("div", {
       staticClass: "form-group mb-3"
-    }, [_c("label", {
-      attrs: {
-        "for": "tags"
-      }
-    }, [_vm._v(_vm._s(_vm.__("tags")) + " (\n                                                            " + _vm._s(_vm.__("these_tags_help_you_in_search_result")) + " ) "), language.is_default ? _c("i", {
-      staticClass: "text-danger"
-    }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("Select2", {
-      key: "tags_" + language.id + "_" + _vm.activeLanguageTab,
-      attrs: {
-        value: language.is_default ? _vm.tag_ids : _vm.tagIdsByLanguage[language.id] || [],
-        placeholder: "Select Tags",
-        "no-add-on-enter": "",
-        options: _vm.tagsOptions,
-        separator: " ,;",
-        settings: {
-          tags: true,
-          multiple: true,
-          width: "100%",
-          dropdownParent: "#mymodal",
-          tokenSeparators: [",", ";"],
-          placeholder: _vm.__("enter_product_tag")
-        }
-      },
-      on: {
-        input: function input($event) {
-          return _vm.handleTagInput(language.id, $event);
-        },
-        change: function change($event) {
-          return _vm.handleTagInput(language.id, $event);
-        }
-      }
-    })], 1)]), _vm._v(" "), _c("div", {
-      staticClass: "col-md-12"
-    }, [_c("div", {
-      staticClass: "form-group mb-3"
     }, [_c("label", [_vm._v(_vm._s(_vm.__("description")) + " "), language.is_default ? _c("i", {
       staticClass: "text-danger"
     }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("editor", {
@@ -2525,32 +2435,7 @@ var render = function render() {
         },
         expression: "translations[language.id].description"
       }
-    })], 1)]), _vm._v(" "), !language.is_default ? _c("div", {
-      staticClass: "col-md-6"
-    }, [_c("div", {
-      staticClass: "form-group mb-3"
-    }, [_c("label", [_vm._v(_vm._s(_vm.__("manufacturer")))]), _vm._v(" "), _c("input", {
-      directives: [{
-        name: "model",
-        rawName: "v-model",
-        value: _vm.translations[language.id].manufacturer,
-        expression: "translations[language.id].manufacturer"
-      }],
-      staticClass: "form-control",
-      attrs: {
-        type: "text",
-        placeholder: _vm.__("enter_manufacturer")
-      },
-      domProps: {
-        value: _vm.translations[language.id].manufacturer
-      },
-      on: {
-        input: function input($event) {
-          if ($event.target.composing) return;
-          _vm.$set(_vm.translations[language.id], "manufacturer", $event.target.value);
-        }
-      }
-    })])]) : _vm._e(), _vm._v(" "), language.is_default ? [_c("div", {
+    })], 1)]), _vm._v(" "), language.is_default ? [_c("div", {
       staticClass: "col-md-6"
     }, [_c("div", {
       staticClass: "form-group mb-3"
@@ -2629,17 +2514,15 @@ var render = function render() {
       }
     }, [_vm.images.length === 0 ? [_c("label", [_c("i", {
       staticClass: "fa fa-cloud-upload-alt fa-2x"
-    })]), _vm._v(" "), _c("label", [_vm._v(_vm._s(_vm.__("drop_files_here_or_click_to_upload")))])] : [_vm.images.length === 1 ? [_c("label", [_vm._v(_vm._s(_vm.__("selected_file_name")) + "\n                                                                            " + _vm._s(_vm.images[0].name))])] : [_c("label", [_vm._v(_vm._s(_vm.images.length) + " files\n                                                                            Selected")]), _vm._v(" "), _c("span", _vm._l(_vm.images, function (image) {
-      return _c("small", [_vm._v(_vm._s(image.name) + ", ")]);
-    }), 0)]]], 2), _vm._v(" "), _c("span", {
+    })]), _vm._v(" "), _c("label", [_vm._v(_vm._s(_vm.__("drop_files_here_or_click_to_upload")))])] : [_c("label", [_vm._v(_vm._s(_vm.images.length) + " files selected")]), _vm._v(" "), _c("span", [_c("small", [_vm._v("Use the + button below to add more.")])])]], 2), _vm._v(" "), _c("span", {
       staticClass: "text text-primary"
     }, [_vm._v("Allowed media: JPG, JPEG, PNG, GIF, WEBP images or MP4 videos. Max 3 MB per file.")]), _vm._v(" "), _vm.otherImageerror ? _c("p", {
       staticClass: "error"
     }, [_vm._v(_vm._s(_vm.otherImageerror))]) : _vm._e(), _vm._v(" "), _vm.images && _vm.images.length !== 0 ? _c("div", {
-      staticClass: "row"
+      staticClass: "row other-media-list"
     }, [_c("h6", {
       staticClass: "mt-3"
-    }, [_vm._v("Seleted Other Image List.")]), _vm._v(" "), _vm._l(_vm.images, function (image, index) {
+    }, [_vm._v("Selected Other Image List.")]), _vm._v(" "), _vm._l(_vm.images, function (image, index) {
       return _vm.images.length !== 0 ? _c("div", {
         staticClass: "col-md-4 image-container"
       }, [image.isVideo ? _c("video", {
@@ -2674,7 +2557,21 @@ var render = function render() {
       }, [_c("i", {
         staticClass: "fa fa-times-circle"
       })])]) : _vm._e();
-    })], 2) : _vm._e(), _vm._v(" "), _vm.other_images && _vm.other_images.length !== 0 ? _c("div", {
+    }), _vm._v(" "), _c("div", {
+      staticClass: "col-md-4"
+    }, [_c("button", {
+      staticClass: "add-more-media-btn",
+      attrs: {
+        type: "button"
+      },
+      on: {
+        click: function click($event) {
+          return _vm.triggerRefClick("file_other_images");
+        }
+      }
+    }, [_c("i", {
+      staticClass: "fa fa-plus"
+    }), _vm._v(" "), _c("span", [_vm._v("Add More")])])])], 2) : _vm._e(), _vm._v(" "), _vm.other_images && _vm.other_images.length !== 0 ? _c("div", {
       staticClass: "row"
     }, [_c("h6", {
       staticClass: "mt-3"
@@ -2929,7 +2826,7 @@ var render = function render() {
     staticClass: "form-group col-md-6"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v(_vm._s(_vm.__("stock_limit")) + " "), _c("i", {
+  }, [_vm._v(_vm._s(_vm.__("available_stock")) + " "), _c("i", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _c("br"), _vm._v(" "), _c("b-form-radio-group", {
     attrs: {
@@ -3840,36 +3737,6 @@ var render = function render() {
     staticClass: "form-group mb-3"
   }, [_c("label", {
     attrs: {
-      "for": "manufacturer"
-    }
-  }, [_vm._v(_vm._s(_vm.__("manufacturer")) + " ")]), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.manufacturer,
-      expression: "manufacturer"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      type: "text",
-      id: "manufacturer",
-      placeholder: _vm.__("enter_manufacturer")
-    },
-    domProps: {
-      value: _vm.manufacturer
-    },
-    on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.manufacturer = $event.target.value;
-      }
-    }
-  })])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-6"
-  }, [_c("div", {
-    staticClass: "form-group mb-3"
-  }, [_c("label", {
-    attrs: {
       "for": "made_in"
     }
   }, [_vm._v(_vm._s(_vm.__("made_in")))]), _vm._v(" "), _c("multiselect", {
@@ -3910,44 +3777,6 @@ var render = function render() {
       expression: "made_in"
     }
   })], 1)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-6"
-  }, [_c("div", {
-    staticClass: "form-group mb-3"
-  }, [_c("label", {
-    attrs: {
-      "for": "barcode"
-    }
-  }, [_vm._v(_vm._s(_vm.__("barcode")))]), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.barcode,
-      expression: "barcode"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      type: "text",
-      id: "barcode",
-      placeholder: _vm.__("barcode")
-    },
-    domProps: {
-      value: _vm.barcode
-    },
-    on: {
-      input: [function ($event) {
-        if ($event.target.composing) return;
-        _vm.barcode = $event.target.value;
-      }, _vm.validateBarcode]
-    }
-  }), _vm._v(" "), _vm.validationBarcodeMessage ? _c("p", {
-    staticStyle: {
-      color: "red"
-    }
-  }, [_vm._v(_vm._s(_vm.validationBarcodeMessage))]) : _vm.isBarcodeValid ? _c("p", {
-    staticStyle: {
-      color: "green"
-    }
-  }, [_vm._v("Barcode is valid!\n                                        ")]) : _vm._e()])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group mb-3"
@@ -4486,7 +4315,7 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 ___CSS_LOADER_EXPORT___.i(_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_multiselect_dist_vue_multiselect_min_css__WEBPACK_IMPORTED_MODULE_1__["default"]);
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n/* AI Generate Button Styles */\n.ai-generate-btn[data-v-a901b314] {\n    position: relative;\n    min-width: 200px;\n    transition: all 0.3s ease;\n}\n.ai-generate-btn[data-v-a901b314]:disabled {\n    opacity: 0.9;\n    cursor: not-allowed;\n    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);\n    border-color: #667eea;\n    color: white;\n}\n\n/* AI Spinner Animation */\n.ai-spinner[data-v-a901b314] {\n    display: inline-block;\n    width: 16px;\n    height: 16px;\n    border: 2px solid rgba(255, 255, 255, 0.3);\n    border-radius: 50%;\n    border-top-color: #fff;\n    animation: ai-spin-a901b314 0.8s ease-in-out infinite;\n}\n@keyframes ai-spin-a901b314 {\nto {\n        transform: rotate(360deg);\n}\n}\n\n/* AI Text Animation - Pulsing effect */\n.ai-text-animate[data-v-a901b314] {\n    animation: ai-pulse-a901b314 1.5s ease-in-out infinite;\n}\n@keyframes ai-pulse-a901b314 {\n0%,\n    100% {\n        opacity: 1;\n}\n50% {\n        opacity: 0.6;\n}\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n/* AI Generate Button Styles */\n.ai-generate-btn[data-v-a901b314] {\n    position: relative;\n    min-width: 200px;\n    transition: all 0.3s ease;\n}\n.ai-generate-btn[data-v-a901b314]:disabled {\n    opacity: 0.9;\n    cursor: not-allowed;\n    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);\n    border-color: #667eea;\n    color: white;\n}\n\n/* AI Spinner Animation */\n.ai-spinner[data-v-a901b314] {\n    display: inline-block;\n    width: 16px;\n    height: 16px;\n    border: 2px solid rgba(255, 255, 255, 0.3);\n    border-radius: 50%;\n    border-top-color: #fff;\n    animation: ai-spin-a901b314 0.8s ease-in-out infinite;\n}\n@keyframes ai-spin-a901b314 {\nto {\n        transform: rotate(360deg);\n}\n}\n\n/* AI Text Animation - Pulsing effect */\n.ai-text-animate[data-v-a901b314] {\n    animation: ai-pulse-a901b314 1.5s ease-in-out infinite;\n}\n.other-media-list[data-v-a901b314] {\n    row-gap: 12px;\n}\n.add-more-media-btn[data-v-a901b314] {\n    align-items: center;\n    aspect-ratio: 1 / 1;\n    background: #f8fafc;\n    border: 1px dashed #8aa0b8;\n    border-radius: 6px;\n    color: #53677d;\n    display: flex;\n    flex-direction: column;\n    font-weight: 600;\n    gap: 8px;\n    justify-content: center;\n    min-height: 120px;\n    width: 100%;\n}\n.add-more-media-btn i[data-v-a901b314] {\n    font-size: 28px;\n}\n.add-more-media-btn[data-v-a901b314]:hover,\n.add-more-media-btn[data-v-a901b314]:focus {\n    background: #eef4fb;\n    border-color: #53677d;\n    color: #23364a;\n}\n@keyframes ai-pulse-a901b314 {\n0%,\n    100% {\n        opacity: 1;\n}\n50% {\n        opacity: 0.6;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

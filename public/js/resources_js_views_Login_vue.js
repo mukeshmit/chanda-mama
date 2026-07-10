@@ -98,7 +98,7 @@ var render = function render() {
     staticClass: "auth-section"
   }, [_c("div", {
     staticClass: "auth-card"
-  }, [_c("div", {
+  }, [_c("h4", [_vm._v("Welcome to!")]), _vm._v(" "), _c("div", {
     staticClass: "auth-logo"
   }, [_c("a", {
     staticStyle: {
@@ -131,7 +131,7 @@ var render = function render() {
     staticStyle: {
       margin: "10px"
     }
-  }, [_vm._v(_vm._s(_vm.$appName))])])]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(_vm.__("welcome_back")))]), _vm._v(" "), _c("p", {
+  }, [_vm._v(_vm._s(_vm.$appName))])])]), _vm._v(" "), _c("p", {
     staticClass: "auth-subtitle text-primary"
   }, [_vm._v(_vm._s(_vm.__("please_login_to_your_account")))]), _vm._v(" "), _c("form", {
     on: {
@@ -297,11 +297,6 @@ var render = function render() {
   }) : _c("span", {
     staticClass: "bi bi-arrow-right"
   })], 1), _vm._v(" "), _c("hr"), _vm._v(" "), _c("router-link", {
-    staticClass: "btn btn-promary-login btn-block btn-lg shadow-lg mt-2",
-    attrs: {
-      to: "/seller/login"
-    }
-  }, [_vm._v("\n                        " + _vm._s(_vm.__("seller_panel")))]), _vm._v(" "), _c("router-link", {
     staticClass: "btn btn-primary btn-block btn-lg shadow-lg mt-2",
     attrs: {
       to: "/delivery_boy/login"

@@ -3,6 +3,7 @@
         <div class="login-wrapper">
             <div class="auth-section">
                 <div class="auth-card">
+                    <h4>Welcome to!</h4>
                     <div class="auth-logo">
                         <a href="javascript:void(0)"
                             style="display: flex; align-items: center; justify-content: flex-start;">
@@ -13,7 +14,6 @@
                             <h2 style="margin: 10px;">{{ $appName }}</h2>
                         </a>
                     </div>
-                    <h4>{{ __('welcome_back') }}</h4>
                     <p class="auth-subtitle text-primary">{{ __('please_login_to_your_account') }}</p>
                     <form @submit.prevent="loginCheck()">
                         <div class="form-group position-relative has-icon-left mb-4">
@@ -48,8 +48,6 @@
                         </button>
 
                         <hr>
-                        <router-link to="/seller/login" class="btn btn-promary-login btn-block btn-lg shadow-lg mt-2">
-                            {{ __('seller_panel') }}</router-link>
                         <router-link to="/delivery_boy/login" class="btn btn-primary btn-block btn-lg shadow-lg mt-2">
                             {{ __('delivery_boy_panel') }}</router-link>
 

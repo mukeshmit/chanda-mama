@@ -29,7 +29,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
     return {
       fields: [{
         key: 'product_variant_id',
-        label: __('id'),
+        label: __('Sr. No.'),
         "class": 'text-center',
         sortable: true,
         sortDirection: 'desc'
@@ -54,6 +54,14 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
         label: __('stock'),
         "class": 'text-center'
       }, {
+        key: 'stock_value',
+        label: __('stock_value'),
+        "class": 'text-center'
+      }, {
+        key: 'sales_value',
+        label: __('sales_value'),
+        "class": 'text-center'
+      }, {
         key: 'pv_status',
         label: __('status'),
         "class": 'text-center'
@@ -63,7 +71,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
       }],
       totalRows: 0,
       currentPage: 1,
-      perPage: this.$perPage || 10,
+      perPage: 10,
       pageOptions: this.$pageOptions || [5, 10, 15, 20],
       sortBy: '',
       sortDesc: false,
@@ -426,7 +434,7 @@ var render = function render() {
     scopedSlots: _vm._u([{
       key: "cell(product_variant_id)",
       fn: function fn(row) {
-        return [_vm._v("\n\n                                " + _vm._s(row.item.product_variant_id) + "\n\n                            ")];
+        return [_vm._v("\n                                " + _vm._s((_vm.currentPage - 1) * _vm.perPage + row.index + 1) + "\n                            ")];
       }
     }, {
       key: "cell(name)",

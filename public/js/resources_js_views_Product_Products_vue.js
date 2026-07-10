@@ -271,7 +271,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     var _this4 = this;
     if (!this.$can('product_list')) {
       this.showError("You do not have permission to view this page.");
-      this.$router.back();
+      this.$router.replace({
+        path: '/unauthorized'
+      });
+      return;
     }
     if (this.$roleSeller === this.login_user.role.name) {
       this.fields.forEach(function (field, index) {

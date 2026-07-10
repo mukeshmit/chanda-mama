@@ -91,7 +91,7 @@ var render = function render() {
     staticClass: "auth-section"
   }, [_c("div", {
     staticClass: "auth-card"
-  }, [_c("div", {
+  }, [_c("h4", [_vm._v("Welcome to!")]), _vm._v(" "), _c("div", {
     staticClass: "auth-logo"
   }, [_c("a", {
     staticStyle: {
@@ -124,7 +124,7 @@ var render = function render() {
     staticStyle: {
       margin: "10px"
     }
-  }, [_vm._v(_vm._s(_vm.$appName))])])]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(_vm.__("welcome_back")))]), _vm._v(" "), _c("p", {
+  }, [_vm._v(_vm._s(_vm.$appName))])])]), _vm._v(" "), _c("p", {
     staticClass: "auth-subtitle text-primary"
   }, [_vm._v(_vm._s(_vm.__("please_login_to_your_delivery_boy_account")))]), _vm._v(" "), _c("form", {
     on: {

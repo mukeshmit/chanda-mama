@@ -27,6 +27,8 @@ const NotificationPanel = () => import("../views/NotificationPanel.vue");
 
 // Categories
 const ManageCategories = () => import("../views/Category/ManageCategories");
+const ManageSubcategories = () => import("../views/Category/ManageSubcategories");
+const ManageSubSubcategories = () => import("../views/Category/ManageSubSubcategories");
 const CategoriesOrder = () => import("../views/Category/CategoriesOrder");
 
 // Products
@@ -458,7 +460,7 @@ function configRoutes() {
                     name: "manage_categories_create",
                     component: ManageCategories,
                     meta: {
-                        permission: 'order_list',
+                        permission: 'category_list',
                         role: adminRoles,
                         title: 'Categories'
 
@@ -469,9 +471,53 @@ function configRoutes() {
                     name: "manage_categories",
                     component: ManageCategories,
                     meta: {
-                        permission: 'order_list',
+                        permission: 'category_list',
                         role: adminRoles,
                         title: 'Categories'
+
+                    },
+                },
+                {
+                    path: "manage_subcategories/:create",
+                    name: "manage_subcategories_create",
+                    component: ManageSubcategories,
+                    meta: {
+                        permission: 'category_list',
+                        role: adminRoles,
+                        title: 'SubCategory'
+
+                    },
+                },
+                {
+                    path: "manage_subcategories",
+                    name: "manage_subcategories",
+                    component: ManageSubcategories,
+                    meta: {
+                        permission: 'category_list',
+                        role: adminRoles,
+                        title: 'SubCategory'
+
+                    },
+                },
+                {
+                    path: "manage_sub_subcategories/:create",
+                    name: "manage_sub_subcategories_create",
+                    component: ManageSubSubcategories,
+                    meta: {
+                        permission: 'category_list',
+                        role: adminRoles,
+                        title: 'Sub SubCategory'
+
+                    },
+                },
+                {
+                    path: "manage_sub_subcategories",
+                    name: "manage_sub_subcategories",
+                    component: ManageSubSubcategories,
+                    meta: {
+                        permission: 'category_list',
+                        role: adminRoles,
+                        title: 'Sub SubCategory'
 
                     },
                 },

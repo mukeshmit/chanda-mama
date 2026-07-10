@@ -236,7 +236,7 @@ Vue.prototype.$logo = '';
 var lang = localStorage.getItem("language");
 
 lang = JSON.parse(lang);
-Vue.prototype.$perPage = 5;
+Vue.prototype.$perPage = 10;
 Vue.prototype.$pageOptions = [2, 5, 10, 20, 50, {
     value: 100,
     text: lang && lang.show_a_lot ? lang.show_a_lot : 'View All'

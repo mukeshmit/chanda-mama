@@ -148,6 +148,14 @@ class CategoryApiController extends Controller
                     $categoriesQuery = $categoriesQuery->where('status', $statusFilter);
                 }
 
+                if ($request->has('parent_id')) {
+                    $categoriesQuery = $categoriesQuery->where('parent_id', (int) $request->input('parent_id'));
+                }
+
+                if ($request->has('parent_id_gt')) {
+                    $categoriesQuery = $categoriesQuery->where('parent_id', '>', (int) $request->input('parent_id_gt'));
+                }
+
                 // Filter by id if provided (for edit modal)
                 if ($categoryId) {
                     $categoriesQuery = $categoriesQuery->where('id', $categoryId);
@@ -215,16 +223,13 @@ class CategoryApiController extends Controller
 
         $rules = [
             'name' => 'required',
-            'subtitle' => 'required',
             'language_id' => 'required|exists:languages,id'
         ];
         if ($isDefaultLanguage) {
             $rules['name'] = 'required';
-            $rules['subtitle'] = 'required';
             $rules['image'] = 'required|mimes:jpeg,jpg,png,gif,webp,svg';
         } else {
             $rules['name'] = 'nullable';
-            $rules['subtitle'] = 'nullable';
             $rules['image'] = 'nullable|mimes:jpeg,jpg,png,gif,webp,svg';
         }
 
@@ -233,51 +238,56 @@ class CategoryApiController extends Controller
             return CommonHelper::responseError($validator->errors()->first());
         }
 
+        \Log::info('Category save request data:', [
+            'name' => $request->name,
+            'parent_id' => $request->parent_id,
+            'slug' => $request->slug,
+            'language_id' => $request->language_id,
+            'is_default_language' => $isDefaultLanguage
+        ]);
+
+        $parentId = (int) $request->input('parent_id', 0);
+
         if ($request->has('slug') && !empty($request->slug)) {
-            $slug = $request->slug;
+            $baseSlug = $request->slug;
         } else {
             // Generate slug from name
-            $slug = preg_replace('/\s+/', '-', trim(
+            $baseSlug = preg_replace('/\s+/', '-', trim(
                 preg_replace('/[^A-Za-z0-9 ]/', '', $request->name)
             ));
-
-            // Ensure slug uniqueness
-            $count = Category::where('slug', $slug)->count();
-            if ($count > 0) {
-                $slug .= '-' . ($count + 1);
-            }
         }
 
-        $category = Category::where('slug', $slug)->first();
+        $slug = $this->makeUniqueSlug($baseSlug);
+        $category = new Category();
+        $category->slug = $slug;
+        $category->status = (int) $request->input('status', 1);
+        $category->parent_id = $parentId;
+        $category->web_image = '';
 
-        if (!$category) {
-            $category = new Category();
-            $category->slug = $slug;
-            $category->status = 1;
-            $category->parent_id = $request->parent_id ?? 0;
-            $category->web_image = '';
+        \Log::info('Creating new category with parent_id:', ['parent_id' => $category->parent_id]);
 
-            $image = '';
-            if ($request->hasFile('image')) {
-                $file = $request->file('image');
-                $fileName = time() . '_' . rand(1111, 99999) . '.' . $file->getClientOriginalExtension();
-                $image = Storage::disk('public')->putFileAs('categories', $file, $fileName);
-            }
-            $category->image = $image;
-
-            $category->name = $request->name;
-            $category->subtitle = $request->subtitle;
-            $category->meta_title = $request->meta_title ?? "";
-            $category->meta_keywords = $request->meta_keywords ?? "";
-            $category->schema_markup = $request->schema_markup ?? "";
-            $category->meta_description = $request->meta_description ?? "";
-
-            $category->save();
+        $image = '';
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $fileName = time() . '_' . rand(1111, 99999) . '.' . $file->getClientOriginalExtension();
+            $image = Storage::disk('public')->putFileAs('categories', $file, $fileName);
         }
+        $category->image = $image;
+
+        $category->name = $request->name;
+        $category->subtitle = '';
+        $category->meta_title = $request->meta_title ?? "";
+        $category->meta_keywords = $request->meta_keywords ?? "";
+        $category->schema_markup = $request->schema_markup ?? "";
+        $category->meta_description = $request->meta_description ?? "";
+
+        $category->save();
+
+        \Log::info('Category saved with ID:', ['id' => $category->id, 'parent_id' => $category->parent_id]);
 
         $translationData = [
             'name' => $request->name,
-            'subtitle' => $request->subtitle,
+            'subtitle' => '',
             'meta_title' => $request->meta_title ?? "",
             'meta_keywords' => $request->meta_keywords ?? "",
             'schema_markup' => $request->schema_markup ?? "",
@@ -302,10 +312,8 @@ class CategoryApiController extends Controller
         ];
         if ($isDefaultLanguage) {
             $rules['name'] = 'required';
-            $rules['subtitle'] = 'required';
         } else {
             $rules['name'] = 'nullable';
-            $rules['subtitle'] = 'nullable';
         }
 
         $validator = Validator::make($request->all(), $rules);
@@ -324,7 +332,9 @@ class CategoryApiController extends Controller
 
         if ($isDefaultLanguage) {
             $category->status = $request->status ?? $category->status;
-            $category->parent_id = $request->parent_id ?? $category->parent_id;
+            if ($request->has('parent_id')) {
+                $category->parent_id = (int) $request->input('parent_id', 0);
+            }
         }
 
         if ($request->hasFile('image')) {
@@ -340,7 +350,7 @@ class CategoryApiController extends Controller
 
         if ($isDefaultLanguage) {
             $category->name = $request->name;
-            $category->subtitle = $request->subtitle;
+            $category->subtitle = '';
             $category->meta_title = $request->meta_title ?? "";
             $category->meta_keywords = $request->meta_keywords ?? "";
             $category->schema_markup = $request->schema_markup ?? "";
@@ -352,7 +362,7 @@ class CategoryApiController extends Controller
         // Save/update translation for the specified language
         $translationData = [
             'name' => $request->name,
-            'subtitle' => $request->subtitle,
+            'subtitle' => '',
             'meta_title' => $request->meta_title ?? "",
             'meta_keywords' => $request->meta_keywords ?? "",
             'schema_markup' => $request->schema_markup ?? "",
@@ -362,6 +372,32 @@ class CategoryApiController extends Controller
         $category->saveTranslation($request->language_id, $translationData);
 
         return CommonHelper::responseSuccess('category_updated_successfully');
+    }
+
+    private function makeUniqueSlug($slug, $ignoreId = null)
+    {
+        $baseSlug = trim((string) $slug);
+        $baseSlug = preg_replace('/\s+/', '-', $baseSlug);
+        $baseSlug = preg_replace('/[^A-Za-z0-9\-]/', '', $baseSlug);
+        $baseSlug = trim(strtolower($baseSlug), '-');
+
+        if ($baseSlug === '') {
+            $baseSlug = 'category';
+        }
+
+        $uniqueSlug = $baseSlug;
+        $counter = 1;
+
+        while (Category::where('slug', $uniqueSlug)
+            ->when($ignoreId, function ($query) use ($ignoreId) {
+                $query->where('id', '!=', $ignoreId);
+            })
+            ->exists()) {
+            $counter++;
+            $uniqueSlug = $baseSlug . '-' . $counter;
+        }
+
+        return $uniqueSlug;
     }
     public function delete(Request $request)
     {
@@ -428,7 +464,7 @@ class CategoryApiController extends Controller
         $rows = Category::query()
             ->select('categories.id', 'categories.name', DB::raw('COUNT(products.id) AS product_count'))
             ->leftJoin('products', 'products.category_id', '=', 'categories.id')
-            ->where('categories.status', 1)
+            // ->where('categories.status', 1)
             ->groupBy('categories.id', 'categories.name')
             ->orderBy('categories.id', 'ASC')
             ->get();

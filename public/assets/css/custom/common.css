@@ -88,22 +88,22 @@ body.rtl .form-select:not([multiple]):not([size]) {
 
 /* toast-style start */
 .toast-header {
-    background-color: #37a279 !important;
+    background-color: #c5ad24 !important;
     color: #ffffff !important;
 }
 
 .update_btn {
-    background-color: #37a279;
-    border-color: #37a279;
+    background-color: #c5ad24;
+    border-color: #c5ad24;
 }
 
 .update_btn:hover {
-    background-color: #37a279;
-    border-color: #37a279;
+    background-color: #c5ad24;
+    border-color: #c5ad24;
 }
 
 #update_description {
-    color: #37a279;
+    color: #c5ad24;
 }
 
 .toast-body {
@@ -118,7 +118,7 @@ body.rtl .form-select:not([multiple]):not([size]) {
 /* toast-style end */
 
 .b-form-tag {
-    background-color: #37a279 !important;
+    background-color: #c5ad24 !important;
 }
 
 .b-form-tag-remove {
@@ -126,7 +126,7 @@ body.rtl .form-select:not([multiple]):not([size]) {
 }
 
 .body.theme-dark .swal2-styled.swal2-confirm {
-    background-color: #37a279 !important;
+    background-color: #c5ad24 !important;
 }
 
 .capitalize {
@@ -194,13 +194,13 @@ body.rtl .form-select:not([multiple]):not([size]) {
 }
 
 select.form-select optgroup {
-    background-color: #37a279;
+    background-color: #c5ad24;
     color: #bdbdbd;
 }
 
 select.form-select option,
 select.monthselect option {
-    background-color: #37a279;
+    background-color: #c5ad24;
     color: #ffffff;
 }
 
@@ -219,23 +219,23 @@ select.monthselect option {
 
 .daterangepicker td.active,
 .daterangepicker td.active:hover {
-    background-color: #37a279 !important;
+    background-color: #c5ad24 !important;
     border-color: transparent;
     color: #fff;
 }
 
 .applyBtn {
-    background-color: #37a279 !important;
+    background-color: #c5ad24 !important;
     color: #ffffff;
 }
 
 .daterangepicker .ranges li.active {
-    background-color: #37a279 !important;
+    background-color: #c5ad24 !important;
     color: #fff;
 }
 
 .primary-toggal {
-    color: #37a279;
+    color: #c5ad24;
 }
 
 .h1,
@@ -254,7 +254,7 @@ h6 {
 }
 
 a:hover {
-    color: #37a279;
+    color: #c5ad24;
 }
 
 .badge:hover {
@@ -262,27 +262,27 @@ a:hover {
 }
 
 .box-title {
-    color: #37a279;
+    color: #c5ad24;
 }
 
 
 .nav-pills .nav-link.active,
 .nav-pills .show>.nav-link {
-    background-color: #37a279;
+    background-color: #c5ad24;
     color: #fff;
 }
 
 .sidebar-wrapper .menu .sidebar-item.active>.sidebar-link {
-    background-color: #37a279;
+    background-color: #c5ad24;
 }
 
 .sidebar-wrapper .menu .submenu .submenu-item.active>a {
-    color: #37a279;
+    color: #c5ad24;
 }
 
 .form-check-input:checked {
-    background-color: #37a279;
-    border-color: #37a279;
+    background-color: #c5ad24;
+    border-color: #c5ad24;
 }
 
 nav-pills .nav-link.active {
@@ -290,12 +290,12 @@ nav-pills .nav-link.active {
 }
 
 .swal2-confirm .swal2-styled {
-    background-color: #37a279;
+    background-color: #c5ad24;
 }
 
 ul .pagination.pagination-primary li .page-item.active .page-link {
-    background-color: #37a279;
-    border-color: #37a279;
+    background-color: #c5ad24;
+    border-color: #c5ad24;
     color: #fff;
     z-index: 99;
 }
@@ -309,15 +309,15 @@ ul .pagination.pagination-primary li .page-item.active .page-link {
 }
 
 .pagination .page-item.active .page-link:hover {
-    background-color: #37a279;
+    background-color: #c5ad24;
 }
 
 .pagination .page-item.active .page-link {
     -webkit-transition: all 0.2s linear;
     transition: all 0.2s linear;
     border-radius: 0.125rem;
-    background-color: #37a279;
-    border-color: #37a279;
+    background-color: #c5ad24;
+    border-color: #c5ad24;
     color: #fff;
 }
 
@@ -334,24 +334,24 @@ ul .pagination.pagination-primary li .page-item.active .page-link {
 
 .btn.btn-light-primary {
     background-color: #ebf3ff;
-    color: #37a279;
+    color: #c5ad24;
 }
 
 .swal2-styled.swal2-confirm {
-    background-color: #37a279;
+    background-color: #c5ad24;
 }
 
 .btn-primary {
-    background-color: #37a279;
-    border-color: #37a279;
+    background-color: #c5ad24;
+    border-color: #c5ad24;
     color: #fff;
 }
 
 .btn-check:focus+.btn-primary,
 .btn-primary:focus,
 .btn-primary:hover {
-    background-color: #37a279;
-    border-color: #37a279;
+    background-color: #c5ad24;
+    border-color: #c5ad24;
     color: #fff;
 }
 
@@ -380,19 +380,19 @@ ul .pagination.pagination-primary li .page-item.active .page-link {
 
 .btn-primary.disabled,
 .btn-primary:disabled {
-    background-color: #37a279;
-    border-color: #37a279;
+    background-color: #c5ad24;
+    border-color: #c5ad24;
     color: #fff;
 }
 
 .btn-outline-primary {
-    border-color: #37a279;
-    color: #37a279;
+    border-color: #c5ad24;
+    color: #c5ad24;
 }
 
 .btn-outline-primary:hover {
-    background-color: #37a279;
-    border-color: #37a279;
+    background-color: #c5ad24;
+    border-color: #c5ad24;
     color: #fff;
 }
 
@@ -406,8 +406,8 @@ ul .pagination.pagination-primary li .page-item.active .page-link {
 .btn-outline-primary.active,
 .btn-outline-primary.dropdown-toggle.show,
 .btn-outline-primary:active {
-    background-color: #37a279;
-    border-color: #37a279;
+    background-color: #c5ad24;
+    border-color: #c5ad24;
     color: #fff;
 }
 
@@ -422,11 +422,11 @@ ul .pagination.pagination-primary li .page-item.active .page-link {
 .btn-outline-primary.disabled,
 .btn-outline-primary:disabled {
     background-color: transparent;
-    color: #37a279;
+    color: #c5ad24;
 }
 
 input[type="radio"] {
-    accent-color: #37a279;
+    accent-color: #c5ad24;
 }
 
 input[type="radio"] {
@@ -476,11 +476,11 @@ input[type="radio"] {
 }
 
 input[type="radio"]:checked:before {
-    background: #37a279;
+    background: #c5ad24;
 }
 
 input[type="radio"]:checked {
-    background-color: #37a279;
+    background-color: #c5ad24;
 }
 
 .file-input {
@@ -516,7 +516,7 @@ input[type="radio"]:checked {
 
 .bg-green-300 {
     background-color: #9ae6b4;
-    border: 2px solid #37a279;
+    border: 2px solid #c5ad24;
 }
 
 /*no use start*/
@@ -545,8 +545,8 @@ input[type="radio"]:checked {
 }
 
 .form-check .form-check-input.form-check-primary {
-    background-color: #37a279;
-    border-color: #37a279;
+    background-color: #c5ad24;
+    border-color: #c5ad24;
 }
 
 .form-check .form-check-input.form-check-primary:not(:checked) {
@@ -583,8 +583,8 @@ input[type="radio"]:checked {
 }
 
 .form-check.form-check-primary .form-check-input {
-    background-color: #37a279;
-    border-color: #37a279;
+    background-color: #c5ad24;
+    border-color: #c5ad24;
 }
 
 .logo .container-logo {
@@ -990,7 +990,7 @@ table img {
 }
 
 .radio-img>input:checked+.style_image {
-    border: 2px solid #37a279;
+    border: 2px solid #c5ad24;
     filter: grayscale(0%) !important;
 }
 
@@ -1534,17 +1534,17 @@ body.theme-dark.rtl .modal-header .modal-title {
 /* ============================================
    Language tabs: Active tab underline in primary color
    Applies to all forms with b-tabs (Edit Product, Units, Category, etc.)
-   Replaces default blue underline with primary (#37a279)
+   Replaces default blue underline with primary (#c5ad24)
    ============================================ */
 .nav-tabs .nav-link.active {
     background-color: transparent !important;
-    color: #37a279 !important;
+    color: #c5ad24 !important;
     border-bottom-color: transparent !important;
     position: relative;
 }
 
 .nav-tabs .nav-link.active:after {
-    background-color: #37a279;
+    background-color: #c5ad24;
     border-radius: 0 0 4px 4px;
     bottom: 0;
     box-shadow: 0 2px 5px rgba(55, 162, 121, 0.5);
@@ -1830,8 +1830,8 @@ body.theme-dark.rtl .modal-header .modal-title {
 .form-switch .form-check-input:checked {
     background-position: right center !important;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e") !important;
-    background-color: #37a279 !important;
-    border-color: #37a279 !important;
+    background-color: #c5ad24 !important;
+    border-color: #c5ad24 !important;
 }
 
 /* Override the incorrect radio style for form-switch */
@@ -1846,8 +1846,8 @@ body.theme-dark.rtl .modal-header .modal-title {
 
 .form-switch input[type="radio"]:checked {
     background-position: right center !important;
-    background-color: #37a279 !important;
-    border-color: #37a279 !important;
+    background-color: #c5ad24 !important;
+    border-color: #c5ad24 !important;
 }
 
 /* ============================================

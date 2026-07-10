@@ -213,6 +213,16 @@ __webpack_require__.r(__webpack_exports__);
           url: '/manage_categories',
           permission: 'category_list'
         }, {
+          name: 'SubCategory',
+          icon: 'grid-fill',
+          url: '/manage_subcategories',
+          permission: 'category_list'
+        }, {
+          name: 'Sub SubCategory',
+          icon: 'grid-fill',
+          url: '/manage_sub_subcategories',
+          permission: 'category_list'
+        }, {
           name: __('categories_order'),
           icon: 'grid-fill',
           url: '/categories_order',
@@ -1845,69 +1855,7 @@ var render = function render() {
     }
   }) : _c("span", [_vm._v(_vm._s(_vm.__("Clear Cache")))])], 1)]), _vm._v(" "), _c("div", {
     staticClass: "d-flex align-items-center gap-3"
-  }, [_c("div", {
-    staticClass: "dropdown"
-  }, [_c("div", {
-    staticClass: "lang-selector d-flex align-items-center justify-content-between p-2",
-    staticStyle: {
-      cursor: "pointer",
-      "font-size": "0.85rem"
-    },
-    attrs: {
-      "data-bs-toggle": "dropdown",
-      "aria-expanded": "false"
-    }
-  }, [_c("img", {
-    staticClass: "rounded-circle",
-    staticStyle: {
-      width: "24px",
-      height: "24px",
-      "object-fit": "cover"
-    },
-    attrs: {
-      src: _vm.currentFlag,
-      alt: "flag"
-    }
-  }), _vm._v(" "), _c("span", {
-    staticClass: "fw-bold text-dark fs-6 ms-1"
-  }, [_vm._v(_vm._s(_vm.currentLanguageName))]), _vm._v(" "), _c("i", {
-    staticClass: "bi bi-chevron-down text-dark fw-bold ms-1",
-    staticStyle: {
-      "font-size": "0.8rem"
-    }
-  })]), _vm._v(" "), _c("ul", {
-    staticClass: "dropdown-menu dropdown-menu-end lang-dropdown-menu shadow border-0 mt-2"
-  }, _vm._l(_vm.languages, function (language) {
-    return _c("li", {
-      key: language.code
-    }, [_c("a", {
-      staticClass: "dropdown-item d-flex align-items-center gap-2 py-2",
-      "class": {
-        active: _vm.lang === language.code
-      },
-      attrs: {
-        href: "javascript:void(0)"
-      },
-      on: {
-        click: function click($event) {
-          return _vm.selectLanguage(language.code);
-        }
-      }
-    }, [_c("img", {
-      staticClass: "rounded-circle",
-      staticStyle: {
-        width: "18px",
-        height: "18px",
-        "object-fit": "cover"
-      },
-      attrs: {
-        src: _vm.getFlagByCode(language.code),
-        alt: "flag"
-      }
-    }), _vm._v(" "), _c("span", {
-      staticClass: "fw-semibold"
-    }, [_vm._v(_vm._s(language.name.substring(0, 3)))])])]);
-  }), 0)]), _vm._v(" "), _c("button", {
+  }, [_c("button", {
     staticClass: "btn p-0 border-0 d-flex align-items-center justify-content-center",
     "class": _vm.userTheme === "theme-dark" ? "text-white" : "text-dark",
     staticStyle: {

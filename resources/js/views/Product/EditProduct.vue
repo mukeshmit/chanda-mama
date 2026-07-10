@@ -132,26 +132,17 @@
                                                                     readonly>
                                                             </div>
                                                         </div>
-                                                        <template v-if="isSellerRole">
-                                                            <input type="hidden" v-model="seller_id" required>   
-                                                        </template>
-                                                        <template v-else>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group mb-3">
-                                                                    <label class="control-label" for="seller_id">{{
-                                                                        __('seller') }} <i class="text-danger">*</i></label>
-                                                                    <select id="seller_id" name="seller_id"
-                                                                        class="form-control form-select" v-model="seller_id"
-                                                                        required
-                                                                        @change="getSellerCategories(); getSeller()">
-                                                                        <option value="">{{ __('select_seller') }}</option>
-                                                                        <option v-for="seller in translatedSellers"
-                                                                            :value="seller.id">{{ seller.name }}
-                                                                        </option>
-                                                                    </select>
-                                                                </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group mb-3">
+                                                                <label for="barcode">{{ __('barcode') }}</label>
+                                                                <input type="text" id="barcode" class="form-control" :placeholder="__('barcode')"
+                                                                    v-model="barcode" @input="validateBarcode">
+                                                                <p style="color:red" v-if="validationBarcodeMessage">{{
+                                                                    validationBarcodeMessage }}</p>
+                                                                <p style="color:green" v-else-if="isBarcodeValid">Barcode is valid!
+                                                                </p>
                                                             </div>
-                                                        </template>
+                                                        </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group mb-3">
                                                                 <label for="tax_id">{{ __('tax') }}</label>
@@ -229,32 +220,6 @@
                                                         </div>
                                                     </template>
 
-                                                    <!-- Translatable Fields: Tags (shown in all language tabs) -->
-                                                    <div class="col-md-12">
-                                                        <div class="form-group mb-3">
-                                                            <label for="tags">{{ __('tags') }} (
-                                                                {{
-                                                                    __('these_tags_help_you_in_search_result') }} ) <i
-                                                                    class="text-danger"
-                                                                    v-if="language.is_default">*</i></label>
-                                                            <!-- Use Select2 for all language tabs -->
-                                                            <Select2
-                                                                :key="'tags_' + language.id + '_' + activeLanguageTab"
-                                                                :value="language.is_default ? tag_ids : (tagIdsByLanguage[language.id] || [])"
-                                                                @input="handleTagInput(language.id, $event)"
-                                                                @change="handleTagInput(language.id, $event)"
-                                                                placeholder="Select Tags" no-add-on-enter
-                                                                :options="tagsOptions" separator=" ,;" :settings="{
-                                                                    tags: true,
-                                                                    multiple: true,
-                                                                    width: '100%',
-                                                                    dropdownParent: '#mymodal',
-                                                                    tokenSeparators: [',', ';'],
-                                                                    placeholder: __('enter_product_tag'),
-                                                                }" />
-                                                        </div>
-                                                    </div>
-
                                                     <!-- Translatable Fields: Description (shown in all language tabs) -->
                                                     <div class="col-md-12">
                                                         <div class="form-group mb-3">
@@ -267,15 +232,6 @@
                                                         </div>
                                                     </div>
 
-                                                    <!-- Translatable Fields: Manufacturer (shown in other language tabs only, not in default) -->
-                                                    <div class="col-md-6" v-if="!language.is_default">
-                                                        <div class="form-group mb-3">
-                                                            <label>{{ __('manufacturer') }}</label>
-                                                            <input type="text" class="form-control"
-                                                                :placeholder="__('enter_manufacturer')"
-                                                                v-model="translations[language.id].manufacturer">
-                                                        </div>
-                                                    </div>
 
                                                     <!-- Non-translatable Fields: Images (only shown in default language tab) -->
                                                     <template v-if="language.is_default">
@@ -495,7 +451,7 @@
                                             ]" buttons button-variant="outline-primary"></b-form-radio-group>
                                         </div>
                                         <div class="form-group col-md-6">
-                                            <label class="control-label">{{ __('stock_limit') }} <i
+                                            <label class="control-label">{{ __('available_stock') }} <i
                                                     class="text-danger">*</i></label><br>
                                             <b-form-radio-group v-model="is_unlimited_stock" :options="[
                                                 { text: __('limited'), 'value': 0 },
@@ -822,14 +778,6 @@
                                         </template>
                                     </div>
 
-                                    <!-- Row: Manufacturer, Made in -->
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-3">
-                                            <label for="manufacturer">{{ __('manufacturer') }} </label>
-                                            <input type="text" id="manufacturer" class="form-control" v-model="manufacturer"
-                                                :placeholder="__('enter_manufacturer')">
-                                        </div>
-                                    </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
                                             <label for="made_in">{{ __('made_in') }}</label>
@@ -854,17 +802,6 @@
                                     </div>
 
 
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-3">
-                                            <label for="barcode">{{ __('barcode') }}</label>
-                                            <input type="text" id="barcode" class="form-control" :placeholder="__('barcode')"
-                                                v-model="barcode" @input="validateBarcode">
-                                            <p style="color:red" v-if="validationBarcodeMessage">{{
-                                                validationBarcodeMessage }}</p>
-                                            <p style="color:green" v-else-if="isBarcodeValid">Barcode is valid!
-                                            </p>
-                                        </div>
-                                    </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
                                             <label for="max_allowed_quantity">{{ __('total_allowed_quantity') }} ({{ __('keep_blank_if_no_such_limit')
@@ -979,7 +916,6 @@ export default {
             type: 'packet',
             category_id: '',
             product_type: '',
-            manufacturer: '',
             made_in: '',
             tag: '',
             allowedOtherMediaTypes: [
@@ -995,7 +931,7 @@ export default {
             return_days: 1,
             cancelable_status: 0,
             till_status: "",
-            cod_allowed_status: 0,
+            cod_allowed_status: 1,
             max_allowed_quantity: 0,
             description: '',
             require_products_approval: 0,
@@ -1059,7 +995,7 @@ export default {
             categories: [], // Store categories data for translation
 
             // Translate buttons
-            translatableFields: ['name', 'description', 'manufacturer', 'meta_title', 'meta_keywords', 'schema_markup', 'meta_description', 'tags'],
+            translatableFields: ['name', 'description', 'meta_title', 'meta_keywords', 'schema_markup', 'meta_description', 'tags'],
             translateSuccessMessage: '',
             loadingEmpty: false,
             loadingOverwrite: false,
@@ -1318,7 +1254,6 @@ export default {
                 allTranslations[language.id] = {
                     name: '',
                     tags: '',
-                    manufacturer: '',
                     description: '',
                     meta_title: '',
                     meta_keywords: '',
@@ -1505,7 +1440,6 @@ export default {
                 if (translation) {
                     this.$set(this.translations[language.id], 'name', translation.name || '');
                     this.$set(this.translations[language.id], 'tags', translation.tags || '');
-                    this.$set(this.translations[language.id], 'manufacturer', translation.manufacturer || '');
                     this.$set(this.translations[language.id], 'description', translation.description || '');
                     this.$set(this.translations[language.id], 'meta_title', translation.meta_title || '');
                     this.$set(this.translations[language.id], 'meta_keywords', translation.meta_keywords || '');
@@ -2137,7 +2071,6 @@ export default {
                         this.category_id = this.record.category_id;
 
                         this.product_type = this.record.indicator ?? "";
-                        this.manufacturer = (this.record.manufacturer != null && this.record.manufacturer !== "null") ? this.record.manufacturer : "";
 
                         // Load translations
                         this.loadTranslations();
@@ -2181,7 +2114,6 @@ export default {
                             } else {
                                 this.translations[this.defaultLanguageId].tags = '';
                             }
-                            this.translations[this.defaultLanguageId].manufacturer = this.manufacturer;
                             this.translations[this.defaultLanguageId].description = this.description;
                             this.translations[this.defaultLanguageId].meta_title = this.meta_title;
                             this.translations[this.defaultLanguageId].meta_keywords = this.meta_keywords;
@@ -2390,7 +2322,6 @@ export default {
 
             formData.append('category_id', this.category_id);
             formData.append('product_type', this.product_type);
-            formData.append('manufacturer', this.manufacturer || '');
 
             formData.append('made_in', this.made_in ? this.made_in.id : 0);
 
@@ -2415,10 +2346,6 @@ export default {
                 formData.append('other_images[]', file);
             }
 
-            // Sync manufacturer to default language translation before saving
-            if (this.defaultLanguageId && this.translations[this.defaultLanguageId]) {
-                this.translations[this.defaultLanguageId].manufacturer = this.manufacturer;
-            }
 
             // Sync tags for all languages before saving (ensure translation.tags is up to date)
             this.languages.forEach(language => {
@@ -2463,15 +2390,10 @@ export default {
                     tagsValue = translation.tags;
                 }
 
-                // For default language, use manufacturer from main field
-                if (language.is_default) {
-                    translation.manufacturer = this.manufacturer || '';
-                }
                 allTranslations.push({
                     language_id: language.id,
                     name: translation.name || '',
                     tags: tagsValue,
-                    manufacturer: translation.manufacturer || '',
                     description: translation.description || '',
                     meta_title: translation.meta_title || '',
                     meta_keywords: translation.meta_keywords || '',
@@ -2560,7 +2482,7 @@ export default {
                     barcode: this.barcode, meta_title: this.meta_title,
                     meta_keywords: this.meta_keywords, schema_markup: this.schema_markup,
                     meta_description: this.meta_description, category_id: this.category_id,
-                    product_type: this.product_type, manufacturer: this.manufacturer,
+                    product_type: this.product_type,
                     made_in: this.made_in ? { id: this.made_in.id } : null, return_status: this.return_status,
                     return_days: (parseInt(this.return_days, 10) > 0) ? this.return_days : 1,
                     cancelable_status: this.cancelable_status,
@@ -2647,10 +2569,10 @@ export default {
                 name: '', slug: '', seller_id: 0, tag_ids: '', tax_id: 0, brand: null,
                 description: '', type: 'packet', is_unlimited_stock: 0,
                 barcode: '', meta_title: '', meta_keywords: '', schema_markup: '',
-                meta_description: '', category_id: '', product_type: '', manufacturer: '',
+                meta_description: '', category_id: '', product_type: '',
                 made_in: null, return_status: 0, return_days: 1, cancelable_status: 0,
                 categoryOptions: '<option value="">' + __('select_category') + '</option>',
-                till_status: '', cod_allowed_status: 0, max_allowed_quantity: 0,
+                till_status: '', cod_allowed_status: 1, max_allowed_quantity: 0,
                 is_approved: 1, tax_included_in_price: 0, status: 1, loose_stock: 0,
                 loose_stock_unit_id: '', inputs: [{ 'name': '', 'packet_status': '', 'packet_stock_unit_id': '' }],
                 image: null, main_image_path: '', main_image_name: '', other_images: null,
@@ -2720,13 +2642,6 @@ export default {
         meta_description: function () { if (!this.id && !this.clone) this.debouncedSave(); },
         category_id: function () { if (!this.id && !this.clone) this.debouncedSave(); },
         product_type: function () { if (!this.id && !this.clone) this.debouncedSave(); },
-        manufacturer: function () {
-            // Sync manufacturer to default language translation
-            if (this.defaultLanguageId && this.translations[this.defaultLanguageId]) {
-                this.translations[this.defaultLanguageId].manufacturer = this.manufacturer;
-            }
-            if (!this.id && !this.clone) this.debouncedSave();
-        },
         made_in: { handler: function () { if (!this.id && !this.clone) this.debouncedSave(); }, deep: true },
         return_status: function () {
             // When user turns off returnable, default return_days to 1 if empty/0

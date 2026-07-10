@@ -52,7 +52,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       translations: {},
       defaultLanguageId: null,
       languages: [],
-      translatableFields: ['name', 'subtitle', 'meta_title', 'meta_keywords', 'schema_markup', 'meta_description'],
+      translatableFields: ['name', 'meta_title', 'meta_keywords', 'schema_markup', 'meta_description'],
       loadingEmpty: false,
       loadingOverwrite: false
     };
@@ -123,7 +123,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       this.languages.forEach(function (language) {
         allTranslations[language.id] = {
           name: '',
-          subtitle: '',
           meta_title: '',
           meta_keywords: '',
           schema_markup: '',
@@ -162,7 +161,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               var langId = trans.language_id;
               updatedTranslations[langId] = {
                 name: trans.name || '',
-                subtitle: trans.subtitle || '',
                 meta_title: trans.meta_title || '',
                 meta_keywords: trans.meta_keywords || '',
                 schema_markup: trans.schema_markup || '',
@@ -171,11 +169,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             });
           }
           _this3.languages.forEach(function (language) {
-            if (!updatedTranslations[language.id] || !updatedTranslations[language.id].name && !updatedTranslations[language.id].subtitle) {
+            if (!updatedTranslations[language.id] || !updatedTranslations[language.id].name) {
               if (language.is_default) {
                 updatedTranslations[language.id] = {
                   name: category.name || '',
-                  subtitle: category.subtitle || '',
                   meta_title: category.meta_title || '',
                   meta_keywords: category.meta_keywords || '',
                   schema_markup: category.schema_markup || '',
@@ -299,16 +296,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         this.showError(__('please_fill_default_language_required_fields'));
         return false;
       }
-      if (!defaultTranslation.subtitle || defaultTranslation.subtitle.trim() === '') {
-        this.switchToDefaultLanguageTab();
-        this.showError(__('please_fill_default_language_required_fields'));
-        return false;
-      }
-      if (!this.slug || this.slug.trim() === '') {
-        this.switchToDefaultLanguageTab();
-        this.showError(__('please_fill_default_language_required_fields'));
-        return false;
-      }
       if (!this.id && !this.image && !this.image_url) {
         this.switchToDefaultLanguageTab();
         this.showError(__('please_fill_default_language_required_fields'));
@@ -392,11 +379,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
                 formData.append('language_id', language.id);
                 formData.append('slug', _this8.slug);
                 formData.append('status', _this8.status);
-                formData.append('parent_id', _this8.parent_id);
+                formData.append('parent_id', parseInt(_this8.parent_id) || 0);
 
                 // Translatable fields
                 formData.append('name', translation.name || '');
-                formData.append('subtitle', translation.subtitle || '');
                 formData.append('meta_title', translation.meta_title || '');
                 formData.append('meta_keywords', translation.meta_keywords || '');
                 formData.append('schema_markup', translation.schema_markup || '');
@@ -506,16 +492,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     return {
       fields: [{
         key: 'id',
-        label: __('id'),
+        label: __('Sr. No.'),
         "class": 'text-center',
         sortable: true,
         sortDirection: 'asc'
-      }, {
-        key: 'parent_id',
-        label: __('parent_id'),
-        "class": 'text-center',
-        sortable: true,
-        sortDirection: 'desc'
       }, {
         key: 'name',
         label: __('name'),
@@ -559,7 +539,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       settingModalShow: false,
       currentLanguageId: null,
       activeLanguages: [],
-      latestRequestId: 0
+      latestRequestId: 0,
+      previewImageUrl: null
     };
   },
   computed: {
@@ -683,6 +664,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         offset: this.currentPage,
         limit: this.perPage,
         filter: this.filter,
+        status: null,
+        // Explicitly request all categories (active and inactive)
         _t: Date.now()
       };
       axios.get(this.$apiUrl + '/categories', {
@@ -749,6 +732,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       this.showMessage('success', message);
       this.getCategories();
       this.create_new = null;
+    },
+    openImageModal: function openImageModal(imageUrl) {
+      this.previewImageUrl = imageUrl;
+      this.$refs['image-modal'].show();
     }
   }
 });
@@ -910,36 +897,12 @@ var render = function render() {
       }
     })], 1)], 1) : _vm._e(), _vm._v(" "), _c("div", {
       staticClass: "row"
-    }, [language.is_default ? _c("div", {
-      staticClass: "form-group"
-    }, [_c("label", [_vm._v(_vm._s(_vm.__("parent_category")))]), _vm._v(" "), _c("select", {
-      directives: [{
-        name: "model",
-        rawName: "v-model",
-        value: _vm.parent_id,
-        expression: "parent_id"
-      }],
-      staticClass: "form-control form-select",
-      domProps: {
-        innerHTML: _vm._s(_vm.parent_categories)
-      },
-      on: {
-        change: function change($event) {
-          var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-            return o.selected;
-          }).map(function (o) {
-            var val = "_value" in o ? o._value : o.value;
-            return val;
-          });
-          _vm.parent_id = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
-        }
-      }
-    })]) : _vm._e(), _vm._v(" "), _c("div", {
+    }, [_c("div", {
       staticClass: "form-group",
       "class": {
         required: language.is_default
       }
-    }, [_c("label", [_vm._v(_vm._s(_vm.__("category_name")))]), _vm._v(" "), language.is_default ? _c("i", {
+    }, [_c("label", [_vm._v(_vm._s(_vm.parent_id > 0 ? _vm.__("subcategory_name") : _vm.__("category_name")))]), _vm._v(" "), language.is_default ? _c("i", {
       staticClass: "text-danger"
     }, [_vm._v("*")]) : _vm._e(), _vm._v(" "), _c("input", {
       directives: [{
@@ -951,71 +914,15 @@ var render = function render() {
       staticClass: "form-control",
       attrs: {
         type: "text",
-        placeholder: _vm.__("enter_category_name")
+        placeholder: _vm.parent_id > 0 ? _vm.__("enter_subcategory_name") : _vm.__("enter_category_name")
       },
       domProps: {
         value: _vm.translations[language.id].name
       },
       on: {
-        keyup: function keyup($event) {
-          language.is_default ? _vm.createSlug() : null;
-        },
         input: function input($event) {
           if ($event.target.composing) return;
           _vm.$set(_vm.translations[language.id], "name", $event.target.value);
-        }
-      }
-    })]), _vm._v(" "), language.is_default ? _c("div", {
-      staticClass: "form-group"
-    }, [_c("label", [_vm._v(_vm._s(_vm.__("slug")))]), _vm._v(" "), _c("i", {
-      staticClass: "text-danger"
-    }, [_vm._v("*")]), _vm._v(" "), _c("input", {
-      directives: [{
-        name: "model",
-        rawName: "v-model",
-        value: _vm.slug,
-        expression: "slug"
-      }],
-      staticClass: "form-control",
-      attrs: {
-        type: "text",
-        placeholder: _vm.__("enter_slug")
-      },
-      domProps: {
-        value: _vm.slug
-      },
-      on: {
-        input: function input($event) {
-          if ($event.target.composing) return;
-          _vm.slug = $event.target.value;
-        }
-      }
-    })]) : _vm._e(), _vm._v(" "), _c("div", {
-      staticClass: "form-group",
-      "class": {
-        required: language.is_default
-      }
-    }, [_c("label", [_vm._v(_vm._s(_vm.__("category_subtitle")))]), _vm._v(" "), language.is_default ? _c("i", {
-      staticClass: "text-danger"
-    }, [_vm._v("*")]) : _vm._e(), _vm._v(" "), _c("input", {
-      directives: [{
-        name: "model",
-        rawName: "v-model",
-        value: _vm.translations[language.id].subtitle,
-        expression: "translations[language.id].subtitle"
-      }],
-      staticClass: "form-control",
-      attrs: {
-        type: "text",
-        placeholder: _vm.__("enter_category_subtitle")
-      },
-      domProps: {
-        value: _vm.translations[language.id].subtitle
-      },
-      on: {
-        input: function input($event) {
-          if ($event.target.composing) return;
-          _vm.$set(_vm.translations[language.id], "subtitle", $event.target.value);
         }
       }
     })]), _vm._v(" "), language.is_default ? _c("div", {
@@ -1364,12 +1271,28 @@ var render = function render() {
       },
       proxy: true
     }, {
+      key: "cell(id)",
+      fn: function fn(row) {
+        return [_vm._v("\n                                " + _vm._s((_vm.currentPage - 1) * _vm.perPage + row.index + 1) + "\n                            ")];
+      }
+    }, {
       key: "cell(image)",
       fn: function fn(row) {
         return [_c("img", {
+          staticStyle: {
+            "object-fit": "cover",
+            cursor: "pointer",
+            "border-radius": "4px"
+          },
           attrs: {
             src: row.item.image_url,
-            height: "50"
+            height: "80",
+            width: "80"
+          },
+          on: {
+            click: function click($event) {
+              return _vm.openImageModal(row.item.image_url);
+            }
           }
         })];
       }
@@ -1479,7 +1402,25 @@ var render = function render() {
       },
       saved: _vm.onCategorySaved
     }
-  }) : _vm._e()], 1);
+  }) : _vm._e(), _vm._v(" "), _c("b-modal", {
+    ref: "image-modal",
+    attrs: {
+      title: "",
+      "hide-footer": "",
+      size: "lg",
+      centered: ""
+    }
+  }, [_c("div", {
+    staticClass: "text-center"
+  }, [_c("img", {
+    staticStyle: {
+      "max-width": "100%",
+      "max-height": "500px"
+    },
+    attrs: {
+      src: _vm.previewImageUrl
+    }
+  })])])], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;

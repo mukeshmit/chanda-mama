@@ -45,35 +45,11 @@
                     <!-- Translate buttons END -->
 
                     <div class="row">
-                        <!-- Parent Category (only show in default language tab) -->
-                        <div class="form-group" v-if="language.is_default">
-                            <label>{{ __("parent_category") }}</label>
-                            <select v-model="parent_id" class="form-control form-select"
-                                v-html="parent_categories"></select>
-                        </div>
-
                         <div class="form-group" :class="{ required: language.is_default }">
-                            <label>{{ __('category_name') }}</label>
+                            <label>{{ parent_id > 0 ? __('subcategory_name') : __('category_name') }}</label>
                             <i class="text-danger" v-if="language.is_default">*</i>
                             <input type="text" class="form-control"
-                                v-model="translations[language.id].name" :placeholder="__('enter_category_name')"
-                                @keyup="language.is_default ? createSlug() : null">
-                        </div>
-
-                        <!-- Slug (only show for default language) -->
-                        <div class="form-group" v-if="language.is_default">
-                            <label>{{ __('slug') }}</label>
-                            <i class="text-danger">*</i>
-                            <input type="text" class="form-control" :placeholder="__('enter_slug')"
-                                v-model="slug">
-                        </div>
-
-                        <div class="form-group" :class="{ required: language.is_default }">
-                            <label>{{ __('category_subtitle') }}</label>
-                            <i class="text-danger" v-if="language.is_default">*</i>
-                            <input type="text" class="form-control"
-                                v-model="translations[language.id].subtitle"
-                                :placeholder="__('enter_category_subtitle')">
+                                v-model="translations[language.id].name" :placeholder="parent_id > 0 ? __('enter_subcategory_name') : __('enter_category_name')">
                         </div>
 
                         <div class="form-group" v-if="language.is_default">
@@ -203,7 +179,7 @@ export default {
             defaultLanguageId: null,
             languages: [],
 
-            translatableFields: ['name', 'subtitle', 'meta_title', 'meta_keywords', 'schema_markup', 'meta_description'],
+            translatableFields: ['name', 'meta_title', 'meta_keywords', 'schema_markup', 'meta_description'],
             loadingEmpty: false,
             loadingOverwrite: false,
         };
@@ -285,7 +261,6 @@ export default {
             this.languages.forEach(language => {
                 allTranslations[language.id] = {
                     name: '',
-                    subtitle: '',
                     meta_title: '',
                     meta_keywords: '',
                     schema_markup: '',
@@ -327,7 +302,6 @@ export default {
                                 const langId = trans.language_id;
                                 updatedTranslations[langId] = {
                                     name: trans.name || '',
-                                    subtitle: trans.subtitle || '',
                                     meta_title: trans.meta_title || '',
                                     meta_keywords: trans.meta_keywords || '',
                                     schema_markup: trans.schema_markup || '',
@@ -338,11 +312,10 @@ export default {
 
                         this.languages.forEach(language => {
                             if (!updatedTranslations[language.id] ||
-                                (!updatedTranslations[language.id].name && !updatedTranslations[language.id].subtitle)) {
+                                !updatedTranslations[language.id].name) {
                                 if (language.is_default) {
                                     updatedTranslations[language.id] = {
                                         name: category.name || '',
-                                        subtitle: category.subtitle || '',
                                         meta_title: category.meta_title || '',
                                         meta_keywords: category.meta_keywords || '',
                                         schema_markup: category.schema_markup || '',
@@ -486,18 +459,6 @@ export default {
                 return false;
             }
 
-            if (!defaultTranslation.subtitle || defaultTranslation.subtitle.trim() === '') {
-                this.switchToDefaultLanguageTab();
-                this.showError(__('please_fill_default_language_required_fields'));
-                return false;
-            }
-
-            if (!this.slug || this.slug.trim() === '') {
-                this.switchToDefaultLanguageTab();
-                this.showError(__('please_fill_default_language_required_fields'));
-                return false;
-            }
-
             if (!this.id && !this.image && !this.image_url) {
                 this.switchToDefaultLanguageTab();
                 this.showError(__('please_fill_default_language_required_fields'));
@@ -577,11 +538,10 @@ export default {
                     formData.append('language_id', language.id);
                     formData.append('slug', this.slug);
                     formData.append('status', this.status);
-                    formData.append('parent_id', this.parent_id);
+                    formData.append('parent_id', parseInt(this.parent_id) || 0);
 
                     // Translatable fields
                     formData.append('name', translation.name || '');
-                    formData.append('subtitle', translation.subtitle || '');
                     formData.append('meta_title', translation.meta_title || '');
                     formData.append('meta_keywords', translation.meta_keywords || '');
                     formData.append('schema_markup', translation.schema_markup || '');

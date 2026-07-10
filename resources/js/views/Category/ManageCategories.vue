@@ -54,8 +54,13 @@
                                     </div>
                                 </template>
 
+                                <template #cell(id)="row">
+                                    {{ (currentPage - 1) * perPage + row.index + 1 }}
+                                </template>
                                 <template #cell(image)="row">
-                                    <img :src="row.item.image_url" height="50" />
+                                    <img :src="row.item.image_url" height="80" width="80" 
+                                        style="object-fit: cover; cursor: pointer; border-radius: 4px;"
+                                        @click="openImageModal(row.item.image_url)" />
                                 </template>
                                 <template #cell(status)="row">
                                     <span class='badge bg-success' v-if="row.item.status == 1">{{ __('activate')
@@ -98,6 +103,13 @@
         <!-- Add / Edit -->
         <app-edit-record v-if="create_new || edit_record" :record="edit_record" @modalClose="hideModal()"
             @saved="onCategorySaved"></app-edit-record>
+
+        <!-- Image Preview Modal -->
+        <b-modal ref="image-modal" title="" hide-footer size="lg" centered>
+            <div class="text-center">
+                <img :src="previewImageUrl" style="max-width: 100%; max-height: 500px;" />
+            </div>
+        </b-modal>
     </div>
 
 </template>
@@ -111,8 +123,7 @@ export default {
     data: function () {
         return {
             fields: [
-                { key: 'id', label: __('id'), class: 'text-center', sortable: true, sortDirection: 'asc' },
-                { key: 'parent_id', label: __('parent_id'), class: 'text-center', sortable: true, sortDirection: 'desc' },
+                { key: 'id', label: __('Sr. No.'), class: 'text-center', sortable: true, sortDirection: 'asc' },
                 { key: 'name', label: __('name'), class: 'text-center', sortable: true },
                 { key: 'subtitle', label: __('subtitle'), class: 'text-center', sortable: true },
                 { key: 'image', label: __('image'), class: 'text-center' },
@@ -140,7 +151,8 @@ export default {
             settingModalShow: false,
             currentLanguageId: null,
             activeLanguages: [],
-            latestRequestId: 0
+            latestRequestId: 0,
+            previewImageUrl: null
         }
     },
     computed: {
@@ -265,6 +277,7 @@ export default {
                 offset: this.currentPage,
                 limit: this.perPage,
                 filter: this.filter,
+                status: null, // Explicitly request all categories (active and inactive)
                 _t: Date.now()
             };
             axios.get(this.$apiUrl + '/categories', { params })
@@ -332,6 +345,10 @@ export default {
             this.showMessage('success', message);
             this.getCategories();
             this.create_new = null;
+        },
+        openImageModal(imageUrl) {
+            this.previewImageUrl = imageUrl;
+            this.$refs['image-modal'].show();
         },
     }
 };
