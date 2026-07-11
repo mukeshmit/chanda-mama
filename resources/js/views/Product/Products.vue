@@ -161,6 +161,9 @@
                                     <input type="checkbox" v-model="selectedItems" @change="selectCheckBox"
                                         :value="`${row.item.product_variant_id}`" class="form-check-input">
                                 </template>
+                                <template #cell(product_variant_id)="row">
+                                    {{ pageStart + row.index }}
+                                </template>
 
                                 <template #cell(seller_name)="row">
                                     {{ row.item.seller_name }}
@@ -289,7 +292,7 @@ export default {
 
             fields: [
                 { key: 'select', label: '', visible: true, class: 'text-center' },
-                { key: 'product_variant_id', label: __('id'), visible: true, sortable: true, sortDirection: 'desc', class: 'text-center' },
+                { key: 'product_variant_id', label: 'Sr. No.', visible: true, class: 'text-center' },
                 { key: 'product_id', label: __('product_id'), visible: true, sortable: true, sortDirection: 'desc', class: 'text-center' },
                 { key: 'tax_id', label: __('tax_id'), visible: false, sortable: true, class: 'text-center' },
                 { key: 'seller_name', label: __('seller_name'), visible: true, class: 'text-center', sortable: true },
