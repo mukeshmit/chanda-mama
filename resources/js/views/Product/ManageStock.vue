@@ -64,8 +64,6 @@
                                 <template #cell(image_url)="row">
                                     <img :src="row.item.image_url" alt="Image" class="img-thumbnail" width="100"
                                         @click="openLightbox(row.item.image_url)" />
-                                    <FsLightbox :toggler="toggler" :sources="lightboxSources" :onClose="handleClose">
-                                    </FsLightbox>
                                 </template>
 
 
@@ -125,14 +123,12 @@
 
 <script>
 import { VuejsDatatableFactory } from 'vuejs-datatable';
-import FsLightbox from "fslightbox-vue";
 import axios from "axios";
 
 
 export default {
     components: {
         VuejsDatatableFactory,
-        FsLightbox,
     },
     data() {
         return {
@@ -161,8 +157,6 @@ export default {
             products: [],
             edit_record: null,
             groupedProducts: [],
-            lightboxSources: [],
-            toggler: false,
             tableKey: 0,
             currentLanguageId: null,
             activeLanguages: []
@@ -312,14 +306,7 @@ export default {
             return measurement;
         },
         openLightbox(image) {
-
-            this.lightboxSources = [image];
-            this.toggler = !this.toggler;
-        },
-        handleClose() {
-            this.lightboxSources = null;
-            this.toggler = false;
-
+            window.open(image, '_blank', 'noopener');
         },
         getRecords() {
             this.isLoading = true;

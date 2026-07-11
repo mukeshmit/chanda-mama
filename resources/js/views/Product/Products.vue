@@ -170,9 +170,6 @@
                                     <img :src="$storageUrl + row.item.image"
                                         @click="openLightbox($storageUrl + row.item.image)" alt="Image" height="50" />
 
-                                    <FsLightbox :toggler="toggler" :sources="lightboxSources" :onClose="handleClose">
-                                    </FsLightbox>
-
                                 </template>
 
                                 <template #cell(is_approved)="row">
@@ -285,11 +282,7 @@
 <script>
 import axios from "axios";
 import Auth from '../../Auth.js';
-import FsLightbox from "fslightbox-vue";
 export default {
-    components: {
-        FsLightbox,
-    },
     data: function () {
         return {
             login_user: Auth.user,
@@ -330,8 +323,6 @@ export default {
             select: '',
             all_select: false,
             isLoading: false,
-            toggler: false,
-            lightboxSources: [],
             showFilters: false,
 
             currentLanguageId: null,
@@ -532,14 +523,7 @@ export default {
                 });
         },
         openLightbox(image) {
-
-            this.lightboxSources = [image];
-            this.toggler = !this.toggler;
-        },
-        handleClose() {
-            this.lightboxSources = null;
-            this.toggler = false;
-
+            window.open(image, '_blank', 'noopener');
         },
         getRecords() {
             this.isLoading = true

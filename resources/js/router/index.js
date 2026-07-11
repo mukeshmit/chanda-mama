@@ -1,6 +1,7 @@
 import Auth from '../Auth.js';
 import Router from "vue-router";
 import axios from "axios";
+import Products from "../views/Product/Products";
 const Install = () => import("../views/Install");
 
 // Auth
@@ -32,7 +33,6 @@ const ManageSubSubcategories = () => import("../views/Category/ManageSubSubcateg
 const CategoriesOrder = () => import("../views/Category/CategoriesOrder");
 
 // Products
-const Products = () => import("../views/Product/Products");
 const EditProduct = () => import("../views/Product/EditProduct");
 const CloneProduct = () => import("../views/Product/EditProduct");
 const ApproveRequests = () => import("../views/Product/ApproveRequests");

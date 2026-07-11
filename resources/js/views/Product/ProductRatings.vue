@@ -68,11 +68,9 @@
                             </template>
                             <template #cell(images)="row">
                                 <a v-for="(image, index) in row.item.images" :key="index">
-                                    <img class="images_border" :src="image.image_url" alt="Image" height="50">
+                                    <img class="images_border" :src="image.image_url" alt="Image" height="50"
+                                        @click="openLightbox(image.image_url)">
                                 </a>
-
-                                <FsLightbox :toggler="toggler" :sources="lightboxSource" :onClose="handleClose">
-                                </FsLightbox>
                             </template>
                             <template #cell(status)="row">
                                 <span class='badge bg-success' v-if="row.item.status == 1">{{ __('activate') }}</span>
@@ -110,11 +108,9 @@
 <script>
 import draggable from 'vuedraggable';
 import axios from "axios";
-import FsLightbox from "fslightbox-vue";
 export default {
     components: {
         draggable,
-        FsLightbox,
     },
     data: function () {
         return {
@@ -145,10 +141,6 @@ export default {
             isLoading: false,
             products: [],
             product_id: this.id !== undefined ? this.id : "",
-
-            lightboxSource: [],  // array to store sources for each row
-            toggler: false,
-            activeImageIndex: 0,
             // Language handling for translations
             currentLanguageId: null,
             activeLanguages: [],
@@ -272,13 +264,7 @@ export default {
                 });
         },
         openLightbox(image) {
-            // Populate lightboxSources with the image URLs
-            this.lightboxSource = [image];
-            // Open the lightbox at the selected index
-            this.toggler = !this.toggler;
-        },
-        handleClose(rowIndex) {
-            this.lightboxSource[rowIndex] = null;  // Close lightbox for the specific row
+            window.open(image, '_blank', 'noopener');
         },
         calculateAverageRating() {
             if (this.ratings.length === 0) {
