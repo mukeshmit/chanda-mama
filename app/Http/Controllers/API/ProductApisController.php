@@ -145,7 +145,7 @@ class ProductApisController extends Controller
             's.id as seller_id',
             'p.indicator',
             'p.is_approved',
-            'p.manufacturer',
+            DB::raw("'' as manufacturer"),
             'p.made_in',
             'p.return_status',
             'p.cancelable_status',
@@ -597,7 +597,7 @@ class ProductApisController extends Controller
                 's.name as seller_name',
                 's.id as seller_id',
                 'p.indicator',
-                'p.manufacturer',
+                DB::raw("'' as manufacturer"),
                 'p.made_in',
                 'p.return_status',
                 'p.cancelable_status',
@@ -650,6 +650,10 @@ class ProductApisController extends Controller
 
     public function save(Request $request)
     {
+        if (!$request->filled('seller_id')) {
+            $request->merge(['seller_id' => $this->getDefaultSellerId()]);
+        }
+
         $validator = Validator::make($request->all(), [
             'name' => [
                 'required',
@@ -703,7 +707,7 @@ class ProductApisController extends Controller
         ], [
             'name.unique' => 'The product name has already been taken.',
             'seller_id.required' => 'The seller name field is required.',
-            'is_unlimited_stock.required' => 'The Stock Limit field is required.',
+            'is_unlimited_stock.required' => 'The Available Stock field is required.',
             'category_id.required' => 'The Category name field is required.',
             'other_images.*.mimes' => 'Other product media must be JPG, JPEG, PNG, GIF, WEBP image or MP4 video.',
             'other_images.*.max' => 'Each other product media file must be 3 MB or smaller.',
@@ -781,11 +785,11 @@ class ProductApisController extends Controller
             $product->tax_id = $request->tax_id ?? "";
             $product->brand_id = $request->brand_id ?? "";
             $product->seller_id = $request->seller_id;
-            $product->tags = $request->tags ?? "";
+            $product->tags = "";
             $product->type = $request->type;
             $product->category_id = $request->category_id;
             $product->indicator = $request->product_type;
-            $product->manufacturer = $request->manufacturer;
+            $product->manufacturer = "";
             $product->made_in = $request->made_in;
             $product->tax_included_in_price = $request->tax_included_in_price;
             $product->return_status = $request->return_status;
@@ -893,7 +897,7 @@ class ProductApisController extends Controller
                     }
                 }
             }
-            $tagIds = array_filter(array_map('trim', explode(',', $request->tag_ids)), function ($value) {
+            $tagIds = array_filter(array_map('trim', explode(',', $request->tag_ids ?? '')), function ($value) {
                 return $value !== '';
             });
 
@@ -941,8 +945,8 @@ class ProductApisController extends Controller
                         if (isset($translation['language_id'])) {
                             $translationData = [
                                 'name' => $translation['name'] ?? '',
-                                'tags' => $translation['tags'] ?? '',
-                                'manufacturer' => $translation['manufacturer'] ?? '',
+                                'tags' => '',
+                                'manufacturer' => '',
                                 'description' => $translation['description'] ?? '',
                                 'meta_title' => $translation['meta_title'] ?? '',
                                 'meta_keywords' => $translation['meta_keywords'] ?? '',
@@ -1046,6 +1050,9 @@ class ProductApisController extends Controller
 
     public function update(Request $request)
     {
+        if (!$request->filled('seller_id')) {
+            $request->merge(['seller_id' => $this->getDefaultSellerId()]);
+        }
 
         $validator = Validator::make($request->all(), [
             'name' => [
@@ -1105,7 +1112,7 @@ class ProductApisController extends Controller
         ], [
             'name.unique' => 'The product name has already been taken.',
             'seller_id.required' => 'The seller name field is required.',
-            'is_unlimited_stock.required' => 'The Stock Limit field is required.',
+            'is_unlimited_stock.required' => 'The Available Stock field is required.',
             'category_id.required' => 'The Category name field is required.',
             'other_images.*.mimes' => 'Other product media must be JPG, JPEG, PNG, GIF, WEBP image or MP4 video.',
             'other_images.*.max' => 'Each other product media file must be 3 MB or smaller.',
@@ -1198,7 +1205,7 @@ class ProductApisController extends Controller
             $product->type = $request->type;
             $product->category_id = $request->category_id;
             $product->indicator = $request->product_type;
-            $product->manufacturer = $request->manufacturer;
+            $product->manufacturer = "";
             $product->made_in = $request->made_in;
             $product->tax_included_in_price = $request->tax_included_in_price;
             $product->return_status = $request->return_status;
@@ -1234,7 +1241,7 @@ class ProductApisController extends Controller
             $product->meta_keywords = $request->meta_keywords ?? "";
             $product->schema_markup = $request->schema_markup ?? "";
             $product->meta_description = $request->meta_description ?? "";
-            $product->tags = $request->tags ?? "";
+            $product->tags = "";
 
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
@@ -1311,7 +1318,7 @@ class ProductApisController extends Controller
                     }
                 }
             }
-            $tagIds = array_filter(array_map('trim', explode(',', $request->tag_ids)), function ($value) {
+            $tagIds = array_filter(array_map('trim', explode(',', $request->tag_ids ?? '')), function ($value) {
                 return $value !== '';
             });
 
@@ -1359,8 +1366,8 @@ class ProductApisController extends Controller
                         if (isset($translation['language_id'])) {
                             $translationData = [
                                 'name' => $translation['name'] ?? '',
-                                'tags' => $translation['tags'] ?? '',
-                                'manufacturer' => $translation['manufacturer'] ?? '',
+                                'tags' => '',
+                                'manufacturer' => '',
                                 'description' => $translation['description'] ?? '',
                                 'meta_title' => $translation['meta_title'] ?? '',
                                 'meta_keywords' => $translation['meta_keywords'] ?? '',
@@ -3204,7 +3211,7 @@ class ProductApisController extends Controller
                 's.name as seller_name',
                 's.id as seller_id',
                 'p.indicator',
-                'p.manufacturer',
+                DB::raw("'' as manufacturer"),
                 'p.made_in',
                 'pv.id as product_variant_id',
                 'pv.type',
@@ -3486,5 +3493,51 @@ class ProductApisController extends Controller
         }
 
         return CommonHelper::responseSuccess('stock_updated_successfully');
+    }
+
+    private function getDefaultSellerId()
+    {
+        if (auth()->check() && auth()->user()->seller) {
+            return auth()->user()->seller->id;
+        }
+
+        $sellerId = Seller::where('status', 1)->orderBy('id')->value('id')
+            ?: Seller::orderBy('id')->value('id');
+
+        if ($sellerId) {
+            return $sellerId;
+        }
+
+        return $this->createDefaultSeller()->id;
+    }
+
+    private function createDefaultSeller()
+    {
+        $host = request()->getHost() ?: 'localhost';
+        $host = in_array($host, ['127.0.0.1', '::1'], true) ? 'localhost' : $host;
+        $storeName = $host === 'localhost' ? 'Localhost Store' : $host;
+        $categoryIds = Category::pluck('id')->implode(',');
+
+        return Seller::create([
+            'admin_id' => null,
+            'name' => $storeName,
+            'store_name' => $storeName,
+            'slug' => preg_replace('/[^A-Za-z0-9]+/', '-', strtolower(trim($storeName))) ?: 'default-seller',
+            'email' => 'seller@' . ($host === 'localhost' ? 'localhost.com' : $host),
+            'mobile' => '',
+            'balance' => 0,
+            'store_url' => $host === 'localhost' ? 'http://localhost' : request()->getSchemeAndHttpHost(),
+            'logo' => '',
+            'store_description' => $storeName,
+            'street' => '',
+            'city_id' => 0,
+            'state' => '',
+            'categories' => $categoryIds,
+            'commission' => 0,
+            'status' => Seller::$statusActive,
+            'require_products_approval' => 0,
+            'tax_name' => '',
+            'tax_number' => '',
+        ]);
     }
 }

@@ -44,10 +44,9 @@
                         </div>
                         <div class="form-group" v-if="lang.is_default == 1">
                             <label>{{ __('percentage') }}</label>
-                            <i class="text-danger" v-if="lang.is_default">*</i>
                             <input type="number" class="form-control" v-model="percentage"
-                                :placeholder="__('enter_percentage')" min="1" max="100" @input="validatePercentage"
-                                step="0.01" :required="lang.is_default == 1 ? true : undefined">
+                                :placeholder="__('enter_percentage')" min="0" max="100" @input="validatePercentage"
+                                step="0.01">
                             <span v-if="validationError" class="error">{{ validationError }}</span>
                         </div>
                         <div class="form-group" v-if="id && lang.is_default == 1">
@@ -231,8 +230,8 @@ export default {
         }
         ,
         validatePercentage() {
-            if (this.percentage < 0.1 || this.percentage > 100) {
-                this.validationError = "Percentage must be between 1 and 100.";
+            if (this.percentage !== null && this.percentage !== '' && (this.percentage < 0 || this.percentage > 100)) {
+                this.validationError = "Percentage must be between 0 and 100.";
             } else {
                 this.validationError = null;
             }
@@ -266,7 +265,7 @@ export default {
 
                     fd.append('language_id', lang.id);
                     fd.append('title', (this.form[lang.id] && this.form[lang.id].title) || '');
-                    fd.append('percentage', this.percentage != null ? this.percentage : '');
+                    fd.append('percentage', this.percentage !== null && this.percentage !== '' ? this.percentage : 0);
                     fd.append('status', this.status != null ? this.status : 1);
 
                     const url = taxId

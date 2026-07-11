@@ -111,27 +111,7 @@
 
                                             <div v-if="translations[language.id]">
                                                 <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group mb-3">
-                                                            <label>{{ __('product_name') }} <i class="text-danger"
-                                                                    v-if="language.is_default">*</i></label>
-                                                            <input type="text" class="form-control"
-                                                                :placeholder="__('enter_product_name')"
-                                                                v-model="translations[language.id].name"
-                                                                :required="language.is_default ? true : undefined"
-                                                                @input="handleDefaultLanguageInput('name', language)">
-                                                        </div>
-                                                    </div>
-
                                                     <template v-if="language.is_default">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group mb-3">
-                                                                <label>{{ __('slug') }} <i class="text-danger">*</i></label>
-                                                                <input type="text" class="form-control"
-                                                                    :placeholder="__('enter_product_slug')" v-model="slug"
-                                                                    readonly>
-                                                            </div>
-                                                        </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group mb-3">
                                                                 <label for="barcode">{{ __('barcode') }}</label>
@@ -141,6 +121,25 @@
                                                                     validationBarcodeMessage }}</p>
                                                                 <p style="color:green" v-else-if="isBarcodeValid">Barcode is valid!
                                                                 </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group mb-3">
+                                                                <label>{{ __('product_name') }} <i class="text-danger"
+                                                                        v-if="language.is_default">*</i></label>
+                                                                <input type="text" class="form-control"
+                                                                    :placeholder="__('enter_product_name')"
+                                                                    v-model="translations[language.id].name"
+                                                                    :required="language.is_default ? true : undefined"
+                                                                    @input="handleDefaultLanguageInput('name', language)">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group mb-3">
+                                                                <label>{{ __('slug') }}</label>
+                                                                <input type="text" class="form-control"
+                                                                    :placeholder="__('enter_product_slug')" v-model="slug"
+                                                                    readonly>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
@@ -209,16 +208,18 @@
                                                                 </label>
                                                             </div>
                                                         </div>
-
+    
                                                         <div class="col-md-12">
                                                             <div class="form-group mb-3" v-if="useCustomPrompt">
                                                                 <label>{{ __('custom_prompt') }}</label>
                                                                 <textarea class="form-control" v-model="customPrompt"
-                                                                    rows="3"
+                                                                    rows="2"
                                                                     placeholder="e.g. Write a fun and engaging description focusing on features and benefits"></textarea>
                                                             </div>
                                                         </div>
                                                     </template>
+                                                    
+
 
                                                     <!-- Translatable Fields: Description (shown in all language tabs) -->
                                                     <div class="col-md-12">
@@ -366,73 +367,7 @@
                             </div>
                         </div>
 
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>{{ __('seo_settings') }}</h4>
-                            </div>
-                            <div class="card-body">
-                                <!-- Language Tabs for SEO -->
-                                <div class="col-md-12 mb-3" v-if="languages.length > 0">
-                                    <b-tabs v-model="activeLanguageTab" content-class="mt-3">
-                                        <b-tab v-for="language in languages" :key="language.id" :title="language.name"
-                                            lazy>
-                                            <template #title>
-                                                <span :class="{ 'text-primary font-weight-bold': language.is_default }">
-                                                    {{ language.name }}
-                                                </span>
-                                            </template>
-
-                                            <div v-if="translations[language.id]">
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group mb-3">
-                                                            <label>{{ __('meta_title') }} </label>
-                                                            <input type="text" class="form-control"
-                                                                v-model="translations[language.id].meta_title"
-                                                                :placeholder="__('enter_meta_title')"
-                                                                @input="handleDefaultLanguageInput('meta_title', language)">
-                                                        </div>
-                                                        <div class="form-group mb-3">
-                                                            <label>{{ __('meta_keywords') }} </label>
-                                                            <input type="text" class="form-control"
-                                                                v-model="translations[language.id].meta_keywords"
-                                                                :placeholder="__('enter_meta_keywords')"
-                                                                @input="handleDefaultLanguageInput('meta_keywords', language)">
-                                                        </div>
-                                                        <div class="form-group mb-3">
-                                                            <label>{{ __('schema_markup') }} </label>
-                                                            <input type="text" class="form-control"
-                                                                v-model="translations[language.id].schema_markup"
-                                                                :placeholder="__('enter_schema_markup')"
-                                                                @input="handleDefaultLanguageInput('schema_markup', language)">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group mb-3">
-                                                            <label>{{ __('meta_description') }} </label>
-                                                            <textarea type="text" class="form-control"
-                                                                v-model="translations[language.id].meta_description"
-                                                                :placeholder="__('enter_meta_description')" rows="4"
-                                                                @input="handleDefaultLanguageInput('meta_description', language)"></textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </b-tab>
-                                    </b-tabs>
-                                </div>
-                            </div>
-                            <!-- Save and Clear buttons for non-default language tabs -->
-                            <div class="card-footer"
-                                v-if="languages.length > 0 && languages[activeLanguageTab] && !languages[activeLanguageTab].is_default">
-                                <b-button type="submit" @keydown.enter="saveRecord" variant="primary"
-                                    :disabled="isLoading"> {{ __('save') }}
-                                    <b-spinner v-if="isLoading" small label="Spinning"></b-spinner>
-                                </b-button>
-                                <button type="button" class="btn btn-danger" @click="clearForm">{{ __('clear')
-                                    }}</button>
-                            </div>
-                        </div>
+                        
 
                         <!-- Product Variants: Only show in default language tab -->
                         <div class="card"
@@ -451,7 +386,7 @@
                                             ]" buttons button-variant="outline-primary"></b-form-radio-group>
                                         </div>
                                         <div class="form-group col-md-6">
-                                            <label class="control-label">{{ __('available_stock') }} <i
+                                            <label class="control-label">Available Stock <i
                                                     class="text-danger">*</i></label><br>
                                             <b-form-radio-group v-model="is_unlimited_stock" :options="[
                                                 { text: __('limited'), 'value': 0 },
@@ -466,8 +401,8 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group mb-3">
-                                                <label>{{ __('measurement') }} <i class="text-danger">*</i></label>
-                                                <input type="number" step="any" min="0" class="form-control"
+                                                <label>{{ __('measurement') }}</label>
+                                                <input type="number" min="0" step="any" class="form-control"
                                                     placeholder="0" v-model="input.packet_measurement">
                                             </div>
                                         </div>
@@ -492,6 +427,20 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group mb-3">
+                                                <label>Profit ( {{ $currency }} )</label>
+                                                <input type="text" class="form-control bg-light"
+                                                    :value="getPacketProfit(input)" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-3">
+                                                <label>Margin %</label>
+                                                <input type="text" class="form-control bg-light"
+                                                    :value="getPacketMargin(input)" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-3">
                                                 <label>{{ __('discounted_price') }} ( {{ $currency }} )</label>
                                                 <input type="number" min="0" step="any" class="form-control"
                                                     placeholder="0.00" v-model="input.discounted_price"
@@ -502,7 +451,7 @@
                                         </div>
                                         <div class="col-md-4" v-if="is_unlimited_stock != 1">
                                             <div class="form-group mb-3">
-                                                <label>{{ __('stock') }} <i class="text-danger">*</i></label>
+                                                <label>Available Stock <i class="text-danger">*</i></label>
                                                 <input type="number" step="any" min="0" class="form-control"
                                                     placeholder="0" name="packate_stock[]" v-model="input.packet_stock">
                                             </div>
@@ -593,12 +542,9 @@
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group loose_div">
-                                                    <label>{{ __('measurement') }} <i class="text-danger">*</i></label>
-
-                                                    <b-input-group class="mb-2">
-                                                        <input type="number" step="any" min="0" class="form-control"
-                                                            placeholder="0" v-model="input.loose_measurement">
-                                                    </b-input-group>
+                                                    <label>{{ __('measurement') }}</label>
+                                                    <input type="number" step="any" min="0" class="form-control"
+                                                        placeholder="0" v-model="input.loose_measurement">
                                                 </div>
                                             </div>
 
@@ -694,10 +640,24 @@
                                                 placeholder="0.00" v-model="loose_purchase_price">
                                         </div>
                                     </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label>Profit ( {{ $currency }} )</label>
+                                            <input type="text" class="form-control bg-light"
+                                                :value="getLooseProfit()" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label>Margin %</label>
+                                            <input type="text" class="form-control bg-light"
+                                                :value="getLooseMargin()" readonly>
+                                        </div>
+                                    </div>
 
                                     <div class="col-md-4">
                                         <div class="form-group mb-3" v-if="is_unlimited_stock != 1">
-                                            <label>{{ __('stock') }} <i class="text-danger">*</i></label>
+                                            <label>Available Stock <i class="text-danger">*</i></label>
                                             <input type="number" step="any" min="0" class="form-control"
                                                 v-model="loose_stock"><br>
                                         </div>
@@ -740,8 +700,32 @@
                                     <div class="col-md-4">
                                         <div class="form-group mb-3">
                                             <label>{{ __('category') }} <i class="text-danger">*</i></label>
-                                            <select class="form-control" v-model="category_id"
-                                                :disabled="!seller_id && !isSellerRole" v-html="categoryOptionsHtml">
+                                            <select class="form-control" v-model="product_category_id" required>
+                                                <option value="">{{ __('select_category') }}</option>
+                                                <option v-for="category in mainCategoryOptions" :key="category.id"
+                                                    :value="category.id">{{ category.name }}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label>SubCategory</label>
+                                            <select class="form-control" v-model="product_subcategory_id"
+                                                :disabled="!product_category_id">
+                                                <option value="">Select SubCategory</option>
+                                                <option v-for="category in subCategoryOptions" :key="category.id"
+                                                    :value="category.id">{{ category.name }}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label>Sub SubCategory</label>
+                                            <select class="form-control" v-model="product_sub_subcategory_id"
+                                                :disabled="!product_subcategory_id">
+                                                <option value="">Select Sub SubCategory</option>
+                                                <option v-for="category in subSubCategoryOptions" :key="category.id"
+                                                    :value="category.id">{{ category.name }}</option>
                                             </select>
                                         </div>
                                     </div>
@@ -864,6 +848,74 @@
                                     </div>
                                 </div>
                             </div>
+                            
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>{{ __('seo_settings') }}</h4>
+                            </div>
+                            <div class="card-body">
+                                <!-- Language Tabs for SEO -->
+                                <div class="col-md-12 mb-3" v-if="languages.length > 0">
+                                    <b-tabs v-model="activeLanguageTab" content-class="mt-3">
+                                        <b-tab v-for="language in languages" :key="language.id" :title="language.name"
+                                            lazy>
+                                            <template #title>
+                                                <span :class="{ 'text-primary font-weight-bold': language.is_default }">
+                                                    {{ language.name }}
+                                                </span>
+                                            </template>
+
+                                            <div v-if="translations[language.id]">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group mb-3">
+                                                            <label>{{ __('meta_title') }} </label>
+                                                            <input type="text" class="form-control"
+                                                                v-model="translations[language.id].meta_title"
+                                                                :placeholder="__('enter_meta_title')"
+                                                                @input="handleDefaultLanguageInput('meta_title', language)">
+                                                        </div>
+                                                        <div class="form-group mb-3">
+                                                            <label>{{ __('meta_keywords') }} </label>
+                                                            <input type="text" class="form-control"
+                                                                v-model="translations[language.id].meta_keywords"
+                                                                :placeholder="__('enter_meta_keywords')"
+                                                                @input="handleDefaultLanguageInput('meta_keywords', language)">
+                                                        </div>
+                                                        <div class="form-group mb-3">
+                                                            <label>{{ __('schema_markup') }} </label>
+                                                            <input type="text" class="form-control"
+                                                                v-model="translations[language.id].schema_markup"
+                                                                :placeholder="__('enter_schema_markup')"
+                                                                @input="handleDefaultLanguageInput('schema_markup', language)">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group mb-3">
+                                                            <label>{{ __('meta_description') }} </label>
+                                                            <textarea type="text" class="form-control"
+                                                                v-model="translations[language.id].meta_description"
+                                                                :placeholder="__('enter_meta_description')" rows="2"
+                                                                @input="handleDefaultLanguageInput('meta_description', language)"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </b-tab>
+                                    </b-tabs>
+                                </div>
+                            </div>
+                            <!-- Save and Clear buttons for non-default language tabs -->
+                            <div class="card-footer"
+                                v-if="languages.length > 0 && languages[activeLanguageTab] && !languages[activeLanguageTab].is_default">
+                                <b-button type="submit" @keydown.enter="saveRecord" variant="primary"
+                                    :disabled="isLoading"> {{ __('save') }}
+                                    <b-spinner v-if="isLoading" small label="Spinning"></b-spinner>
+                                </b-button>
+                                <button type="button" class="btn btn-danger" @click="clearForm">{{ __('clear')
+                                    }}</button>
+                            </div>
                             <!-- Save and Clear buttons for default language tab only -->
                             <div class="card-footer"
                                 v-if="languages.length === 0 || (languages[activeLanguageTab] && languages[activeLanguageTab].is_default)">
@@ -875,6 +927,8 @@
                                     }}</button>
                             </div>
                         </div>
+
+                        
                     </form>
                 </div>
             </div>
@@ -886,7 +940,6 @@ import Vue from 'vue';
 // import InputTag from 'vue-input-tag';
 import axios from "axios";
 import Multiselect from 'vue-multiselect'
-import Select2 from "v-select2-component";
 import Editor from '@tinymce/tinymce-vue';
 import Auth from '../../Auth.js';
 import TranslationHelper from '../../mixins/TranslationHelper.js';
@@ -894,7 +947,7 @@ import TranslationHelper from '../../mixins/TranslationHelper.js';
 export default {
     mixins: [TranslationHelper],
     // register the component
-    components: { Multiselect, Select2, 'editor': Editor },
+    components: { Multiselect, 'editor': Editor },
     data: function () {
         return {
             login_user: Auth.user,
@@ -907,14 +960,13 @@ export default {
             name: '',
             slug: '',
             seller_id: '',
-            tags: [],
-            tag_ids: '',
-            tagIdsByLanguage: {}, // Store tag IDs for each language
-            tagSuggestions: [],
             brand: null,
             tax_id: 0,
             type: 'packet',
             category_id: '',
+            product_category_id: '',
+            product_subcategory_id: '',
+            product_sub_subcategory_id: '',
             product_type: '',
             made_in: '',
             tag: '',
@@ -967,6 +1019,7 @@ export default {
             record: null,
             clone: false,
             categoryOptions: '<option value="">' + __('select_category') + '</option>',
+            productCategoryList: [],
             deleteImageIds: [],
             loggedUser: Auth.user,
             isBarcodeValid: '',
@@ -995,7 +1048,7 @@ export default {
             categories: [], // Store categories data for translation
 
             // Translate buttons
-            translatableFields: ['name', 'description', 'meta_title', 'meta_keywords', 'schema_markup', 'meta_description', 'tags'],
+            translatableFields: ['name', 'description', 'meta_title', 'meta_keywords', 'schema_markup', 'meta_description'],
             translateSuccessMessage: '',
             loadingEmpty: false,
             loadingOverwrite: false,
@@ -1011,12 +1064,6 @@ export default {
         isSellerRoute() {
             // Use this.$route to access the current route
             return this.$route.path.startsWith('/seller/');
-        },
-        tagsOptions() {
-            return this.tags.length ? this.tags.map(tag => ({ id: tag.id, text: tag.name })) : [];
-        },
-        selectedTags() {
-            return this.tags.filter(tag => this.tag_ids.includes(tag.id));
         },
         // Computed property to safely access $roleSeller
         roleSeller() {
@@ -1166,6 +1213,22 @@ export default {
         categoryOptionsHtml: function () {
             return this.categoryOptions;
         },
+        mainCategoryOptions() {
+            return this.productCategoryList.filter(category => Number(category.parent_id) === 0);
+        },
+        subCategoryOptions() {
+            return this.productCategoryList.filter(category => {
+                return Number(category.parent_id) === Number(this.product_category_id);
+            });
+        },
+        subSubCategoryOptions() {
+            return this.productCategoryList.filter(category => {
+                return Number(category.parent_id) === Number(this.product_subcategory_id);
+            });
+        },
+        selectedProductCategoryId() {
+            return this.product_sub_subcategory_id || this.product_subcategory_id || this.product_category_id || '';
+        },
     },
 
     created: function () {
@@ -1178,14 +1241,13 @@ export default {
             this.getUnits();
             this.getBrands();
             this.getCountries();
-            this.getTags();
             this.getOrderStatus();
             this.getTextGenKey();
             if (this.isSellerRole) {
                 this.seller_id = this.login_user.seller.id;
                 this.getSeller();
-                this.getSellerCategories();
             }
+            this.getCategories();
             if (this.id) {
                 this.getProduct();
             } else {
@@ -1253,7 +1315,6 @@ export default {
             this.languages.forEach(language => {
                 allTranslations[language.id] = {
                     name: '',
-                    tags: '',
                     description: '',
                     meta_title: '',
                     meta_keywords: '',
@@ -1277,64 +1338,6 @@ export default {
             }
         },
 
-        // Handle tag input for any language tab
-        handleTagInput(languageId, value) {
-            // Ensure value is properly formatted (could be array, string, or undefined)
-            let tagIds = value;
-            if (!tagIds) {
-                tagIds = [];
-            } else if (typeof tagIds === 'string') {
-                tagIds = tagIds.split(',').map(t => t.trim()).filter(t => t);
-            } else if (!Array.isArray(tagIds)) {
-                tagIds = [tagIds];
-            }
-
-            if (languageId === this.defaultLanguageId) {
-                // For default language, update tag_ids
-                this.tag_ids = tagIds;
-            } else {
-                // For other languages, update tagIdsByLanguage
-                this.$set(this.tagIdsByLanguage, languageId, tagIds);
-            }
-            // Convert IDs to names for translation
-            this.handleTagChange(languageId);
-        },
-
-        // Handle tag changes - convert IDs to names for translation
-        handleTagChange(languageId) {
-            if (!this.translations[languageId]) return;
-
-            // Get tag IDs for this language
-            let tagIds = [];
-            if (languageId === this.defaultLanguageId) {
-                tagIds = Array.isArray(this.tag_ids) ? this.tag_ids : (this.tag_ids ? String(this.tag_ids).split(',').map(t => t.trim()).filter(t => t) : []);
-            } else {
-                const langTagIds = this.tagIdsByLanguage[languageId];
-                if (langTagIds) {
-                    tagIds = Array.isArray(langTagIds) ? langTagIds : (String(langTagIds).split(',').map(t => t.trim()).filter(t => t));
-                }
-            }
-
-            // Convert tag IDs to tag names for translation
-            if (tagIds.length > 0) {
-                const tagNames = tagIds.map(tagId => {
-                    // If it's a number, find the tag name from tags array
-                    if (typeof tagId === 'number' || (typeof tagId === 'string' && !isNaN(tagId))) {
-                        const tag = this.tags.find(t => t.id == tagId);
-                        return tag ? tag.name : tagId;
-                    }
-                    // If it's already a string (new tag), use it as is
-                    return tagId;
-                });
-                this.$set(this.translations[languageId], 'tags', tagNames.join(','));
-            } else {
-                // Only clear if we explicitly have an empty array (user cleared tags)
-                // Don't overwrite if translation.tags already has a value
-                if (tagIds.length === 0 && (!this.translations[languageId].tags || this.translations[languageId].tags === '')) {
-                    this.$set(this.translations[languageId], 'tags', '');
-                }
-            }
-        },
 
         getEditorConfig() {
             const plugins = (this.$editorPlugins && Array.isArray(this.$editorPlugins))
@@ -1403,6 +1406,12 @@ export default {
                 return false;
             }
 
+            if (!this.product_category_id) {
+                this.showError(__('please_select_category'));
+                this.switchToDefaultLanguageTab();
+                return false;
+            }
+
             return true;
         },
 
@@ -1439,71 +1448,11 @@ export default {
                 const translation = translationsArray.find(t => t.language_id === language.id);
                 if (translation) {
                     this.$set(this.translations[language.id], 'name', translation.name || '');
-                    this.$set(this.translations[language.id], 'tags', translation.tags || '');
                     this.$set(this.translations[language.id], 'description', translation.description || '');
                     this.$set(this.translations[language.id], 'meta_title', translation.meta_title || '');
                     this.$set(this.translations[language.id], 'meta_keywords', translation.meta_keywords || '');
                     this.$set(this.translations[language.id], 'schema_markup', translation.schema_markup || '');
                     this.$set(this.translations[language.id], 'meta_description', translation.meta_description || '');
-                }
-            });
-
-            if (this.tags && this.tags.length > 0) {
-                this.convertTagNamesToIds();
-            }
-        },
-
-        // Helper method to convert tag names to IDs for Select2 (for all languages)
-        convertTagNamesToIds() {
-            if (!this.tags || this.tags.length === 0) {
-                return; // Tags not loaded yet
-            }
-
-            if (!this.languages || this.languages.length === 0) {
-                return; // Languages not loaded yet
-            }
-
-            this.languages.forEach(language => {
-                if (this.translations[language.id] && this.translations[language.id].tags) {
-                    const tagsString = this.translations[language.id].tags;
-                    if (tagsString && tagsString.trim()) {
-                        // Tags in translation are names (comma-separated string)
-                        // Convert names to IDs for Select2
-                        const tagNames = tagsString.split(',').map(t => t.trim()).filter(t => t);
-                        const tagIds = tagNames.map(tagName => {
-                            // Try to find tag by name (case-insensitive matching)
-                            const tag = this.tags.find(t => {
-                                const tagNameTrimmed = String(t.name || '').trim();
-                                const searchNameTrimmed = String(tagName || '').trim();
-                                return tagNameTrimmed.toLowerCase() === searchNameTrimmed.toLowerCase();
-                            });
-
-                            if (tag) {
-                                return tag.id;
-                            }
-                            // If not found, it might be a new tag (keep as string)
-                            return tagName;
-                        });
-
-                        if (language.is_default) {
-                            this.tag_ids = tagIds;
-                        } else {
-                            // Use $set to ensure reactivity
-                            this.$set(this.tagIdsByLanguage, language.id, tagIds);
-                        }
-                    } else {
-                        // Set empty array if no tags
-                        if (language.is_default) {
-                            this.tag_ids = [];
-                        } else {
-                            this.$set(this.tagIdsByLanguage, language.id, []);
-                        }
-                    }
-                } else {
-                    // Initialize with empty array if no translation
-                    if (!language.is_default) {
-                        this.$set(this.tagIdsByLanguage, language.id, []);
-                    }
                 }
             });
         },
@@ -1789,32 +1738,13 @@ export default {
         },
 
         getSellerCategories() {
-            const selectPlaceholder = '<option value="">' + __('select_category') + '</option>';
-            // When no seller selected, show only placeholder and clear selection
-            if (!this.seller_id || this.seller_id === 0 || this.seller_id === '') {
-                this.categoryOptions = selectPlaceholder;
-                this.category_id = '';
-                return;
+            return this.getCategories();
+        },
+        getDefaultSellerId() {
+            if (this.isSellerRole && this.login_user && this.login_user.seller) {
+                return this.login_user.seller.id;
             }
-            this.isLoading = true;
-            axios.get(this.$apiUrl + '/categories/seller_categories', {
-                params: { seller_id: this.seller_id }
-            })
-                .then((response) => {
-                    this.isLoading = false;
-                    const data = response.data;
-                    let optionsHtml = '';
-                    if (typeof data === 'string') {
-                        optionsHtml = data;
-                    } else if (data && typeof data.data === 'string') {
-                        optionsHtml = data.data;
-                    }
-                    this.categoryOptions = selectPlaceholder + optionsHtml;
-                })
-                .catch((error) => {
-                    this.isLoading = false;
-                    this.categoryOptions = selectPlaceholder;
-                });
+            return (this.sellers && this.sellers.length > 0) ? this.sellers[0].id : '';
         },
         getSeller() {
             if (this.seller_id !== 0 && this.seller_id !== "" && !this.id) {
@@ -1833,21 +1763,26 @@ export default {
         },
         getCategories() {
             this.isLoading = true
-            axios.get(this.$apiUrl + '/categories/options')
+            axios.get(this.$apiUrl + '/categories', {
+                params: {
+                    status: 1,
+                    limit: 1000
+                }
+            })
                 .then((response) => {
                     this.isLoading = false
-                    let data = response.data;
-                    const placeholder = '<option value="">' + __('select_category') + '</option>';
-                    if (typeof data === 'string') {
-                        this.categoryOptions = placeholder + data;
-                    } else if (data.data && typeof data.data === 'string') {
-                        this.categoryOptions = placeholder + data.data;
-                    } else {
-                        this.categoryOptions = placeholder;
+                    const data = response.data || {};
+                    const categories = Array.isArray(data.data)
+                        ? data.data
+                        : ((data.data && Array.isArray(data.data.categories)) ? data.data.categories : []);
+                    this.productCategoryList = categories;
+                    if (this.category_id) {
+                        this.setCategorySelectionFromSavedId(this.category_id);
                     }
                 })
                 .catch((error) => {
                     this.isLoading = false
+                    this.productCategoryList = [];
                 });
         },
         getSellers() {
@@ -1856,7 +1791,11 @@ export default {
                 .then((response) => {
                     this.isLoading = false
                     let data = response.data;
-                    this.sellers = data.data
+                    this.sellers = Array.isArray(data.data) ? data.data : [];
+                    if (!this.seller_id && this.sellers.length > 0) {
+                        this.seller_id = this.sellers[0].id;
+                        this.getSeller();
+                    }
                 });
         },
         getTaxes() {
@@ -1911,22 +1850,6 @@ export default {
                     this.countries = data.data;
                     if (this.cachedData && this.cachedData.made_in) {
                         this.made_in = this.countries.find(c => c.id === this.cachedData.made_in.id) || null;
-                    }
-                });
-        },
-        getTags() {
-            this.isLoading = true
-            axios.get(this.$apiUrl + '/products/tags')
-                .then((response) => {
-                    this.isLoading = false
-                    let data = response.data;
-                    this.tags = data.data;
-
-                    // After tags are loaded, convert tag names to IDs for Select2 (if translations are already loaded)
-                    if (this.id && this.languages.length > 0) {
-                        this.$nextTick(() => {
-                            this.convertTagNamesToIds();
-                        });
                     }
                 });
         },
@@ -2045,8 +1968,6 @@ export default {
                         this.getSellerCategories();
                         this.getSeller();
 
-                        this.tag_ids = this.record.tags.map(item => item.id);
-
                         this.tax_id = this.record.tax_id;
 
                         const foundBrand = this.brands.find((item) => {
@@ -2104,16 +2025,6 @@ export default {
                         // Set default language translation from main record
                         if (this.defaultLanguageId && this.translations[this.defaultLanguageId]) {
                             this.translations[this.defaultLanguageId].name = this.name;
-                            // Convert tag_ids to tag names for translation
-                            if (Array.isArray(this.tag_ids) && this.tag_ids.length > 0) {
-                                const tagNames = this.tag_ids.map(tagId => {
-                                    const tag = this.tags.find(t => t.id == tagId);
-                                    return tag ? tag.name : tagId;
-                                });
-                                this.translations[this.defaultLanguageId].tags = tagNames.join(',');
-                            } else {
-                                this.translations[this.defaultLanguageId].tags = '';
-                            }
                             this.translations[this.defaultLanguageId].description = this.description;
                             this.translations[this.defaultLanguageId].meta_title = this.meta_title;
                             this.translations[this.defaultLanguageId].meta_keywords = this.meta_keywords;
@@ -2220,36 +2131,7 @@ export default {
             // Use default language values for main table
             formData.append('name', defaultTranslation.name || '');
             formData.append('slug', this.slug);
-            formData.append('seller_id', this.seller_id);
-            // Convert tag_ids array to comma-separated string for backend relationship
-            const tagIdsString = Array.isArray(this.tag_ids) ? this.tag_ids.join(',') : (this.tag_ids || '');
-            formData.append('tag_ids', tagIdsString);
-            // Convert tag_ids to tag names for main products table tags column
-            let tagsString = '';
-            if (Array.isArray(this.tag_ids) && this.tag_ids.length > 0) {
-                const tagNames = this.tag_ids.map(tagId => {
-                    // If it's a number, find the tag name from tags array
-                    if (typeof tagId === 'number' || (typeof tagId === 'string' && !isNaN(tagId))) {
-                        const tag = this.tags.find(t => t.id == tagId);
-                        return tag ? tag.name : tagId;
-                    }
-                    // If it's already a string (new tag), use it as is
-                    return tagId;
-                });
-                tagsString = tagNames.join(',');
-            } else if (this.tag_ids) {
-                // Handle string case
-                const tagIdsArray = String(this.tag_ids).split(',').map(t => t.trim());
-                const tagNames = tagIdsArray.map(tagId => {
-                    if (!isNaN(tagId)) {
-                        const tag = this.tags.find(t => t.id == tagId);
-                        return tag ? tag.name : tagId;
-                    }
-                    return tagId;
-                });
-                tagsString = tagNames.join(',');
-            }
-            formData.append('tags', tagsString);
+            formData.append('seller_id', this.seller_id || this.getDefaultSellerId());
             formData.append('tax_id', this.tax_id);
             formData.append('brand_id', this.brand ? this.brand.id : 0);
             formData.append('description', defaultTranslation.description || '');
@@ -2266,7 +2148,7 @@ export default {
                 for (let i = 0; i < this.inputs.length; i++) {
 
                     formData.append('variant_id[]', (this.inputs[i].id) ? this.inputs[i].id : "");
-                    formData.append('packet_measurement[]', this.inputs[i].packet_measurement);
+                    formData.append('packet_measurement[]', this.inputs[i].packet_measurement || 1);
 
                     formData.append('packet_price[]', (this.inputs[i].packet_price != undefined) ? this.inputs[i].packet_price : 0);
                     formData.append('packet_purchase_price[]', (this.inputs[i].packet_purchase_price != undefined) ? this.inputs[i].packet_purchase_price : 0);
@@ -2291,7 +2173,7 @@ export default {
             if (this.type === 'loose') {
                 for (let i = 0; i < this.inputs.length; i++) {
                     formData.append('variant_id[]', (this.inputs[i].id) ? this.inputs[i].id : "");
-                    formData.append('loose_measurement[]', this.inputs[i].loose_measurement);
+                    formData.append('loose_measurement[]', this.inputs[i].loose_measurement || 1);
                     formData.append('loose_custom_title[]', this.inputs[i].loose_custom_title);
 
                     formData.append('loose_price[]', (this.inputs[i].loose_price != undefined) ? this.inputs[i].loose_price : 0);
@@ -2320,6 +2202,7 @@ export default {
             formData.append('loose_stock_unit_id', (this.loose_stock_unit_id != undefined) ? this.loose_stock_unit_id : 0);
             formData.append('status', (this.status != undefined) ? this.status : 0);
 
+            this.category_id = this.selectedProductCategoryId;
             formData.append('category_id', this.category_id);
             formData.append('product_type', this.product_type);
 
@@ -2346,54 +2229,14 @@ export default {
                 formData.append('other_images[]', file);
             }
 
-
-            // Sync tags for all languages before saving (ensure translation.tags is up to date)
-            this.languages.forEach(language => {
-                if (this.translations[language.id]) {
-                    this.handleTagChange(language.id);
-                }
-            });
-
             // Prepare translations array
             const allTranslations = [];
             this.languages.forEach(language => {
                 const translation = this.translations[language.id];
-                // Convert tag IDs to tag names for translation (for all languages)
-                let tagsValue = translation.tags || '';
-
-                // Get tag IDs for this language
-                let tagIds = [];
-                if (language.is_default) {
-                    tagIds = Array.isArray(this.tag_ids) ? this.tag_ids : (this.tag_ids ? String(this.tag_ids).split(',').map(t => t.trim()).filter(t => t) : []);
-                } else {
-                    const langTagIds = this.tagIdsByLanguage[language.id];
-                    if (langTagIds) {
-                        tagIds = Array.isArray(langTagIds) ? langTagIds : (String(langTagIds).split(',').map(t => t.trim()).filter(t => t));
-                    }
-                }
-
-                // Convert tag IDs to tag names (only if we have tag IDs)
-                // If tagIds is empty but translation.tags already has a value, use that (it was already converted by handleTagChange)
-                if (tagIds.length > 0) {
-                    const tagNames = tagIds.map(tagId => {
-                        // If it's a number, find the tag name from tags array
-                        if (typeof tagId === 'number' || (typeof tagId === 'string' && !isNaN(tagId))) {
-                            const tag = this.tags.find(t => t.id == tagId);
-                            return tag ? tag.name : tagId;
-                        }
-                        // If it's already a string (new tag), use it as is
-                        return tagId;
-                    });
-                    tagsValue = tagNames.join(',');
-                } else if (!tagsValue && translation.tags) {
-                    // If no tagIds but translation.tags exists, use it (already converted)
-                    tagsValue = translation.tags;
-                }
 
                 allTranslations.push({
                     language_id: language.id,
                     name: translation.name || '',
-                    tags: tagsValue,
                     description: translation.description || '',
                     meta_title: translation.meta_title || '',
                     meta_keywords: translation.meta_keywords || '',
@@ -2472,16 +2315,96 @@ export default {
         changeUnits: function () {
         },
 
+        setCategorySelectionFromSavedId(categoryId) {
+            const selectedId = Number(categoryId);
+            if (!selectedId || this.productCategoryList.length === 0) return;
+
+            const categoryMap = this.productCategoryList.reduce((map, category) => {
+                map[Number(category.id)] = category;
+                return map;
+            }, {});
+
+            const selected = categoryMap[selectedId];
+            if (!selected) return;
+
+            const parent = categoryMap[Number(selected.parent_id)];
+            const grandParent = parent ? categoryMap[Number(parent.parent_id)] : null;
+
+            if (Number(selected.parent_id) === 0) {
+                this.product_category_id = selected.id;
+                this.product_subcategory_id = '';
+                this.product_sub_subcategory_id = '';
+            } else if (parent && Number(parent.parent_id) === 0) {
+                this.product_category_id = parent.id;
+                this.product_subcategory_id = selected.id;
+                this.product_sub_subcategory_id = '';
+            } else if (parent && grandParent) {
+                this.product_category_id = grandParent.id;
+                this.product_subcategory_id = parent.id;
+                this.product_sub_subcategory_id = selected.id;
+            }
+        },
+
+        getSellingPrice(price, discountedPrice) {
+            const regularPrice = this.toNumber(price);
+            const salePrice = this.toNumber(discountedPrice);
+            return salePrice > 0 ? salePrice : regularPrice;
+        },
+
+        toNumber(value) {
+            const number = parseFloat(value);
+            return Number.isFinite(number) ? number : 0;
+        },
+
+        formatMoney(value) {
+            const amount = this.toNumber(value);
+            return amount.toFixed(2);
+        },
+
+        getMarginPercent(sellingPrice, purchasePrice) {
+            const sale = this.toNumber(sellingPrice);
+            const cost = this.toNumber(purchasePrice);
+            if (cost <= 0) return sale > 0 ? '100.00' : '0.00';
+            return (((sale - cost) / cost) * 100).toFixed(2);
+        },
+
+        getPacketProfit(input) {
+            const sellingPrice = this.getSellingPrice(input.packet_price, input.discounted_price);
+            const purchasePrice = this.toNumber(input.packet_purchase_price);
+            return this.formatMoney(sellingPrice - purchasePrice);
+        },
+
+        getPacketMargin(input) {
+            const sellingPrice = this.getSellingPrice(input.packet_price, input.discounted_price);
+            return this.getMarginPercent(sellingPrice, input.packet_purchase_price);
+        },
+
+        getLooseProfit() {
+            const firstVariant = this.inputs[0] || {};
+            const sellingPrice = this.getSellingPrice(firstVariant.loose_price, firstVariant.loose_discounted_price);
+            const purchasePrice = this.toNumber(this.loose_purchase_price);
+            return this.formatMoney(sellingPrice - purchasePrice);
+        },
+
+        getLooseMargin() {
+            const firstVariant = this.inputs[0] || {};
+            const sellingPrice = this.getSellingPrice(firstVariant.loose_price, firstVariant.loose_discounted_price);
+            return this.getMarginPercent(sellingPrice, this.loose_purchase_price);
+        },
+
         saveCache: function () {
             if (this.id || this.clone || this.skipCache) return;
             try {
                 const data = {
-                    name: this.name, slug: this.slug, seller_id: this.seller_id, tag_ids: this.tag_ids,
+                    name: this.name, slug: this.slug, seller_id: this.seller_id,
                     tax_id: this.tax_id, brand: this.brand ? { id: this.brand.id } : null,
                     description: this.description, type: this.type, is_unlimited_stock: this.is_unlimited_stock,
                     barcode: this.barcode, meta_title: this.meta_title,
                     meta_keywords: this.meta_keywords, schema_markup: this.schema_markup,
                     meta_description: this.meta_description, category_id: this.category_id,
+                    product_category_id: this.product_category_id,
+                    product_subcategory_id: this.product_subcategory_id,
+                    product_sub_subcategory_id: this.product_sub_subcategory_id,
                     product_type: this.product_type,
                     made_in: this.made_in ? { id: this.made_in.id } : null, return_status: this.return_status,
                     return_days: (parseInt(this.return_days, 10) > 0) ? this.return_days : 1,
@@ -2492,7 +2415,6 @@ export default {
                     loose_stock: this.loose_stock, loose_stock_unit_id: this.loose_stock_unit_id,
                     inputs: JSON.parse(JSON.stringify(this.inputs)), useCustomPrompt: this.useCustomPrompt,
                     customPrompt: this.customPrompt,
-                    tagIdsByLanguage: JSON.parse(JSON.stringify(this.tagIdsByLanguage)),
                     translations: JSON.parse(JSON.stringify(this.translations)),
                     timestamp: Date.now()
                 };
@@ -2511,7 +2433,7 @@ export default {
                 }
                 this.cachedData = data;
                 Object.keys(data).forEach(key => {
-                    if (key === 'timestamp' || key === 'brand' || key === 'made_in' || key === 'translations' || key === 'tagIdsByLanguage') return;
+                    if (key === 'timestamp' || key === 'brand' || key === 'made_in' || key === 'translations') return;
                     if (this.hasOwnProperty(key)) this[key] = data[key] !== undefined ? data[key] : this[key];
                 });
 
@@ -2529,13 +2451,6 @@ export default {
                         }
                     });
                 }
-                // Restore per-language tag ID selections.
-                if (data.tagIdsByLanguage && this.languages && this.languages.length > 0) {
-                    Object.keys(data.tagIdsByLanguage).forEach(languageId => {
-                        this.$set(this.tagIdsByLanguage, languageId, data.tagIdsByLanguage[languageId]);
-                    });
-                }
-
                 if (data.brand && this.brands && this.brands.length) {
                     const foundBrand = this.brands.find(b => b.id === data.brand.id) || null;
                     // Update brand with translated name
@@ -2566,10 +2481,11 @@ export default {
         clearForm: function () {
             if (this.$refs['my-form']) this.$refs['my-form'].reset();
             Object.assign(this, {
-                name: '', slug: '', seller_id: 0, tag_ids: '', tax_id: 0, brand: null,
+                name: '', slug: '', seller_id: 0, tax_id: 0, brand: null,
                 description: '', type: 'packet', is_unlimited_stock: 0,
                 barcode: '', meta_title: '', meta_keywords: '', schema_markup: '',
-                meta_description: '', category_id: '', product_type: '',
+                meta_description: '', category_id: '', product_category_id: '', product_subcategory_id: '',
+                product_sub_subcategory_id: '', product_type: '',
                 made_in: null, return_status: 0, return_days: 1, cancelable_status: 0,
                 categoryOptions: '<option value="">' + __('select_category') + '</option>',
                 till_status: '', cod_allowed_status: 1, max_allowed_quantity: 0,
@@ -2577,9 +2493,8 @@ export default {
                 loose_stock_unit_id: '', inputs: [{ 'name': '', 'packet_status': '', 'packet_stock_unit_id': '' }],
                 image: null, main_image_path: '', main_image_name: '', other_images: null,
                 images: [], variantImages: {}, deleteImageIds: [], useCustomPrompt: false, customPrompt: '',
-                tagIdsByLanguage: {}, activeLanguageTab: 0
+                activeLanguageTab: 0
             });
-            this.tag_ids = [];
             this.initializeTranslations();
             localStorage.removeItem('product_form_cache');
         },
@@ -2615,21 +2530,15 @@ export default {
             },
             deep: true
         },
-        // Watch activeLanguageTab to ensure Select2 updates when switching tabs
-        activeLanguageTab: function (newTab, oldTab) {
-            // Force Select2 to update when switching language tabs
-            this.$nextTick(() => {
-                // Trigger conversion again to ensure tagIdsByLanguage is set
-                if (this.tags && this.tags.length > 0 && this.languages.length > 0) {
-                    this.convertTagNamesToIds();
-                }
-            });
-        },
         // Auto-save form data to cache (debounced)
         name: function () { if (!this.id && !this.clone) this.debouncedSave(); },
         slug: function () { if (!this.id && !this.clone) this.debouncedSave(); },
-        seller_id: function () { if (!this.id && !this.clone) this.debouncedSave(); },
-        tag_ids: function () { if (!this.id && !this.clone) this.debouncedSave(); },
+        seller_id: function () {
+            if (this.seller_id) {
+                this.getSellerCategories();
+            }
+            if (!this.id && !this.clone) this.debouncedSave();
+        },
         tax_id: function () { if (!this.id && !this.clone) this.debouncedSave(); },
         brand: { handler: function () { if (!this.id && !this.clone) this.debouncedSave(); }, deep: true },
         description: function () { if (!this.id && !this.clone) this.debouncedSave(); },
@@ -2641,6 +2550,26 @@ export default {
         schema_markup: function () { if (!this.id && !this.clone) this.debouncedSave(); },
         meta_description: function () { if (!this.id && !this.clone) this.debouncedSave(); },
         category_id: function () { if (!this.id && !this.clone) this.debouncedSave(); },
+        product_category_id: function () {
+            const hasSubcategory = this.subCategoryOptions.some(category => {
+                return Number(category.id) === Number(this.product_subcategory_id);
+            });
+            if (!hasSubcategory) {
+                this.product_subcategory_id = '';
+                this.product_sub_subcategory_id = '';
+            }
+            if (!this.id && !this.clone) this.debouncedSave();
+        },
+        product_subcategory_id: function () {
+            const hasSubSubcategory = this.subSubCategoryOptions.some(category => {
+                return Number(category.id) === Number(this.product_sub_subcategory_id);
+            });
+            if (!hasSubSubcategory) {
+                this.product_sub_subcategory_id = '';
+            }
+            if (!this.id && !this.clone) this.debouncedSave();
+        },
+        product_sub_subcategory_id: function () { if (!this.id && !this.clone) this.debouncedSave(); },
         product_type: function () { if (!this.id && !this.clone) this.debouncedSave(); },
         made_in: { handler: function () { if (!this.id && !this.clone) this.debouncedSave(); }, deep: true },
         return_status: function () {
@@ -2670,8 +2599,6 @@ export default {
         useCustomPrompt: function () { if (!this.id && !this.clone) this.debouncedSave(); },
         customPrompt: function () { if (!this.id && !this.clone) this.debouncedSave(); },
         translations: { handler: function () { if (!this.id && !this.clone) this.debouncedSave(); }, deep: true }
-        ,
-        tagIdsByLanguage: { handler: function () { if (!this.id && !this.clone) this.debouncedSave(); }, deep: true }
     },
 
 };

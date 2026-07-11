@@ -11,15 +11,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-multiselect */ "./node_modules/vue-multiselect/dist/vue-multiselect.min.js");
 /* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_multiselect__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var v_select2_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! v-select2-component */ "./node_modules/v-select2-component/dist/Select2.esm.js");
-/* harmony import */ var _tinymce_tinymce_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @tinymce/tinymce-vue */ "./node_modules/@tinymce/tinymce-vue/lib/es2015/main/ts/index.js");
-/* harmony import */ var _Auth_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../Auth.js */ "./resources/js/Auth.js");
-/* harmony import */ var _mixins_TranslationHelper_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/TranslationHelper.js */ "./resources/js/mixins/TranslationHelper.js");
+/* harmony import */ var _tinymce_tinymce_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @tinymce/tinymce-vue */ "./node_modules/@tinymce/tinymce-vue/lib/es2015/main/ts/index.js");
+/* harmony import */ var _Auth_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../Auth.js */ "./resources/js/Auth.js");
+/* harmony import */ var _mixins_TranslationHelper_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/TranslationHelper.js */ "./resources/js/mixins/TranslationHelper.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
@@ -37,18 +36,16 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 
 
 
-
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  mixins: [_mixins_TranslationHelper_js__WEBPACK_IMPORTED_MODULE_5__["default"]],
+  mixins: [_mixins_TranslationHelper_js__WEBPACK_IMPORTED_MODULE_4__["default"]],
   // register the component
   components: {
     Multiselect: (vue_multiselect__WEBPACK_IMPORTED_MODULE_1___default()),
-    Select2: v_select2_component__WEBPACK_IMPORTED_MODULE_2__["default"],
-    'editor': _tinymce_tinymce_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
+    'editor': _tinymce_tinymce_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
   data: function data() {
     return _defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty({
-      login_user: _Auth_js__WEBPACK_IMPORTED_MODULE_4__["default"].user,
+      login_user: _Auth_js__WEBPACK_IMPORTED_MODULE_3__["default"].user,
       isLoading: false,
       isGeneratingAI: false,
       // Track AI content generation state
@@ -58,15 +55,13 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       name: '',
       slug: '',
       seller_id: '',
-      tags: [],
-      tag_ids: '',
-      tagIdsByLanguage: {},
-      // Store tag IDs for each language
-      tagSuggestions: [],
       brand: null,
       tax_id: 0,
       type: 'packet',
       category_id: '',
+      product_category_id: '',
+      product_subcategory_id: '',
+      product_sub_subcategory_id: '',
       product_type: '',
       made_in: '',
       tag: '',
@@ -110,8 +105,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       record: null,
       clone: false,
       categoryOptions: '<option value="">' + __('select_category') + '</option>',
+      productCategoryList: [],
       deleteImageIds: [],
-      loggedUser: _Auth_js__WEBPACK_IMPORTED_MODULE_4__["default"].user,
+      loggedUser: _Auth_js__WEBPACK_IMPORTED_MODULE_3__["default"].user,
       isBarcodeValid: '',
       input: [],
       mainImageerror: null,
@@ -135,26 +131,12 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       languages: [],
       currentLanguageId: null,
       activeLanguages: []
-    }, "categories", []), "translatableFields", ['name', 'description', 'meta_title', 'meta_keywords', 'schema_markup', 'meta_description', 'tags']), "translateSuccessMessage", ''), "loadingEmpty", false), "loadingOverwrite", false), "cacheTimer", null), "cachedData", null), "skipCache", false);
+    }, "categories", []), "translatableFields", ['name', 'description', 'meta_title', 'meta_keywords', 'schema_markup', 'meta_description']), "translateSuccessMessage", ''), "loadingEmpty", false), "loadingOverwrite", false), "cacheTimer", null), "cachedData", null), "skipCache", false);
   },
   computed: {
     isSellerRoute: function isSellerRoute() {
       // Use this.$route to access the current route
       return this.$route.path.startsWith('/seller/');
-    },
-    tagsOptions: function tagsOptions() {
-      return this.tags.length ? this.tags.map(function (tag) {
-        return {
-          id: tag.id,
-          text: tag.name
-        };
-      }) : [];
-    },
-    selectedTags: function selectedTags() {
-      var _this = this;
-      return this.tags.filter(function (tag) {
-        return _this.tag_ids.includes(tag.id);
-      });
     },
     // Computed property to safely access $roleSeller
     roleSeller: function roleSeller() {
@@ -169,11 +151,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }
     },
     canUseAIGenerate: function canUseAIGenerate() {
-      var user = _Auth_js__WEBPACK_IMPORTED_MODULE_4__["default"].user || this.login_user;
+      var user = _Auth_js__WEBPACK_IMPORTED_MODULE_3__["default"].user || this.login_user;
       return this.$isDemo != 1 && user && user.id == 1;
     },
     translatedSellers: function translatedSellers() {
-      var _this2 = this;
+      var _this = this;
       if (!this.currentLanguageId || !this.sellers || this.sellers.length === 0) {
         return this.sellers || [];
       }
@@ -186,7 +168,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         var translatedName = seller.name;
         if (seller.translations && Array.isArray(seller.translations)) {
           var translation = seller.translations.find(function (t) {
-            return t.language_id === _this2.currentLanguageId;
+            return t.language_id === _this.currentLanguageId;
           });
           if (!translation && defaultLanguageId) {
             translation = seller.translations.find(function (t) {
@@ -202,7 +184,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       });
     },
     translatedBrands: function translatedBrands() {
-      var _this3 = this;
+      var _this2 = this;
       if (!this.currentLanguageId || !this.brands || this.brands.length === 0) {
         return this.brands || [];
       }
@@ -215,7 +197,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         var translatedTitle = brand.title || brand.name;
         if (brand.translations && Array.isArray(brand.translations)) {
           var translation = brand.translations.find(function (t) {
-            return t.language_id === _this3.currentLanguageId;
+            return t.language_id === _this2.currentLanguageId;
           });
           if (!translation && defaultLanguageId) {
             translation = brand.translations.find(function (t) {
@@ -232,7 +214,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       });
     },
     translatedTaxes: function translatedTaxes() {
-      var _this4 = this;
+      var _this3 = this;
       if (!this.currentLanguageId || !this.taxes || this.taxes.length === 0) {
         return this.taxes || [];
       }
@@ -245,7 +227,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         var translatedTitle = tax.title;
         if (tax.translations && Array.isArray(tax.translations)) {
           var translation = tax.translations.find(function (t) {
-            return t.language_id === _this4.currentLanguageId;
+            return t.language_id === _this3.currentLanguageId;
           });
           if (!translation && defaultLanguageId) {
             translation = tax.translations.find(function (t) {
@@ -261,7 +243,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       });
     },
     translatedCategories: function translatedCategories() {
-      var _this5 = this;
+      var _this4 = this;
       if (!this.currentLanguageId || !this.categories || this.categories.length === 0) {
         return this.categories || [];
       }
@@ -274,7 +256,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         var translatedName = category.name;
         if (category.translations && Array.isArray(category.translations)) {
           var translation = category.translations.find(function (t) {
-            return t.language_id === _this5.currentLanguageId;
+            return t.language_id === _this4.currentLanguageId;
           });
           if (!translation && defaultLanguageId) {
             translation = category.translations.find(function (t) {
@@ -291,30 +273,49 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     },
     categoryOptionsHtml: function categoryOptionsHtml() {
       return this.categoryOptions;
+    },
+    mainCategoryOptions: function mainCategoryOptions() {
+      return this.productCategoryList.filter(function (category) {
+        return Number(category.parent_id) === 0;
+      });
+    },
+    subCategoryOptions: function subCategoryOptions() {
+      var _this5 = this;
+      return this.productCategoryList.filter(function (category) {
+        return Number(category.parent_id) === Number(_this5.product_category_id);
+      });
+    },
+    subSubCategoryOptions: function subSubCategoryOptions() {
+      var _this6 = this;
+      return this.productCategoryList.filter(function (category) {
+        return Number(category.parent_id) === Number(_this6.product_subcategory_id);
+      });
+    },
+    selectedProductCategoryId: function selectedProductCategoryId() {
+      return this.product_sub_subcategory_id || this.product_subcategory_id || this.product_category_id || '';
     }
   },
   created: function created() {
-    var _this6 = this;
+    var _this7 = this;
     this.id = this.$route.params.id || null;
     this.clone = this.$route.params.clone || false;
     this.fetchActiveLanguages().then(function () {
-      _this6.getSellers();
-      _this6.getTaxes();
-      _this6.getUnits();
-      _this6.getBrands();
-      _this6.getCountries();
-      _this6.getTags();
-      _this6.getOrderStatus();
-      _this6.getTextGenKey();
-      if (_this6.isSellerRole) {
-        _this6.seller_id = _this6.login_user.seller.id;
-        _this6.getSeller();
-        _this6.getSellerCategories();
+      _this7.getSellers();
+      _this7.getTaxes();
+      _this7.getUnits();
+      _this7.getBrands();
+      _this7.getCountries();
+      _this7.getOrderStatus();
+      _this7.getTextGenKey();
+      if (_this7.isSellerRole) {
+        _this7.seller_id = _this7.login_user.seller.id;
+        _this7.getSeller();
       }
-      if (_this6.id) {
-        _this6.getProduct();
+      _this7.getCategories();
+      if (_this7.id) {
+        _this7.getProduct();
       } else {
-        _this6.restoreCache();
+        _this7.restoreCache();
       }
     });
   },
@@ -324,14 +325,14 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   },
   methods: {
     validateDefaultLanguageForTranslation: function validateDefaultLanguageForTranslation() {
-      var _this7 = this;
+      var _this8 = this;
       var form = this.$refs['my-form'];
 
       // Trigger native browser validation UI
       if (form && !form.reportValidity()) {
         // Switch to default language tab so error field is visible
         this.$nextTick(function () {
-          _this7.switchToDefaultLanguageTab();
+          _this8.switchToDefaultLanguageTab();
         });
         return false;
       }
@@ -340,37 +341,37 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       return this.validateDefaultLanguage();
     },
     fetchActiveLanguages: function fetchActiveLanguages() {
-      var _this8 = this;
+      var _this9 = this;
       this.isLoadingLanguages = true;
       return axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/active_languages').then(function (response) {
         if (response.data.data) {
-          _this8.languages = response.data.data;
-          _this8.activeLanguages = response.data.data;
-          var defaultLang = _this8.languages.find(function (lang) {
+          _this9.languages = response.data.data;
+          _this9.activeLanguages = response.data.data;
+          var defaultLang = _this9.languages.find(function (lang) {
             return lang.is_default === 1;
           });
           if (defaultLang) {
-            _this8.defaultLanguageId = defaultLang.id;
+            _this9.defaultLanguageId = defaultLang.id;
           }
 
           // Get current language ID from app_locale
           var appLocale = window.appLocale || 'en';
-          var currentLanguage = _this8.activeLanguages.find(function (lang) {
+          var currentLanguage = _this9.activeLanguages.find(function (lang) {
             return lang.code === appLocale;
           });
           if (currentLanguage) {
-            _this8.currentLanguageId = currentLanguage.id;
+            _this9.currentLanguageId = currentLanguage.id;
           } else if (defaultLang) {
-            _this8.currentLanguageId = defaultLang.id;
+            _this9.currentLanguageId = defaultLang.id;
           }
-          _this8.initializeTranslations();
-          _this8.isLoadingLanguages = false;
+          _this9.initializeTranslations();
+          _this9.isLoadingLanguages = false;
         } else {
-          _this8.isLoadingLanguages = false;
+          _this9.isLoadingLanguages = false;
         }
       })["catch"](function (error) {
         console.error('Error loading languages:', error);
-        _this8.isLoadingLanguages = false;
+        _this9.isLoadingLanguages = false;
       });
     },
     initializeTranslations: function initializeTranslations() {
@@ -378,7 +379,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       this.languages.forEach(function (language) {
         allTranslations[language.id] = {
           name: '',
-          tags: '',
           description: '',
           meta_title: '',
           meta_keywords: '',
@@ -397,77 +397,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         // Special handling for name field - also create slug
         if (fieldName === 'name') {
           this.createSlug();
-        }
-      }
-    },
-    // Handle tag input for any language tab
-    handleTagInput: function handleTagInput(languageId, value) {
-      // Ensure value is properly formatted (could be array, string, or undefined)
-      var tagIds = value;
-      if (!tagIds) {
-        tagIds = [];
-      } else if (typeof tagIds === 'string') {
-        tagIds = tagIds.split(',').map(function (t) {
-          return t.trim();
-        }).filter(function (t) {
-          return t;
-        });
-      } else if (!Array.isArray(tagIds)) {
-        tagIds = [tagIds];
-      }
-      if (languageId === this.defaultLanguageId) {
-        // For default language, update tag_ids
-        this.tag_ids = tagIds;
-      } else {
-        // For other languages, update tagIdsByLanguage
-        this.$set(this.tagIdsByLanguage, languageId, tagIds);
-      }
-      // Convert IDs to names for translation
-      this.handleTagChange(languageId);
-    },
-    // Handle tag changes - convert IDs to names for translation
-    handleTagChange: function handleTagChange(languageId) {
-      var _this9 = this;
-      if (!this.translations[languageId]) return;
-
-      // Get tag IDs for this language
-      var tagIds = [];
-      if (languageId === this.defaultLanguageId) {
-        tagIds = Array.isArray(this.tag_ids) ? this.tag_ids : this.tag_ids ? String(this.tag_ids).split(',').map(function (t) {
-          return t.trim();
-        }).filter(function (t) {
-          return t;
-        }) : [];
-      } else {
-        var langTagIds = this.tagIdsByLanguage[languageId];
-        if (langTagIds) {
-          tagIds = Array.isArray(langTagIds) ? langTagIds : String(langTagIds).split(',').map(function (t) {
-            return t.trim();
-          }).filter(function (t) {
-            return t;
-          });
-        }
-      }
-
-      // Convert tag IDs to tag names for translation
-      if (tagIds.length > 0) {
-        var tagNames = tagIds.map(function (tagId) {
-          // If it's a number, find the tag name from tags array
-          if (typeof tagId === 'number' || typeof tagId === 'string' && !isNaN(tagId)) {
-            var tag = _this9.tags.find(function (t) {
-              return t.id == tagId;
-            });
-            return tag ? tag.name : tagId;
-          }
-          // If it's already a string (new tag), use it as is
-          return tagId;
-        });
-        this.$set(this.translations[languageId], 'tags', tagNames.join(','));
-      } else {
-        // Only clear if we explicitly have an empty array (user cleared tags)
-        // Don't overwrite if translation.tags already has a value
-        if (tagIds.length === 0 && (!this.translations[languageId].tags || this.translations[languageId].tags === '')) {
-          this.$set(this.translations[languageId], 'tags', '');
         }
       }
     },
@@ -527,6 +456,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         this.switchToDefaultLanguageTab();
         return false;
       }
+      if (!this.product_category_id) {
+        this.showError(__('please_select_category'));
+        this.switchToDefaultLanguageTab();
+        return false;
+      }
       return true;
     },
     switchToDefaultLanguageTab: function switchToDefaultLanguageTab() {
@@ -564,7 +498,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         });
         if (translation) {
           _this11.$set(_this11.translations[language.id], 'name', translation.name || '');
-          _this11.$set(_this11.translations[language.id], 'tags', translation.tags || '');
           _this11.$set(_this11.translations[language.id], 'description', translation.description || '');
           _this11.$set(_this11.translations[language.id], 'meta_title', translation.meta_title || '');
           _this11.$set(_this11.translations[language.id], 'meta_keywords', translation.meta_keywords || '');
@@ -572,98 +505,40 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           _this11.$set(_this11.translations[language.id], 'meta_description', translation.meta_description || '');
         }
       });
-      if (this.tags && this.tags.length > 0) {
-        this.convertTagNamesToIds();
-      }
-    },
-    // Helper method to convert tag names to IDs for Select2 (for all languages)
-    convertTagNamesToIds: function convertTagNamesToIds() {
-      var _this12 = this;
-      if (!this.tags || this.tags.length === 0) {
-        return; // Tags not loaded yet
-      }
-      if (!this.languages || this.languages.length === 0) {
-        return; // Languages not loaded yet
-      }
-      this.languages.forEach(function (language) {
-        if (_this12.translations[language.id] && _this12.translations[language.id].tags) {
-          var tagsString = _this12.translations[language.id].tags;
-          if (tagsString && tagsString.trim()) {
-            // Tags in translation are names (comma-separated string)
-            // Convert names to IDs for Select2
-            var tagNames = tagsString.split(',').map(function (t) {
-              return t.trim();
-            }).filter(function (t) {
-              return t;
-            });
-            var tagIds = tagNames.map(function (tagName) {
-              // Try to find tag by name (case-insensitive matching)
-              var tag = _this12.tags.find(function (t) {
-                var tagNameTrimmed = String(t.name || '').trim();
-                var searchNameTrimmed = String(tagName || '').trim();
-                return tagNameTrimmed.toLowerCase() === searchNameTrimmed.toLowerCase();
-              });
-              if (tag) {
-                return tag.id;
-              }
-              // If not found, it might be a new tag (keep as string)
-              return tagName;
-            });
-            if (language.is_default) {
-              _this12.tag_ids = tagIds;
-            } else {
-              // Use $set to ensure reactivity
-              _this12.$set(_this12.tagIdsByLanguage, language.id, tagIds);
-            }
-          } else {
-            // Set empty array if no tags
-            if (language.is_default) {
-              _this12.tag_ids = [];
-            } else {
-              _this12.$set(_this12.tagIdsByLanguage, language.id, []);
-            }
-          }
-        } else {
-          // Initialize with empty array if no translation
-          if (!language.is_default) {
-            _this12.$set(_this12.tagIdsByLanguage, language.id, []);
-          }
-        }
-      });
     },
     generateDescription: function generateDescription() {
-      var _this13 = this;
+      var _this12 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
         var prompt, _data$candidates, response, data, generatedText, _t;
         return _regenerator().w(function (_context) {
           while (1) switch (_context.p = _context.n) {
             case 0:
-              if (!(_this13.$isDemo == 1)) {
+              if (!(_this12.$isDemo == 1)) {
                 _context.n = 1;
                 break;
               }
-              _this13.showError("This function is not available in demo mode.");
+              _this12.showError("This function is not available in demo mode.");
               return _context.a(2);
             case 1:
-              if (_this13.name) {
+              if (_this12.name) {
                 _context.n = 2;
                 break;
               }
-              _this13.showMessage("error", "Please enter the product name.");
+              _this12.showMessage("error", "Please enter the product name.");
               return _context.a(2);
             case 2:
-              if (_this13.textGenKey) {
+              if (_this12.textGenKey) {
                 _context.n = 3;
                 break;
               }
-              _this13.showMessage("error", "Text generation API key is not configured");
+              _this12.showMessage("error", "Text generation API key is not configured");
               return _context.a(2);
             case 3:
-              prompt = _this13.useCustomPrompt && _this13.customPrompt.trim() ? "".concat(_this13.customPrompt, " for product: ").concat(_this13.name, ". Output raw HTML only, no explanatory text, no code blocks, no images.") : "Generate a detailed product description for ".concat(_this13.name, " formatted for TinyMCE editor.\n            Structure: Start with <strong>Product Overview</strong>, then multiple <p> paragraphs describing features and benefits.\n            Include <strong>Key Features</strong> with <ul><li> bullet points.\n            Add <strong>Benefits</strong> section with more <p> content.\n            Use <strong> for emphasis, <em> for highlights.\n            Important: no code blocks, no markdown syntax, no explanatory text.");
+              prompt = _this12.useCustomPrompt && _this12.customPrompt.trim() ? "".concat(_this12.customPrompt, " for product: ").concat(_this12.name, ". Output raw HTML only, no explanatory text, no code blocks, no images.") : "Generate a detailed product description for ".concat(_this12.name, " formatted for TinyMCE editor.\n            Structure: Start with <strong>Product Overview</strong>, then multiple <p> paragraphs describing features and benefits.\n            Include <strong>Key Features</strong> with <ul><li> bullet points.\n            Add <strong>Benefits</strong> section with more <p> content.\n            Use <strong> for emphasis, <em> for highlights.\n            Important: no code blocks, no markdown syntax, no explanatory text.");
               _context.p = 4;
-              _this13.isGeneratingAI = true; // Start AI processing state
+              _this12.isGeneratingAI = true; // Start AI processing state
               _context.n = 5;
-              return fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + _this13.textGenKey, {
+              return fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + _this12.textGenKey, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -684,22 +559,22 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               data = _context.v;
               if (data !== null && data !== void 0 && (_data$candidates = data.candidates) !== null && _data$candidates !== void 0 && (_data$candidates = _data$candidates[0]) !== null && _data$candidates !== void 0 && (_data$candidates = _data$candidates.content) !== null && _data$candidates !== void 0 && (_data$candidates = _data$candidates.parts) !== null && _data$candidates !== void 0 && (_data$candidates = _data$candidates[0]) !== null && _data$candidates !== void 0 && _data$candidates.text) {
                 generatedText = data.candidates[0].content.parts[0].text;
-                _this13.description = generatedText;
-                if (_this13.defaultLanguageId && _this13.translations[_this13.defaultLanguageId]) {
-                  _this13.$set(_this13.translations[_this13.defaultLanguageId], 'description', generatedText);
+                _this12.description = generatedText;
+                if (_this12.defaultLanguageId && _this12.translations[_this12.defaultLanguageId]) {
+                  _this12.$set(_this12.translations[_this12.defaultLanguageId], 'description', generatedText);
                 }
               } else {
-                _this13.showMessage("error", "Failed to generate description.");
+                _this12.showMessage("error", "Failed to generate description.");
               }
               _context.n = 8;
               break;
             case 7:
               _context.p = 7;
               _t = _context.v;
-              _this13.showMessage("error", "An error occurred while generating the description.");
+              _this12.showMessage("error", "An error occurred while generating the description.");
             case 8:
               _context.p = 8;
-              _this13.isGeneratingAI = false; // Stop AI processing state
+              _this12.isGeneratingAI = false; // Stop AI processing state
               return _context.f(8);
             case 9:
               return _context.a(2);
@@ -717,14 +592,14 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }
     },
     fetchTags: function fetchTags(query) {
-      var _this14 = this;
+      var _this13 = this;
       if (query.length > 1) {
         axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/products/tags', {
           params: {
             search: query
           }
         }).then(function (response) {
-          _this14.tagSuggestions = response.data;
+          _this13.tagSuggestions = response.data;
         })["catch"](function (error) {
           console.error(error);
         });
@@ -744,7 +619,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }
     },
     remove: function remove(index) {
-      var _this15 = this;
+      var _this14 = this;
       var variant_id = this.inputs[index].id ? this.inputs[index].id : "";
       if (this.id && variant_id !== "") {
         this.$swal.fire({
@@ -761,10 +636,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             var postData = {
               id: variant_id
             };
-            axios__WEBPACK_IMPORTED_MODULE_0___default().post(_this15.$apiUrl + '/products/delete', postData).then(function (response) {
+            axios__WEBPACK_IMPORTED_MODULE_0___default().post(_this14.$apiUrl + '/products/delete', postData).then(function (response) {
               var data = response.data;
-              _this15.inputs.splice(index, 1);
-              _this15.showSuccess(data.message);
+              _this14.inputs.splice(index, 1);
+              _this14.showSuccess(data.message);
             });
           }
         });
@@ -868,7 +743,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     },
     variantImagesChanges: function variantImagesChanges(index) {
       var tempImages = [];
-      vue__WEBPACK_IMPORTED_MODULE_6__["default"].set(this.variantImages, index, []);
+      vue__WEBPACK_IMPORTED_MODULE_5__["default"].set(this.variantImages, index, []);
       if (this.type === 'packet') {
         var validExtensions = ['jpg', 'jpeg', 'png', 'gif']; // Add more valid extensions as needed
         var maxSizeInBytes = 5 * 1024 * 1024; // 5 MB (adjust the size limit as needed)
@@ -892,7 +767,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           image.url = URL.createObjectURL(file);
           image.name = file.name;
           tempImages.push(image);
-          vue__WEBPACK_IMPORTED_MODULE_6__["default"].set(this.variantImages, index, tempImages);
+          vue__WEBPACK_IMPORTED_MODULE_5__["default"].set(this.variantImages, index, tempImages);
         }
       } else {
         for (var i = 0; i < this.$refs['loose_variant_images_' + index][0].files.length; i++) {
@@ -901,41 +776,21 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           _image.url = URL.createObjectURL(_file);
           _image.name = _file.name;
           tempImages.push(_image);
-          vue__WEBPACK_IMPORTED_MODULE_6__["default"].set(this.variantImages, index, tempImages);
+          vue__WEBPACK_IMPORTED_MODULE_5__["default"].set(this.variantImages, index, tempImages);
         }
       }
     },
     getSellerCategories: function getSellerCategories() {
-      var _this16 = this;
-      var selectPlaceholder = '<option value="">' + __('select_category') + '</option>';
-      // When no seller selected, show only placeholder and clear selection
-      if (!this.seller_id || this.seller_id === 0 || this.seller_id === '') {
-        this.categoryOptions = selectPlaceholder;
-        this.category_id = '';
-        return;
+      return this.getCategories();
+    },
+    getDefaultSellerId: function getDefaultSellerId() {
+      if (this.isSellerRole && this.login_user && this.login_user.seller) {
+        return this.login_user.seller.id;
       }
-      this.isLoading = true;
-      axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/categories/seller_categories', {
-        params: {
-          seller_id: this.seller_id
-        }
-      }).then(function (response) {
-        _this16.isLoading = false;
-        var data = response.data;
-        var optionsHtml = '';
-        if (typeof data === 'string') {
-          optionsHtml = data;
-        } else if (data && typeof data.data === 'string') {
-          optionsHtml = data.data;
-        }
-        _this16.categoryOptions = selectPlaceholder + optionsHtml;
-      })["catch"](function (error) {
-        _this16.isLoading = false;
-        _this16.categoryOptions = selectPlaceholder;
-      });
+      return this.sellers && this.sellers.length > 0 ? this.sellers[0].id : '';
     },
     getSeller: function getSeller() {
-      var _this17 = this;
+      var _this15 = this;
       if (this.seller_id !== 0 && this.seller_id !== "" && !this.id) {
         this.isLoading = true;
         var param = {
@@ -944,115 +799,106 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/sellers/edit/' + this.seller_id, {
           params: param
         }).then(function (response) {
-          _this17.isLoading = false, _this17.require_products_approval = response.data.data.require_products_approval;
-          _this17.is_approved = _this17.require_products_approval == 0 ? 1 : 0;
+          _this15.isLoading = false, _this15.require_products_approval = response.data.data.require_products_approval;
+          _this15.is_approved = _this15.require_products_approval == 0 ? 1 : 0;
         });
       }
     },
     getCategories: function getCategories() {
-      var _this18 = this;
+      var _this16 = this;
       this.isLoading = true;
-      axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/categories/options').then(function (response) {
-        _this18.isLoading = false;
-        var data = response.data;
-        var placeholder = '<option value="">' + __('select_category') + '</option>';
-        if (typeof data === 'string') {
-          _this18.categoryOptions = placeholder + data;
-        } else if (data.data && typeof data.data === 'string') {
-          _this18.categoryOptions = placeholder + data.data;
-        } else {
-          _this18.categoryOptions = placeholder;
+      axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/categories', {
+        params: {
+          status: 1,
+          limit: 1000
+        }
+      }).then(function (response) {
+        _this16.isLoading = false;
+        var data = response.data || {};
+        var categories = Array.isArray(data.data) ? data.data : data.data && Array.isArray(data.data.categories) ? data.data.categories : [];
+        _this16.productCategoryList = categories;
+        if (_this16.category_id) {
+          _this16.setCategorySelectionFromSavedId(_this16.category_id);
         }
       })["catch"](function (error) {
-        _this18.isLoading = false;
+        _this16.isLoading = false;
+        _this16.productCategoryList = [];
       });
     },
     getSellers: function getSellers() {
-      var _this19 = this;
+      var _this17 = this;
       this.isLoading = true;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/sellers').then(function (response) {
-        _this19.isLoading = false;
+        _this17.isLoading = false;
         var data = response.data;
-        _this19.sellers = data.data;
+        _this17.sellers = Array.isArray(data.data) ? data.data : [];
+        if (!_this17.seller_id && _this17.sellers.length > 0) {
+          _this17.seller_id = _this17.sellers[0].id;
+          _this17.getSeller();
+        }
       });
     },
     getTaxes: function getTaxes() {
-      var _this20 = this;
+      var _this18 = this;
       this.isLoading = true;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/products/taxes').then(function (response) {
-        _this20.isLoading = false;
+        _this18.isLoading = false;
         var data = response.data;
-        _this20.taxes = data.data;
+        _this18.taxes = data.data;
       });
     },
     getUnits: function getUnits() {
-      var _this21 = this;
+      var _this19 = this;
       this.isLoading = true;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/units/get').then(function (response) {
-        _this21.isLoading = false;
+        _this19.isLoading = false;
         var data = response.data;
-        _this21.units = data.data;
+        _this19.units = data.data;
       });
     },
     getBrands: function getBrands() {
-      var _this22 = this;
+      var _this20 = this;
       this.isLoading = true;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/products/brands/get').then(function (response) {
-        _this22.isLoading = false;
+        _this20.isLoading = false;
         var data = response.data;
-        _this22.brands = data.data;
-        if (_this22.cachedData && _this22.cachedData.brand) {
-          var foundBrand = _this22.brands.find(function (b) {
-            return b.id === _this22.cachedData.brand.id;
+        _this20.brands = data.data;
+        if (_this20.cachedData && _this20.cachedData.brand) {
+          var foundBrand = _this20.brands.find(function (b) {
+            return b.id === _this20.cachedData.brand.id;
           }) || null;
           // Update brand with translated name
-          _this22.$nextTick(function () {
-            if (foundBrand && _this22.translatedBrands && _this22.translatedBrands.length > 0) {
-              var translatedBrand = _this22.translatedBrands.find(function (b) {
+          _this20.$nextTick(function () {
+            if (foundBrand && _this20.translatedBrands && _this20.translatedBrands.length > 0) {
+              var translatedBrand = _this20.translatedBrands.find(function (b) {
                 return b.id === foundBrand.id;
               });
               if (translatedBrand) {
-                _this22.brand = _objectSpread(_objectSpread({}, foundBrand), {}, {
+                _this20.brand = _objectSpread(_objectSpread({}, foundBrand), {}, {
                   name: translatedBrand.name,
                   title: translatedBrand.title
                 });
               } else {
-                _this22.brand = foundBrand;
+                _this20.brand = foundBrand;
               }
             } else {
-              _this22.brand = foundBrand;
+              _this20.brand = foundBrand;
             }
           });
         }
       });
     },
     getCountries: function getCountries() {
-      var _this23 = this;
+      var _this21 = this;
       this.isLoading = true;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/countries/active').then(function (response) {
-        _this23.isLoading = false;
+        _this21.isLoading = false;
         var data = response.data;
-        _this23.countries = data.data;
-        if (_this23.cachedData && _this23.cachedData.made_in) {
-          _this23.made_in = _this23.countries.find(function (c) {
-            return c.id === _this23.cachedData.made_in.id;
+        _this21.countries = data.data;
+        if (_this21.cachedData && _this21.cachedData.made_in) {
+          _this21.made_in = _this21.countries.find(function (c) {
+            return c.id === _this21.cachedData.made_in.id;
           }) || null;
-        }
-      });
-    },
-    getTags: function getTags() {
-      var _this24 = this;
-      this.isLoading = true;
-      axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/products/tags').then(function (response) {
-        _this24.isLoading = false;
-        var data = response.data;
-        _this24.tags = data.data;
-
-        // After tags are loaded, convert tag names to IDs for Select2 (if translations are already loaded)
-        if (_this24.id && _this24.languages.length > 0) {
-          _this24.$nextTick(function () {
-            _this24.convertTagNamesToIds();
-          });
         }
       });
     },
@@ -1077,26 +923,26 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       return status.status || '';
     },
     getOrderStatus: function getOrderStatus() {
-      var _this25 = this;
+      var _this22 = this;
       this.isLoading = true;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/order_statuses').then(function (response) {
-        _this25.isLoading = false;
+        _this22.isLoading = false;
         var data = response.data;
         var statusesToRemoveIds = [6, 7, 8];
-        _this25.order_status = data.data.filter(function (status) {
+        _this22.order_status = data.data.filter(function (status) {
           return !statusesToRemoveIds.includes(status.id);
         });
       });
     },
     getTextGenKey: function getTextGenKey() {
-      var _this26 = this;
+      var _this23 = this;
       // Get the text generation API key from store settings
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/store_settings').then(function (response) {
         var data = response.data.data;
         if (data.store_settings) {
           data.store_settings.forEach(function (item) {
             if (item.variable === 'text_gen_key') {
-              _this26.textGenKey = item.value;
+              _this23.textGenKey = item.value;
             }
           });
         }
@@ -1151,102 +997,87 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       return true;
     },
     getProduct: function getProduct() {
-      var _this27 = this;
+      var _this24 = this;
       this.isLoading = true;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/products/edit/' + this.id).then(function (response) {
         var data = response.data;
         if (data.status === 1) {
-          var _this27$record$indica;
-          _this27.record = data.data;
-          _this27.name = _this27.record.name;
-          _this27.slug = _this27.record.slug;
-          _this27.barcode = _this27.record.barcode;
-          if (_this27.clone) {
-            _this27.name = '';
-            _this27.slug = '';
-            _this27.barcode = '';
+          var _this24$record$indica;
+          _this24.record = data.data;
+          _this24.name = _this24.record.name;
+          _this24.slug = _this24.record.slug;
+          _this24.barcode = _this24.record.barcode;
+          if (_this24.clone) {
+            _this24.name = '';
+            _this24.slug = '';
+            _this24.barcode = '';
           }
-          _this27.seller_id = _this27.record.seller_id;
-          _this27.getSellerCategories();
-          _this27.getSeller();
-          _this27.tag_ids = _this27.record.tags.map(function (item) {
-            return item.id;
-          });
-          _this27.tax_id = _this27.record.tax_id;
-          var foundBrand = _this27.brands.find(function (item) {
-            return item.id === _this27.record.brand_id;
+          _this24.seller_id = _this24.record.seller_id;
+          _this24.getSellerCategories();
+          _this24.getSeller();
+          _this24.tax_id = _this24.record.tax_id;
+          var foundBrand = _this24.brands.find(function (item) {
+            return item.id === _this24.record.brand_id;
           });
           // Update brand with translated name after brands are loaded
-          _this27.$nextTick(function () {
-            if (foundBrand && _this27.translatedBrands && _this27.translatedBrands.length > 0) {
-              var translatedBrand = _this27.translatedBrands.find(function (b) {
+          _this24.$nextTick(function () {
+            if (foundBrand && _this24.translatedBrands && _this24.translatedBrands.length > 0) {
+              var translatedBrand = _this24.translatedBrands.find(function (b) {
                 return b.id === foundBrand.id;
               });
               if (translatedBrand) {
-                _this27.brand = _objectSpread(_objectSpread({}, foundBrand), {}, {
+                _this24.brand = _objectSpread(_objectSpread({}, foundBrand), {}, {
                   name: translatedBrand.name,
                   title: translatedBrand.title
                 });
               } else {
-                _this27.brand = foundBrand;
+                _this24.brand = foundBrand;
               }
             } else {
-              _this27.brand = foundBrand;
+              _this24.brand = foundBrand;
             }
           });
-          _this27.type = _this27.record.type;
-          _this27.category_id = _this27.record.category_id;
-          _this27.product_type = (_this27$record$indica = _this27.record.indicator) !== null && _this27$record$indica !== void 0 ? _this27$record$indica : "";
+          _this24.type = _this24.record.type;
+          _this24.category_id = _this24.record.category_id;
+          _this24.product_type = (_this24$record$indica = _this24.record.indicator) !== null && _this24$record$indica !== void 0 ? _this24$record$indica : "";
 
           // Load translations
-          _this27.loadTranslations();
-          _this27.made_in = _this27.countries.find(function (item) {
-            return item.id == _this27.record.made_in;
+          _this24.loadTranslations();
+          _this24.made_in = _this24.countries.find(function (item) {
+            return item.id == _this24.record.made_in;
           });
-          _this27.tax_included_in_price = _this27.record.tax_included_in_price;
-          _this27.return_status = _this27.record.return_status;
-          _this27.return_days = _this27.record.return_days;
-          _this27.cancelable_status = _this27.record.cancelable_status;
-          _this27.till_status = _this27.record.till_status;
-          _this27.cod_allowed_status = _this27.record.cod_allowed;
-          _this27.max_allowed_quantity = _this27.record.total_allowed_quantity;
-          _this27.description = _this27.record.description;
-          _this27.is_approved = _this27.record.is_approved;
-          _this27.status = _this27.record.status;
-          _this27.is_unlimited_stock = _this27.record.is_unlimited_stock;
-          _this27.main_image_path = _this27.$storageUrl + _this27.record.image;
-          _this27.other_images = _this27.record.images;
-          _this27.image = _this27.record.image;
-          _this27.meta_title = _this27.record.meta_title;
-          _this27.meta_keywords = _this27.record.meta_keywords;
-          _this27.schema_markup = _this27.record.schema_markup;
-          _this27.meta_description = _this27.record.meta_description;
+          _this24.tax_included_in_price = _this24.record.tax_included_in_price;
+          _this24.return_status = _this24.record.return_status;
+          _this24.return_days = _this24.record.return_days;
+          _this24.cancelable_status = _this24.record.cancelable_status;
+          _this24.till_status = _this24.record.till_status;
+          _this24.cod_allowed_status = _this24.record.cod_allowed;
+          _this24.max_allowed_quantity = _this24.record.total_allowed_quantity;
+          _this24.description = _this24.record.description;
+          _this24.is_approved = _this24.record.is_approved;
+          _this24.status = _this24.record.status;
+          _this24.is_unlimited_stock = _this24.record.is_unlimited_stock;
+          _this24.main_image_path = _this24.$storageUrl + _this24.record.image;
+          _this24.other_images = _this24.record.images;
+          _this24.image = _this24.record.image;
+          _this24.meta_title = _this24.record.meta_title;
+          _this24.meta_keywords = _this24.record.meta_keywords;
+          _this24.schema_markup = _this24.record.schema_markup;
+          _this24.meta_description = _this24.record.meta_description;
 
           // Set default language translation from main record
-          if (_this27.defaultLanguageId && _this27.translations[_this27.defaultLanguageId]) {
-            _this27.translations[_this27.defaultLanguageId].name = _this27.name;
-            // Convert tag_ids to tag names for translation
-            if (Array.isArray(_this27.tag_ids) && _this27.tag_ids.length > 0) {
-              var tagNames = _this27.tag_ids.map(function (tagId) {
-                var tag = _this27.tags.find(function (t) {
-                  return t.id == tagId;
-                });
-                return tag ? tag.name : tagId;
-              });
-              _this27.translations[_this27.defaultLanguageId].tags = tagNames.join(',');
-            } else {
-              _this27.translations[_this27.defaultLanguageId].tags = '';
-            }
-            _this27.translations[_this27.defaultLanguageId].description = _this27.description;
-            _this27.translations[_this27.defaultLanguageId].meta_title = _this27.meta_title;
-            _this27.translations[_this27.defaultLanguageId].meta_keywords = _this27.meta_keywords;
-            _this27.translations[_this27.defaultLanguageId].schema_markup = _this27.schema_markup;
-            _this27.translations[_this27.defaultLanguageId].meta_description = _this27.meta_description;
+          if (_this24.defaultLanguageId && _this24.translations[_this24.defaultLanguageId]) {
+            _this24.translations[_this24.defaultLanguageId].name = _this24.name;
+            _this24.translations[_this24.defaultLanguageId].description = _this24.description;
+            _this24.translations[_this24.defaultLanguageId].meta_title = _this24.meta_title;
+            _this24.translations[_this24.defaultLanguageId].meta_keywords = _this24.meta_keywords;
+            _this24.translations[_this24.defaultLanguageId].schema_markup = _this24.schema_markup;
+            _this24.translations[_this24.defaultLanguageId].meta_description = _this24.meta_description;
           }
-          var vm = _this27;
-          if (_this27.type == 'packet') {
-            _this27.inputs = [];
-            _this27.record.variants.forEach(function (item) {
+          var vm = _this24;
+          if (_this24.type == 'packet') {
+            _this24.inputs = [];
+            _this24.record.variants.forEach(function (item) {
               var variantData = {
                 'id': item.id ? item.id : "",
                 'packet_measurement': item.measurement,
@@ -1261,12 +1092,12 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               vm.inputs.push(variantData);
             });
           }
-          if (_this27.type == 'loose') {
+          if (_this24.type == 'loose') {
             var loose_stock = 0;
             var loose_stock_unit_id = 0;
             var status = 0;
-            _this27.inputs = [];
-            _this27.record.variants.forEach(function (item) {
+            _this24.inputs = [];
+            _this24.record.variants.forEach(function (item) {
               var _item$custom_title;
               var variantData = {
                 'id': item.id ? item.id : "",
@@ -1282,28 +1113,28 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               loose_stock_unit_id = item.stock_unit_id;
               status = item.status;
             });
-            _this27.loose_stock = loose_stock;
-            _this27.loose_stock_unit_id = loose_stock_unit_id;
-            _this27.loose_purchase_price = _this27.record.variants[0] ? _this27.record.variants[0].purchase_price : 0;
-            _this27.status = status;
+            _this24.loose_stock = loose_stock;
+            _this24.loose_stock_unit_id = loose_stock_unit_id;
+            _this24.loose_purchase_price = _this24.record.variants[0] ? _this24.record.variants[0].purchase_price : 0;
+            _this24.status = status;
           }
         } else {
-          _this27.showError(data.message);
+          _this24.showError(data.message);
           setTimeout(function () {
-            _this27.$router.back();
+            _this24.$router.back();
           }, 1000);
         }
       })["catch"](function (error) {
-        _this27.isLoading = false;
+        _this24.isLoading = false;
         if (error.message) {
-          _this27.showError(error.message);
+          _this24.showError(error.message);
         } else {
-          _this27.showError("Something went wrong!");
+          _this24.showError("Something went wrong!");
         }
       });
     },
     saveRecord: function saveRecord() {
-      var _this28 = this;
+      var _this25 = this;
       // Validate default language
       if (!this.validateDefaultLanguage()) {
         return;
@@ -1339,42 +1170,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       // Use default language values for main table
       formData.append('name', defaultTranslation.name || '');
       formData.append('slug', this.slug);
-      formData.append('seller_id', this.seller_id);
-      // Convert tag_ids array to comma-separated string for backend relationship
-      var tagIdsString = Array.isArray(this.tag_ids) ? this.tag_ids.join(',') : this.tag_ids || '';
-      formData.append('tag_ids', tagIdsString);
-      // Convert tag_ids to tag names for main products table tags column
-      var tagsString = '';
-      if (Array.isArray(this.tag_ids) && this.tag_ids.length > 0) {
-        var tagNames = this.tag_ids.map(function (tagId) {
-          // If it's a number, find the tag name from tags array
-          if (typeof tagId === 'number' || typeof tagId === 'string' && !isNaN(tagId)) {
-            var tag = _this28.tags.find(function (t) {
-              return t.id == tagId;
-            });
-            return tag ? tag.name : tagId;
-          }
-          // If it's already a string (new tag), use it as is
-          return tagId;
-        });
-        tagsString = tagNames.join(',');
-      } else if (this.tag_ids) {
-        // Handle string case
-        var tagIdsArray = String(this.tag_ids).split(',').map(function (t) {
-          return t.trim();
-        });
-        var _tagNames = tagIdsArray.map(function (tagId) {
-          if (!isNaN(tagId)) {
-            var tag = _this28.tags.find(function (t) {
-              return t.id == tagId;
-            });
-            return tag ? tag.name : tagId;
-          }
-          return tagId;
-        });
-        tagsString = _tagNames.join(',');
-      }
-      formData.append('tags', tagsString);
+      formData.append('seller_id', this.seller_id || this.getDefaultSellerId());
       formData.append('tax_id', this.tax_id);
       formData.append('brand_id', this.brand ? this.brand.id : 0);
       formData.append('description', defaultTranslation.description || '');
@@ -1390,7 +1186,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       if (this.type === 'packet') {
         for (var _i = 0; _i < this.inputs.length; _i++) {
           formData.append('variant_id[]', this.inputs[_i].id ? this.inputs[_i].id : "");
-          formData.append('packet_measurement[]', this.inputs[_i].packet_measurement);
+          formData.append('packet_measurement[]', this.inputs[_i].packet_measurement || 1);
           formData.append('packet_price[]', this.inputs[_i].packet_price != undefined ? this.inputs[_i].packet_price : 0);
           formData.append('packet_purchase_price[]', this.inputs[_i].packet_purchase_price != undefined ? this.inputs[_i].packet_purchase_price : 0);
           formData.append('discounted_price[]', this.inputs[_i].discounted_price != undefined ? this.inputs[_i].discounted_price : 0);
@@ -1414,7 +1210,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       if (this.type === 'loose') {
         for (var _i2 = 0; _i2 < this.inputs.length; _i2++) {
           formData.append('variant_id[]', this.inputs[_i2].id ? this.inputs[_i2].id : "");
-          formData.append('loose_measurement[]', this.inputs[_i2].loose_measurement);
+          formData.append('loose_measurement[]', this.inputs[_i2].loose_measurement || 1);
           formData.append('loose_custom_title[]', this.inputs[_i2].loose_custom_title);
           formData.append('loose_price[]', this.inputs[_i2].loose_price != undefined ? this.inputs[_i2].loose_price : 0);
           formData.append('loose_discounted_price[]', this.inputs[_i2].loose_discounted_price != undefined ? this.inputs[_i2].loose_discounted_price : 0);
@@ -1438,6 +1234,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       formData.append('loose_stock', this.loose_stock != undefined ? this.loose_stock : 0);
       formData.append('loose_stock_unit_id', this.loose_stock_unit_id != undefined ? this.loose_stock_unit_id : 0);
       formData.append('status', this.status != undefined ? this.status : 0);
+      this.category_id = this.selectedProductCategoryId;
       formData.append('category_id', this.category_id);
       formData.append('product_type', this.product_type);
       formData.append('made_in', this.made_in ? this.made_in.id : 0);
@@ -1459,62 +1256,13 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         formData.append('other_images[]', _file3);
       }
 
-      // Sync tags for all languages before saving (ensure translation.tags is up to date)
-      this.languages.forEach(function (language) {
-        if (_this28.translations[language.id]) {
-          _this28.handleTagChange(language.id);
-        }
-      });
-
       // Prepare translations array
       var allTranslations = [];
       this.languages.forEach(function (language) {
-        var translation = _this28.translations[language.id];
-        // Convert tag IDs to tag names for translation (for all languages)
-        var tagsValue = translation.tags || '';
-
-        // Get tag IDs for this language
-        var tagIds = [];
-        if (language.is_default) {
-          tagIds = Array.isArray(_this28.tag_ids) ? _this28.tag_ids : _this28.tag_ids ? String(_this28.tag_ids).split(',').map(function (t) {
-            return t.trim();
-          }).filter(function (t) {
-            return t;
-          }) : [];
-        } else {
-          var langTagIds = _this28.tagIdsByLanguage[language.id];
-          if (langTagIds) {
-            tagIds = Array.isArray(langTagIds) ? langTagIds : String(langTagIds).split(',').map(function (t) {
-              return t.trim();
-            }).filter(function (t) {
-              return t;
-            });
-          }
-        }
-
-        // Convert tag IDs to tag names (only if we have tag IDs)
-        // If tagIds is empty but translation.tags already has a value, use that (it was already converted by handleTagChange)
-        if (tagIds.length > 0) {
-          var _tagNames2 = tagIds.map(function (tagId) {
-            // If it's a number, find the tag name from tags array
-            if (typeof tagId === 'number' || typeof tagId === 'string' && !isNaN(tagId)) {
-              var tag = _this28.tags.find(function (t) {
-                return t.id == tagId;
-              });
-              return tag ? tag.name : tagId;
-            }
-            // If it's already a string (new tag), use it as is
-            return tagId;
-          });
-          tagsValue = _tagNames2.join(',');
-        } else if (!tagsValue && translation.tags) {
-          // If no tagIds but translation.tags exists, use it (already converted)
-          tagsValue = translation.tags;
-        }
+        var translation = _this25.translations[language.id];
         allTranslations.push({
           language_id: language.id,
           name: translation.name || '',
-          tags: tagsValue,
           description: translation.description || '',
           meta_title: translation.meta_title || '',
           meta_keywords: translation.meta_keywords || '',
@@ -1536,9 +1284,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }).then(function (res) {
         var data = res.data;
         if (data.status === 1) {
-          _this28.skipCache = true;
+          _this25.skipCache = true;
           localStorage.removeItem('product_form_cache');
-          _this28.showMessage("success", data.message);
+          _this25.showMessage("success", data.message);
           setTimeout(function () {
             var _vm$loggedUser;
             vm.$swal.close();
@@ -1559,11 +1307,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
       })["catch"](function (error) {
         vm.isLoading = false;
-        _this28.showError("Something went wrong!");
+        _this25.showError("Something went wrong!");
       });
     },
     deleteImage: function deleteImage(index, id, productImage) {
-      var _this29 = this;
+      var _this26 = this;
       var key = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "";
       this.$swal.fire({
         title: "Are you Sure?",
@@ -1576,20 +1324,84 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         cancelButtonColor: '#d33'
       }).then(function (result) {
         if (result.value) {
-          _this29.deleteImageIds.push(id);
+          _this26.deleteImageIds.push(id);
           if (productImage) {
-            _this29.other_images.splice(index, 1);
+            _this26.other_images.splice(index, 1);
           } else {
-            if (_this29.type === 'packet') {
-              _this29.inputs[key].images.splice(index, 1);
+            if (_this26.type === 'packet') {
+              _this26.inputs[key].images.splice(index, 1);
             } else {
-              _this29.inputs[key].loose_images.splice(index, 1);
+              _this26.inputs[key].loose_images.splice(index, 1);
             }
           }
         }
       });
     },
     changeUnits: function changeUnits() {},
+    setCategorySelectionFromSavedId: function setCategorySelectionFromSavedId(categoryId) {
+      var selectedId = Number(categoryId);
+      if (!selectedId || this.productCategoryList.length === 0) return;
+      var categoryMap = this.productCategoryList.reduce(function (map, category) {
+        map[Number(category.id)] = category;
+        return map;
+      }, {});
+      var selected = categoryMap[selectedId];
+      if (!selected) return;
+      var parent = categoryMap[Number(selected.parent_id)];
+      var grandParent = parent ? categoryMap[Number(parent.parent_id)] : null;
+      if (Number(selected.parent_id) === 0) {
+        this.product_category_id = selected.id;
+        this.product_subcategory_id = '';
+        this.product_sub_subcategory_id = '';
+      } else if (parent && Number(parent.parent_id) === 0) {
+        this.product_category_id = parent.id;
+        this.product_subcategory_id = selected.id;
+        this.product_sub_subcategory_id = '';
+      } else if (parent && grandParent) {
+        this.product_category_id = grandParent.id;
+        this.product_subcategory_id = parent.id;
+        this.product_sub_subcategory_id = selected.id;
+      }
+    },
+    getSellingPrice: function getSellingPrice(price, discountedPrice) {
+      var regularPrice = this.toNumber(price);
+      var salePrice = this.toNumber(discountedPrice);
+      return salePrice > 0 ? salePrice : regularPrice;
+    },
+    toNumber: function toNumber(value) {
+      var number = parseFloat(value);
+      return Number.isFinite(number) ? number : 0;
+    },
+    formatMoney: function formatMoney(value) {
+      var amount = this.toNumber(value);
+      return amount.toFixed(2);
+    },
+    getMarginPercent: function getMarginPercent(sellingPrice, purchasePrice) {
+      var sale = this.toNumber(sellingPrice);
+      var cost = this.toNumber(purchasePrice);
+      if (cost <= 0) return sale > 0 ? '100.00' : '0.00';
+      return ((sale - cost) / cost * 100).toFixed(2);
+    },
+    getPacketProfit: function getPacketProfit(input) {
+      var sellingPrice = this.getSellingPrice(input.packet_price, input.discounted_price);
+      var purchasePrice = this.toNumber(input.packet_purchase_price);
+      return this.formatMoney(sellingPrice - purchasePrice);
+    },
+    getPacketMargin: function getPacketMargin(input) {
+      var sellingPrice = this.getSellingPrice(input.packet_price, input.discounted_price);
+      return this.getMarginPercent(sellingPrice, input.packet_purchase_price);
+    },
+    getLooseProfit: function getLooseProfit() {
+      var firstVariant = this.inputs[0] || {};
+      var sellingPrice = this.getSellingPrice(firstVariant.loose_price, firstVariant.loose_discounted_price);
+      var purchasePrice = this.toNumber(this.loose_purchase_price);
+      return this.formatMoney(sellingPrice - purchasePrice);
+    },
+    getLooseMargin: function getLooseMargin() {
+      var firstVariant = this.inputs[0] || {};
+      var sellingPrice = this.getSellingPrice(firstVariant.loose_price, firstVariant.loose_discounted_price);
+      return this.getMarginPercent(sellingPrice, this.loose_purchase_price);
+    },
     saveCache: function saveCache() {
       if (this.id || this.clone || this.skipCache) return;
       try {
@@ -1597,7 +1409,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           name: this.name,
           slug: this.slug,
           seller_id: this.seller_id,
-          tag_ids: this.tag_ids,
           tax_id: this.tax_id,
           brand: this.brand ? {
             id: this.brand.id
@@ -1611,6 +1422,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           schema_markup: this.schema_markup,
           meta_description: this.meta_description,
           category_id: this.category_id,
+          product_category_id: this.product_category_id,
+          product_subcategory_id: this.product_subcategory_id,
+          product_sub_subcategory_id: this.product_sub_subcategory_id,
           product_type: this.product_type,
           made_in: this.made_in ? {
             id: this.made_in.id
@@ -1629,7 +1443,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           inputs: JSON.parse(JSON.stringify(this.inputs)),
           useCustomPrompt: this.useCustomPrompt,
           customPrompt: this.customPrompt,
-          tagIdsByLanguage: JSON.parse(JSON.stringify(this.tagIdsByLanguage)),
           translations: JSON.parse(JSON.stringify(this.translations)),
           timestamp: Date.now()
         };
@@ -1637,7 +1450,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       } catch (e) {}
     },
     restoreCache: function restoreCache() {
-      var _this30 = this;
+      var _this27 = this;
       try {
         var cached = localStorage.getItem('product_form_cache');
         if (!cached) return;
@@ -1648,8 +1461,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         this.cachedData = data;
         Object.keys(data).forEach(function (key) {
-          if (key === 'timestamp' || key === 'brand' || key === 'made_in' || key === 'translations' || key === 'tagIdsByLanguage') return;
-          if (_this30.hasOwnProperty(key)) _this30[key] = data[key] !== undefined ? data[key] : _this30[key];
+          if (key === 'timestamp' || key === 'brand' || key === 'made_in' || key === 'translations') return;
+          if (_this27.hasOwnProperty(key)) _this27[key] = data[key] !== undefined ? data[key] : _this27[key];
         });
 
         // Restore per-language translation data.
@@ -1659,14 +1472,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         if (data.translations && this.languages && this.languages.length > 0) {
           this.languages.forEach(function (language) {
             if (data.translations[language.id]) {
-              _this30.$set(_this30.translations, language.id, _objectSpread(_objectSpread({}, _this30.translations[language.id]), data.translations[language.id]));
+              _this27.$set(_this27.translations, language.id, _objectSpread(_objectSpread({}, _this27.translations[language.id]), data.translations[language.id]));
             }
-          });
-        }
-        // Restore per-language tag ID selections.
-        if (data.tagIdsByLanguage && this.languages && this.languages.length > 0) {
-          Object.keys(data.tagIdsByLanguage).forEach(function (languageId) {
-            _this30.$set(_this30.tagIdsByLanguage, languageId, data.tagIdsByLanguage[languageId]);
           });
         }
         if (data.brand && this.brands && this.brands.length) {
@@ -1675,20 +1482,20 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           }) || null;
           // Update brand with translated name
           this.$nextTick(function () {
-            if (foundBrand && _this30.translatedBrands && _this30.translatedBrands.length > 0) {
-              var translatedBrand = _this30.translatedBrands.find(function (b) {
+            if (foundBrand && _this27.translatedBrands && _this27.translatedBrands.length > 0) {
+              var translatedBrand = _this27.translatedBrands.find(function (b) {
                 return b.id === foundBrand.id;
               });
               if (translatedBrand) {
-                _this30.brand = _objectSpread(_objectSpread({}, foundBrand), {}, {
+                _this27.brand = _objectSpread(_objectSpread({}, foundBrand), {}, {
                   name: translatedBrand.name,
                   title: translatedBrand.title
                 });
               } else {
-                _this30.brand = foundBrand;
+                _this27.brand = foundBrand;
               }
             } else {
-              _this30.brand = foundBrand;
+              _this27.brand = foundBrand;
             }
           });
         }
@@ -1699,8 +1506,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         if (this.seller_id) {
           this.$nextTick(function () {
-            _this30.getSellerCategories();
-            _this30.getSeller();
+            _this27.getSellerCategories();
+            _this27.getSeller();
           });
         }
       } catch (e) {
@@ -1713,7 +1520,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         name: '',
         slug: '',
         seller_id: 0,
-        tag_ids: '',
         tax_id: 0,
         brand: null,
         description: '',
@@ -1725,6 +1531,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         schema_markup: '',
         meta_description: '',
         category_id: '',
+        product_category_id: '',
+        product_subcategory_id: '',
+        product_sub_subcategory_id: '',
         product_type: '',
         made_in: null,
         return_status: 0,
@@ -1753,29 +1562,27 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         deleteImageIds: [],
         useCustomPrompt: false,
         customPrompt: '',
-        tagIdsByLanguage: {},
         activeLanguageTab: 0
       });
-      this.tag_ids = [];
       this.initializeTranslations();
       localStorage.removeItem('product_form_cache');
     },
     debouncedSave: function debouncedSave() {
-      var _this31 = this;
+      var _this28 = this;
       if (this.cacheTimer) clearTimeout(this.cacheTimer);
       this.cacheTimer = setTimeout(function () {
-        return _this31.saveCache();
+        return _this28.saveCache();
       }, 500);
     }
   },
   watch: {
     // Watch currentLanguageId to update selected brand name when language changes
     currentLanguageId: function currentLanguageId(newVal, oldVal) {
-      var _this32 = this;
+      var _this29 = this;
       if (newVal && this.brand && this.translatedBrands && this.translatedBrands.length > 0) {
         // Find the translated brand from translatedBrands
         var translatedBrand = this.translatedBrands.find(function (b) {
-          return b.id === _this32.brand.id;
+          return b.id === _this29.brand.id;
         });
         if (translatedBrand) {
           // Update the brand object with translated name
@@ -1789,11 +1596,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     // Watch translatedBrands to update selected brand when brands are loaded or language changes
     translatedBrands: {
       handler: function handler(newVal) {
-        var _this33 = this;
+        var _this30 = this;
         if (newVal && newVal.length > 0 && this.brand && this.brand.id) {
           // Find the translated brand from translatedBrands
           var translatedBrand = newVal.find(function (b) {
-            return b.id === _this33.brand.id;
+            return b.id === _this30.brand.id;
           });
           if (translatedBrand) {
             // Update the brand object with translated name
@@ -1806,17 +1613,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       },
       deep: true
     },
-    // Watch activeLanguageTab to ensure Select2 updates when switching tabs
-    activeLanguageTab: function activeLanguageTab(newTab, oldTab) {
-      var _this34 = this;
-      // Force Select2 to update when switching language tabs
-      this.$nextTick(function () {
-        // Trigger conversion again to ensure tagIdsByLanguage is set
-        if (_this34.tags && _this34.tags.length > 0 && _this34.languages.length > 0) {
-          _this34.convertTagNamesToIds();
-        }
-      });
-    },
     // Auto-save form data to cache (debounced)
     name: function name() {
       if (!this.id && !this.clone) this.debouncedSave();
@@ -1825,9 +1621,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       if (!this.id && !this.clone) this.debouncedSave();
     },
     seller_id: function seller_id() {
-      if (!this.id && !this.clone) this.debouncedSave();
-    },
-    tag_ids: function tag_ids() {
+      if (this.seller_id) {
+        this.getSellerCategories();
+      }
       if (!this.id && !this.clone) this.debouncedSave();
     },
     tax_id: function tax_id() {
@@ -1864,6 +1660,30 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       if (!this.id && !this.clone) this.debouncedSave();
     },
     category_id: function category_id() {
+      if (!this.id && !this.clone) this.debouncedSave();
+    },
+    product_category_id: function product_category_id() {
+      var _this31 = this;
+      var hasSubcategory = this.subCategoryOptions.some(function (category) {
+        return Number(category.id) === Number(_this31.product_subcategory_id);
+      });
+      if (!hasSubcategory) {
+        this.product_subcategory_id = '';
+        this.product_sub_subcategory_id = '';
+      }
+      if (!this.id && !this.clone) this.debouncedSave();
+    },
+    product_subcategory_id: function product_subcategory_id() {
+      var _this32 = this;
+      var hasSubSubcategory = this.subSubCategoryOptions.some(function (category) {
+        return Number(category.id) === Number(_this32.product_sub_subcategory_id);
+      });
+      if (!hasSubSubcategory) {
+        this.product_sub_subcategory_id = '';
+      }
+      if (!this.id && !this.clone) this.debouncedSave();
+    },
+    product_sub_subcategory_id: function product_sub_subcategory_id() {
       if (!this.id && !this.clone) this.debouncedSave();
     },
     product_type: function product_type() {
@@ -1929,12 +1749,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       if (!this.id && !this.clone) this.debouncedSave();
     },
     translations: {
-      handler: function handler() {
-        if (!this.id && !this.clone) this.debouncedSave();
-      },
-      deep: true
-    },
-    tagIdsByLanguage: {
       handler: function handler() {
         if (!this.id && !this.clone) this.debouncedSave();
       },
@@ -2141,65 +1955,7 @@ var render = function render() {
       staticClass: "text-success mt-2 font-weight-bold"
     }, [_vm._v("\n                                                " + _vm._s(_vm.translateSuccessMessage) + "\n                                            ")]) : _vm._e()], 1) : _vm._e(), _vm._v(" "), _vm.translations[language.id] ? _c("div", [_c("div", {
       staticClass: "row"
-    }, [_c("div", {
-      staticClass: "col-md-6"
-    }, [_c("div", {
-      staticClass: "form-group mb-3"
-    }, [_c("label", [_vm._v(_vm._s(_vm.__("product_name")) + " "), language.is_default ? _c("i", {
-      staticClass: "text-danger"
-    }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
-      directives: [{
-        name: "model",
-        rawName: "v-model",
-        value: _vm.translations[language.id].name,
-        expression: "translations[language.id].name"
-      }],
-      staticClass: "form-control",
-      attrs: {
-        type: "text",
-        placeholder: _vm.__("enter_product_name"),
-        required: language.is_default ? true : undefined
-      },
-      domProps: {
-        value: _vm.translations[language.id].name
-      },
-      on: {
-        input: [function ($event) {
-          if ($event.target.composing) return;
-          _vm.$set(_vm.translations[language.id], "name", $event.target.value);
-        }, function ($event) {
-          return _vm.handleDefaultLanguageInput("name", language);
-        }]
-      }
-    })])]), _vm._v(" "), language.is_default ? [_c("div", {
-      staticClass: "col-md-6"
-    }, [_c("div", {
-      staticClass: "form-group mb-3"
-    }, [_c("label", [_vm._v(_vm._s(_vm.__("slug")) + " "), _c("i", {
-      staticClass: "text-danger"
-    }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
-      directives: [{
-        name: "model",
-        rawName: "v-model",
-        value: _vm.slug,
-        expression: "slug"
-      }],
-      staticClass: "form-control",
-      attrs: {
-        type: "text",
-        placeholder: _vm.__("enter_product_slug"),
-        readonly: ""
-      },
-      domProps: {
-        value: _vm.slug
-      },
-      on: {
-        input: function input($event) {
-          if ($event.target.composing) return;
-          _vm.slug = $event.target.value;
-        }
-      }
-    })])]), _vm._v(" "), _c("div", {
+    }, [language.is_default ? [_c("div", {
       staticClass: "col-md-6"
     }, [_c("div", {
       staticClass: "form-group mb-3"
@@ -2238,6 +1994,62 @@ var render = function render() {
         color: "green"
       }
     }, [_vm._v("Barcode is valid!\n                                                            ")]) : _vm._e()])]), _vm._v(" "), _c("div", {
+      staticClass: "col-md-6"
+    }, [_c("div", {
+      staticClass: "form-group mb-3"
+    }, [_c("label", [_vm._v(_vm._s(_vm.__("product_name")) + " "), language.is_default ? _c("i", {
+      staticClass: "text-danger"
+    }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: _vm.translations[language.id].name,
+        expression: "translations[language.id].name"
+      }],
+      staticClass: "form-control",
+      attrs: {
+        type: "text",
+        placeholder: _vm.__("enter_product_name"),
+        required: language.is_default ? true : undefined
+      },
+      domProps: {
+        value: _vm.translations[language.id].name
+      },
+      on: {
+        input: [function ($event) {
+          if ($event.target.composing) return;
+          _vm.$set(_vm.translations[language.id], "name", $event.target.value);
+        }, function ($event) {
+          return _vm.handleDefaultLanguageInput("name", language);
+        }]
+      }
+    })])]), _vm._v(" "), _c("div", {
+      staticClass: "col-md-6"
+    }, [_c("div", {
+      staticClass: "form-group mb-3"
+    }, [_c("label", [_vm._v(_vm._s(_vm.__("slug")))]), _vm._v(" "), _c("input", {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: _vm.slug,
+        expression: "slug"
+      }],
+      staticClass: "form-control",
+      attrs: {
+        type: "text",
+        placeholder: _vm.__("enter_product_slug"),
+        readonly: ""
+      },
+      domProps: {
+        value: _vm.slug
+      },
+      on: {
+        input: function input($event) {
+          if ($event.target.composing) return;
+          _vm.slug = $event.target.value;
+        }
+      }
+    })])]), _vm._v(" "), _c("div", {
       staticClass: "col-md-6"
     }, [_c("div", {
       staticClass: "form-group mb-3"
@@ -2400,7 +2212,7 @@ var render = function render() {
       }],
       staticClass: "form-control",
       attrs: {
-        rows: "3",
+        rows: "2",
         placeholder: "e.g. Write a fun and engaging description focusing on features and benefits"
       },
       domProps: {
@@ -2617,179 +2429,7 @@ var render = function render() {
     attrs: {
       label: "Loading languages..."
     }
-  })], 1) : _vm._e()])]), _vm._v(" "), _c("div", {
-    staticClass: "card"
-  }, [_c("div", {
-    staticClass: "card-header"
-  }, [_c("h4", [_vm._v(_vm._s(_vm.__("seo_settings")))])]), _vm._v(" "), _c("div", {
-    staticClass: "card-body"
-  }, [_vm.languages.length > 0 ? _c("div", {
-    staticClass: "col-md-12 mb-3"
-  }, [_c("b-tabs", {
-    attrs: {
-      "content-class": "mt-3"
-    },
-    model: {
-      value: _vm.activeLanguageTab,
-      callback: function callback($$v) {
-        _vm.activeLanguageTab = $$v;
-      },
-      expression: "activeLanguageTab"
-    }
-  }, _vm._l(_vm.languages, function (language) {
-    return _c("b-tab", {
-      key: language.id,
-      attrs: {
-        title: language.name,
-        lazy: ""
-      },
-      scopedSlots: _vm._u([{
-        key: "title",
-        fn: function fn() {
-          return [_c("span", {
-            "class": {
-              "text-primary font-weight-bold": language.is_default
-            }
-          }, [_vm._v("\n                                                " + _vm._s(language.name) + "\n                                            ")])];
-        },
-        proxy: true
-      }], null, true)
-    }, [_vm._v(" "), _vm.translations[language.id] ? _c("div", [_c("div", {
-      staticClass: "row"
-    }, [_c("div", {
-      staticClass: "col-md-6"
-    }, [_c("div", {
-      staticClass: "form-group mb-3"
-    }, [_c("label", [_vm._v(_vm._s(_vm.__("meta_title")) + " ")]), _vm._v(" "), _c("input", {
-      directives: [{
-        name: "model",
-        rawName: "v-model",
-        value: _vm.translations[language.id].meta_title,
-        expression: "translations[language.id].meta_title"
-      }],
-      staticClass: "form-control",
-      attrs: {
-        type: "text",
-        placeholder: _vm.__("enter_meta_title")
-      },
-      domProps: {
-        value: _vm.translations[language.id].meta_title
-      },
-      on: {
-        input: [function ($event) {
-          if ($event.target.composing) return;
-          _vm.$set(_vm.translations[language.id], "meta_title", $event.target.value);
-        }, function ($event) {
-          return _vm.handleDefaultLanguageInput("meta_title", language);
-        }]
-      }
-    })]), _vm._v(" "), _c("div", {
-      staticClass: "form-group mb-3"
-    }, [_c("label", [_vm._v(_vm._s(_vm.__("meta_keywords")) + " ")]), _vm._v(" "), _c("input", {
-      directives: [{
-        name: "model",
-        rawName: "v-model",
-        value: _vm.translations[language.id].meta_keywords,
-        expression: "translations[language.id].meta_keywords"
-      }],
-      staticClass: "form-control",
-      attrs: {
-        type: "text",
-        placeholder: _vm.__("enter_meta_keywords")
-      },
-      domProps: {
-        value: _vm.translations[language.id].meta_keywords
-      },
-      on: {
-        input: [function ($event) {
-          if ($event.target.composing) return;
-          _vm.$set(_vm.translations[language.id], "meta_keywords", $event.target.value);
-        }, function ($event) {
-          return _vm.handleDefaultLanguageInput("meta_keywords", language);
-        }]
-      }
-    })]), _vm._v(" "), _c("div", {
-      staticClass: "form-group mb-3"
-    }, [_c("label", [_vm._v(_vm._s(_vm.__("schema_markup")) + " ")]), _vm._v(" "), _c("input", {
-      directives: [{
-        name: "model",
-        rawName: "v-model",
-        value: _vm.translations[language.id].schema_markup,
-        expression: "translations[language.id].schema_markup"
-      }],
-      staticClass: "form-control",
-      attrs: {
-        type: "text",
-        placeholder: _vm.__("enter_schema_markup")
-      },
-      domProps: {
-        value: _vm.translations[language.id].schema_markup
-      },
-      on: {
-        input: [function ($event) {
-          if ($event.target.composing) return;
-          _vm.$set(_vm.translations[language.id], "schema_markup", $event.target.value);
-        }, function ($event) {
-          return _vm.handleDefaultLanguageInput("schema_markup", language);
-        }]
-      }
-    })])]), _vm._v(" "), _c("div", {
-      staticClass: "col-md-6"
-    }, [_c("div", {
-      staticClass: "form-group mb-3"
-    }, [_c("label", [_vm._v(_vm._s(_vm.__("meta_description")) + " ")]), _vm._v(" "), _c("textarea", {
-      directives: [{
-        name: "model",
-        rawName: "v-model",
-        value: _vm.translations[language.id].meta_description,
-        expression: "translations[language.id].meta_description"
-      }],
-      staticClass: "form-control",
-      attrs: {
-        type: "text",
-        placeholder: _vm.__("enter_meta_description"),
-        rows: "4"
-      },
-      domProps: {
-        value: _vm.translations[language.id].meta_description
-      },
-      on: {
-        input: [function ($event) {
-          if ($event.target.composing) return;
-          _vm.$set(_vm.translations[language.id], "meta_description", $event.target.value);
-        }, function ($event) {
-          return _vm.handleDefaultLanguageInput("meta_description", language);
-        }]
-      }
-    })])])])]) : _vm._e()]);
-  }), 1)], 1) : _vm._e()]), _vm._v(" "), _vm.languages.length > 0 && _vm.languages[_vm.activeLanguageTab] && !_vm.languages[_vm.activeLanguageTab].is_default ? _c("div", {
-    staticClass: "card-footer"
-  }, [_c("b-button", {
-    attrs: {
-      type: "submit",
-      variant: "primary",
-      disabled: _vm.isLoading
-    },
-    on: {
-      keydown: function keydown($event) {
-        if (!$event.type.indexOf("key") && _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")) return null;
-        return _vm.saveRecord.apply(null, arguments);
-      }
-    }
-  }, [_vm._v(" " + _vm._s(_vm.__("save")) + "\n                                "), _vm.isLoading ? _c("b-spinner", {
-    attrs: {
-      small: "",
-      label: "Spinning"
-    }
-  }) : _vm._e()], 1), _vm._v(" "), _c("button", {
-    staticClass: "btn btn-danger",
-    attrs: {
-      type: "button"
-    },
-    on: {
-      click: _vm.clearForm
-    }
-  }, [_vm._v(_vm._s(_vm.__("clear")))])], 1) : _vm._e()]), _vm._v(" "), _vm.languages.length > 0 && _vm.languages[_vm.activeLanguageTab] && _vm.languages[_vm.activeLanguageTab].is_default ? _c("div", {
+  })], 1) : _vm._e()])]), _vm._v(" "), _vm.languages.length > 0 && _vm.languages[_vm.activeLanguageTab] && _vm.languages[_vm.activeLanguageTab].is_default ? _c("div", {
     staticClass: "card"
   }, [_c("div", {
     staticClass: "card-header"
@@ -2824,11 +2464,7 @@ var render = function render() {
     }
   })], 1), _vm._v(" "), _c("div", {
     staticClass: "form-group col-md-6"
-  }, [_c("label", {
-    staticClass: "control-label"
-  }, [_vm._v(_vm._s(_vm.__("available_stock")) + " "), _c("i", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")])]), _c("br"), _vm._v(" "), _c("b-form-radio-group", {
+  }, [_vm._m(0), _c("br"), _vm._v(" "), _c("b-form-radio-group", {
     attrs: {
       options: [{
         text: _vm.__("limited"),
@@ -2860,9 +2496,7 @@ var render = function render() {
       staticClass: "col-md-4"
     }, [_c("div", {
       staticClass: "form-group mb-3"
-    }, [_c("label", [_vm._v(_vm._s(_vm.__("measurement")) + " "), _c("i", {
-      staticClass: "text-danger"
-    }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
+    }, [_c("label", [_vm._v(_vm._s(_vm.__("measurement")))]), _vm._v(" "), _c("input", {
       directives: [{
         name: "model",
         rawName: "v-model",
@@ -2872,8 +2506,8 @@ var render = function render() {
       staticClass: "form-control",
       attrs: {
         type: "number",
-        step: "any",
         min: "0",
+        step: "any",
         placeholder: "0"
       },
       domProps: {
@@ -2958,6 +2592,32 @@ var render = function render() {
       staticClass: "col-md-4"
     }, [_c("div", {
       staticClass: "form-group mb-3"
+    }, [_c("label", [_vm._v("Profit ( " + _vm._s(_vm.$currency) + " )")]), _vm._v(" "), _c("input", {
+      staticClass: "form-control bg-light",
+      attrs: {
+        type: "text",
+        readonly: ""
+      },
+      domProps: {
+        value: _vm.getPacketProfit(_input)
+      }
+    })])]), _vm._v(" "), _c("div", {
+      staticClass: "col-md-4"
+    }, [_c("div", {
+      staticClass: "form-group mb-3"
+    }, [_c("label", [_vm._v("Margin %")]), _vm._v(" "), _c("input", {
+      staticClass: "form-control bg-light",
+      attrs: {
+        type: "text",
+        readonly: ""
+      },
+      domProps: {
+        value: _vm.getPacketMargin(_input)
+      }
+    })])]), _vm._v(" "), _c("div", {
+      staticClass: "col-md-4"
+    }, [_c("div", {
+      staticClass: "form-group mb-3"
     }, [_c("label", [_vm._v(_vm._s(_vm.__("discounted_price")) + " ( " + _vm._s(_vm.$currency) + " )")]), _vm._v(" "), _c("input", {
       directives: [{
         name: "model",
@@ -2989,9 +2649,7 @@ var render = function render() {
       staticClass: "col-md-4"
     }, [_c("div", {
       staticClass: "form-group mb-3"
-    }, [_c("label", [_vm._v(_vm._s(_vm.__("stock")) + " "), _c("i", {
-      staticClass: "text-danger"
-    }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
+    }, [_vm._m(1, true), _vm._v(" "), _c("input", {
       directives: [{
         name: "model",
         rawName: "v-model",
@@ -3119,7 +2777,7 @@ var render = function render() {
         dragover: _vm.$dragoverFile,
         dragleave: _vm.$dragleaveFile
       }
-    }, [_vm._m(0, true), _vm._v(" "), _c("label", [_vm._v(_vm._s(_vm.__("drop_files_here_or_click_to_upload")))])]), _vm._v(" "), _c("span", {
+    }, [_vm._m(2, true), _vm._v(" "), _c("label", [_vm._v(_vm._s(_vm.__("drop_files_here_or_click_to_upload")))])]), _vm._v(" "), _c("span", {
       staticClass: "text text-primary"
     }, [_vm._v(_vm._s(_vm.__("please_choose_square_image_of_larger_than_350px_350px_and_smaller_than_550px_550px")))]), _vm._v(" "), _vm.variantImageerror ? _c("p", {
       staticClass: "error"
@@ -3222,11 +2880,7 @@ var render = function render() {
       staticClass: "col-md-4"
     }, [_c("div", {
       staticClass: "form-group loose_div"
-    }, [_c("label", [_vm._v(_vm._s(_vm.__("measurement")) + " "), _c("i", {
-      staticClass: "text-danger"
-    }, [_vm._v("*")])]), _vm._v(" "), _c("b-input-group", {
-      staticClass: "mb-2"
-    }, [_c("input", {
+    }, [_c("label", [_vm._v(_vm._s(_vm.__("measurement")))]), _vm._v(" "), _c("input", {
       directives: [{
         name: "model",
         rawName: "v-model",
@@ -3249,7 +2903,7 @@ var render = function render() {
           _vm.$set(_input2, "loose_measurement", $event.target.value);
         }
       }
-    })])], 1)]), _vm._v(" "), _c("div", {
+    })])]), _vm._v(" "), _c("div", {
       staticClass: "col-md-4"
     }, [_c("div", {
       staticClass: "form-group mb-3 loose_div"
@@ -3342,7 +2996,7 @@ var render = function render() {
           _vm.$refs["loose_variant_images_" + k][0].click();
         }
       }
-    }, [_vm._m(1, true), _vm._v(" "), _c("label", [_vm._v(_vm._s(_vm.__("drop_files_here_or_click_to_upload")))])]), _vm._v(" "), _c("span", {
+    }, [_vm._m(3, true), _vm._v(" "), _c("label", [_vm._v(_vm._s(_vm.__("drop_files_here_or_click_to_upload")))])]), _vm._v(" "), _c("span", {
       staticClass: "text text-primary"
     }, [_vm._v(_vm._s(_vm.__("please_choose_square_image_of_larger_than_350px_350px_and_smaller_than_550px_550px")))]), _vm._v(" "), _c("div", {
       staticClass: "row"
@@ -3475,11 +3129,35 @@ var render = function render() {
     }
   })])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group mb-3"
+  }, [_c("label", [_vm._v("Profit ( " + _vm._s(_vm.$currency) + " )")]), _vm._v(" "), _c("input", {
+    staticClass: "form-control bg-light",
+    attrs: {
+      type: "text",
+      readonly: ""
+    },
+    domProps: {
+      value: _vm.getLooseProfit()
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group mb-3"
+  }, [_c("label", [_vm._v("Margin %")]), _vm._v(" "), _c("input", {
+    staticClass: "form-control bg-light",
+    attrs: {
+      type: "text",
+      readonly: ""
+    },
+    domProps: {
+      value: _vm.getLooseMargin()
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
   }, [_vm.is_unlimited_stock != 1 ? _c("div", {
     staticClass: "form-group mb-3"
-  }, [_c("label", [_vm._v(_vm._s(_vm.__("stock")) + " "), _c("i", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
+  }, [_vm._m(4), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -3597,15 +3275,12 @@ var render = function render() {
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: _vm.category_id,
-      expression: "category_id"
+      value: _vm.product_category_id,
+      expression: "product_category_id"
     }],
     staticClass: "form-control",
     attrs: {
-      disabled: !_vm.seller_id && !_vm.isSellerRole
-    },
-    domProps: {
-      innerHTML: _vm._s(_vm.categoryOptionsHtml)
+      required: ""
     },
     on: {
       change: function change($event) {
@@ -3615,10 +3290,95 @@ var render = function render() {
           var val = "_value" in o ? o._value : o.value;
           return val;
         });
-        _vm.category_id = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
+        _vm.product_category_id = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
       }
     }
-  })])]), _vm._v(" "), _c("div", {
+  }, [_c("option", {
+    attrs: {
+      value: ""
+    }
+  }, [_vm._v(_vm._s(_vm.__("select_category")))]), _vm._v(" "), _vm._l(_vm.mainCategoryOptions, function (category) {
+    return _c("option", {
+      key: category.id,
+      domProps: {
+        value: category.id
+      }
+    }, [_vm._v(_vm._s(category.name))]);
+  })], 2)])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group mb-3"
+  }, [_c("label", [_vm._v("SubCategory")]), _vm._v(" "), _c("select", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.product_subcategory_id,
+      expression: "product_subcategory_id"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      disabled: !_vm.product_category_id
+    },
+    on: {
+      change: function change($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
+          return o.selected;
+        }).map(function (o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val;
+        });
+        _vm.product_subcategory_id = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
+      }
+    }
+  }, [_c("option", {
+    attrs: {
+      value: ""
+    }
+  }, [_vm._v("Select SubCategory")]), _vm._v(" "), _vm._l(_vm.subCategoryOptions, function (category) {
+    return _c("option", {
+      key: category.id,
+      domProps: {
+        value: category.id
+      }
+    }, [_vm._v(_vm._s(category.name))]);
+  })], 2)])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group mb-3"
+  }, [_c("label", [_vm._v("Sub SubCategory")]), _vm._v(" "), _c("select", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.product_sub_subcategory_id,
+      expression: "product_sub_subcategory_id"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      disabled: !_vm.product_subcategory_id
+    },
+    on: {
+      change: function change($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
+          return o.selected;
+        }).map(function (o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val;
+        });
+        _vm.product_sub_subcategory_id = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
+      }
+    }
+  }, [_c("option", {
+    attrs: {
+      value: ""
+    }
+  }, [_vm._v("Select Sub SubCategory")]), _vm._v(" "), _vm._l(_vm.subSubCategoryOptions, function (category) {
+    return _c("option", {
+      key: category.id,
+      domProps: {
+        value: category.id
+      }
+    }, [_vm._v(_vm._s(category.name))]);
+  })], 2)])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-4"
   }, [_c("div", {
     staticClass: "form-group mb-3"
@@ -3948,7 +3708,152 @@ var render = function render() {
       },
       expression: "cod_allowed_status"
     }
-  })], 1)])])]), _vm._v(" "), _vm.languages.length === 0 || _vm.languages[_vm.activeLanguageTab] && _vm.languages[_vm.activeLanguageTab].is_default ? _c("div", {
+  })], 1)])])])]) : _vm._e(), _vm._v(" "), _c("div", {
+    staticClass: "card"
+  }, [_c("div", {
+    staticClass: "card-header"
+  }, [_c("h4", [_vm._v(_vm._s(_vm.__("seo_settings")))])]), _vm._v(" "), _c("div", {
+    staticClass: "card-body"
+  }, [_vm.languages.length > 0 ? _c("div", {
+    staticClass: "col-md-12 mb-3"
+  }, [_c("b-tabs", {
+    attrs: {
+      "content-class": "mt-3"
+    },
+    model: {
+      value: _vm.activeLanguageTab,
+      callback: function callback($$v) {
+        _vm.activeLanguageTab = $$v;
+      },
+      expression: "activeLanguageTab"
+    }
+  }, _vm._l(_vm.languages, function (language) {
+    return _c("b-tab", {
+      key: language.id,
+      attrs: {
+        title: language.name,
+        lazy: ""
+      },
+      scopedSlots: _vm._u([{
+        key: "title",
+        fn: function fn() {
+          return [_c("span", {
+            "class": {
+              "text-primary font-weight-bold": language.is_default
+            }
+          }, [_vm._v("\n                                                " + _vm._s(language.name) + "\n                                            ")])];
+        },
+        proxy: true
+      }], null, true)
+    }, [_vm._v(" "), _vm.translations[language.id] ? _c("div", [_c("div", {
+      staticClass: "row"
+    }, [_c("div", {
+      staticClass: "col-md-6"
+    }, [_c("div", {
+      staticClass: "form-group mb-3"
+    }, [_c("label", [_vm._v(_vm._s(_vm.__("meta_title")) + " ")]), _vm._v(" "), _c("input", {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: _vm.translations[language.id].meta_title,
+        expression: "translations[language.id].meta_title"
+      }],
+      staticClass: "form-control",
+      attrs: {
+        type: "text",
+        placeholder: _vm.__("enter_meta_title")
+      },
+      domProps: {
+        value: _vm.translations[language.id].meta_title
+      },
+      on: {
+        input: [function ($event) {
+          if ($event.target.composing) return;
+          _vm.$set(_vm.translations[language.id], "meta_title", $event.target.value);
+        }, function ($event) {
+          return _vm.handleDefaultLanguageInput("meta_title", language);
+        }]
+      }
+    })]), _vm._v(" "), _c("div", {
+      staticClass: "form-group mb-3"
+    }, [_c("label", [_vm._v(_vm._s(_vm.__("meta_keywords")) + " ")]), _vm._v(" "), _c("input", {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: _vm.translations[language.id].meta_keywords,
+        expression: "translations[language.id].meta_keywords"
+      }],
+      staticClass: "form-control",
+      attrs: {
+        type: "text",
+        placeholder: _vm.__("enter_meta_keywords")
+      },
+      domProps: {
+        value: _vm.translations[language.id].meta_keywords
+      },
+      on: {
+        input: [function ($event) {
+          if ($event.target.composing) return;
+          _vm.$set(_vm.translations[language.id], "meta_keywords", $event.target.value);
+        }, function ($event) {
+          return _vm.handleDefaultLanguageInput("meta_keywords", language);
+        }]
+      }
+    })]), _vm._v(" "), _c("div", {
+      staticClass: "form-group mb-3"
+    }, [_c("label", [_vm._v(_vm._s(_vm.__("schema_markup")) + " ")]), _vm._v(" "), _c("input", {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: _vm.translations[language.id].schema_markup,
+        expression: "translations[language.id].schema_markup"
+      }],
+      staticClass: "form-control",
+      attrs: {
+        type: "text",
+        placeholder: _vm.__("enter_schema_markup")
+      },
+      domProps: {
+        value: _vm.translations[language.id].schema_markup
+      },
+      on: {
+        input: [function ($event) {
+          if ($event.target.composing) return;
+          _vm.$set(_vm.translations[language.id], "schema_markup", $event.target.value);
+        }, function ($event) {
+          return _vm.handleDefaultLanguageInput("schema_markup", language);
+        }]
+      }
+    })])]), _vm._v(" "), _c("div", {
+      staticClass: "col-md-6"
+    }, [_c("div", {
+      staticClass: "form-group mb-3"
+    }, [_c("label", [_vm._v(_vm._s(_vm.__("meta_description")) + " ")]), _vm._v(" "), _c("textarea", {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: _vm.translations[language.id].meta_description,
+        expression: "translations[language.id].meta_description"
+      }],
+      staticClass: "form-control",
+      attrs: {
+        type: "text",
+        placeholder: _vm.__("enter_meta_description"),
+        rows: "2"
+      },
+      domProps: {
+        value: _vm.translations[language.id].meta_description
+      },
+      on: {
+        input: [function ($event) {
+          if ($event.target.composing) return;
+          _vm.$set(_vm.translations[language.id], "meta_description", $event.target.value);
+        }, function ($event) {
+          return _vm.handleDefaultLanguageInput("meta_description", language);
+        }]
+      }
+    })])])])]) : _vm._e()]);
+  }), 1)], 1) : _vm._e()]), _vm._v(" "), _vm.languages.length > 0 && _vm.languages[_vm.activeLanguageTab] && !_vm.languages[_vm.activeLanguageTab].is_default ? _c("div", {
     staticClass: "card-footer"
   }, [_c("b-button", {
     attrs: {
@@ -3975,9 +3880,50 @@ var render = function render() {
     on: {
       click: _vm.clearForm
     }
-  }, [_vm._v(_vm._s(_vm.__("clear")))])], 1) : _vm._e()]) : _vm._e()])])])])]);
+  }, [_vm._v(_vm._s(_vm.__("clear")))])], 1) : _vm._e(), _vm._v(" "), _vm.languages.length === 0 || _vm.languages[_vm.activeLanguageTab] && _vm.languages[_vm.activeLanguageTab].is_default ? _c("div", {
+    staticClass: "card-footer"
+  }, [_c("b-button", {
+    attrs: {
+      type: "submit",
+      variant: "primary",
+      disabled: _vm.isLoading
+    },
+    on: {
+      keydown: function keydown($event) {
+        if (!$event.type.indexOf("key") && _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")) return null;
+        return _vm.saveRecord.apply(null, arguments);
+      }
+    }
+  }, [_vm._v(" " + _vm._s(_vm.__("save")) + "\n                                "), _vm.isLoading ? _c("b-spinner", {
+    attrs: {
+      small: "",
+      label: "Spinning"
+    }
+  }) : _vm._e()], 1), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-danger",
+    attrs: {
+      type: "button"
+    },
+    on: {
+      click: _vm.clearForm
+    }
+  }, [_vm._v(_vm._s(_vm.__("clear")))])], 1) : _vm._e()])])])])])]);
 };
 var staticRenderFns = [function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("Available Stock "), _c("i", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("label", [_vm._v("Available Stock "), _c("i", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")])]);
+}, function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("label", [_c("i", {
@@ -3989,6 +3935,12 @@ var staticRenderFns = [function () {
   return _c("label", [_c("i", {
     staticClass: "fa fa-cloud-upload-alt fa-2x"
   })]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("label", [_vm._v("Available Stock "), _c("i", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")])]);
 }];
 render._withStripped = true;
 

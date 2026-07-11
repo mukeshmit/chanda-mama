@@ -53,8 +53,8 @@
                                 </div>
                             </template>
 
-                            <template #cell(id)="row">
-                                {{ row.item.id }}
+                            <template #cell(sr_no)="row">
+                                {{ ((currentPage - 1) * perPage) + row.index + 1 }}
                             </template>
 
                             <template #cell(image)="row">
@@ -113,7 +113,7 @@ export default {
     data: function () {
         return {
             fields: [
-                { key: 'id', label: __('id'), class: 'text-center', sortable: true, sortDirection: 'desc' },
+                { key: 'sr_no', label: 'Sr. No.', class: 'text-center' },
                 { key: 'title', label: __('title'), class: 'text-center' },
                 { key: 'percentage', label: __('percentage'), class: 'text-center' },
                 { key: 'status', label: __('status'), class: 'text-center' },

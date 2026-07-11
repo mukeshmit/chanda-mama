@@ -175,8 +175,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return this.validateDefaultLanguage();
     },
     validatePercentage: function validatePercentage() {
-      if (this.percentage < 0.1 || this.percentage > 100) {
-        this.validationError = "Percentage must be between 1 and 100.";
+      if (this.percentage !== null && this.percentage !== '' && (this.percentage < 0 || this.percentage > 100)) {
+        this.validationError = "Percentage must be between 0 and 100.";
       } else {
         this.validationError = null;
       }
@@ -215,7 +215,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 if (taxId) fd.append('id', taxId);
                 fd.append('language_id', lang.id);
                 fd.append('title', _this5.form[lang.id] && _this5.form[lang.id].title || '');
-                fd.append('percentage', _this5.percentage != null ? _this5.percentage : '');
+                fd.append('percentage', _this5.percentage !== null && _this5.percentage !== '' ? _this5.percentage : 0);
                 fd.append('status', _this5.status != null ? _this5.status : 1);
                 url = taxId ? _this5.$apiUrl + '/products/taxes/update' : _this5.$apiUrl + '/products/taxes/save';
                 _context.n = 2;
@@ -291,11 +291,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   data: function data() {
     return {
       fields: [{
-        key: 'id',
-        label: __('id'),
-        "class": 'text-center',
-        sortable: true,
-        sortDirection: 'desc'
+        key: 'sr_no',
+        label: 'Sr. No.',
+        "class": 'text-center'
       }, {
         key: 'title',
         label: __('title'),
@@ -603,9 +601,7 @@ var render = function render() {
       }
     })]), _vm._v(" "), lang.is_default == 1 ? _c("div", {
       staticClass: "form-group"
-    }, [_c("label", [_vm._v(_vm._s(_vm.__("percentage")))]), _vm._v(" "), lang.is_default ? _c("i", {
-      staticClass: "text-danger"
-    }, [_vm._v("*")]) : _vm._e(), _vm._v(" "), _c("input", {
+    }, [_c("label", [_vm._v(_vm._s(_vm.__("percentage")))]), _vm._v(" "), _c("input", {
       directives: [{
         name: "model",
         rawName: "v-model",
@@ -616,10 +612,9 @@ var render = function render() {
       attrs: {
         type: "number",
         placeholder: _vm.__("enter_percentage"),
-        min: "1",
+        min: "0",
         max: "100",
-        step: "0.01",
-        required: lang.is_default == 1 ? true : undefined
+        step: "0.01"
       },
       domProps: {
         value: _vm.percentage
@@ -819,9 +814,9 @@ var render = function render() {
       },
       proxy: true
     }, {
-      key: "cell(id)",
+      key: "cell(sr_no)",
       fn: function fn(row) {
-        return [_vm._v("\n                            " + _vm._s(row.item.id) + "\n                        ")];
+        return [_vm._v("\n                            " + _vm._s((_vm.currentPage - 1) * _vm.perPage + row.index + 1) + "\n                        ")];
       }
     }, {
       key: "cell(image)",
