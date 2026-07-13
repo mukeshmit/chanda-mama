@@ -69,7 +69,7 @@ Route::group(['middleware' => ['auth.customer']], function () {
 
     Route::get('offers', [\App\Http\Controllers\API\Customer\BasicApiController::class, 'getOffers']);
     Route::get('sliders', [\App\Http\Controllers\API\Customer\BasicApiController::class, 'getSliders']);
-    Route::get('hero_slider_videos', [\App\Http\Controllers\API\HomeSliderImagesApiController::class, 'activeVideos']);
+    Route::get('hero_slider_videos', [\App\Http\Controllers\API\HeroSliderVideosApiController::class, 'activeVideos']);
     Route::get('notifications', [\App\Http\Controllers\API\Customer\BasicApiController::class, 'getNotifications']);
 
     /***********************************************************************************************/

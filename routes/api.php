@@ -174,10 +174,10 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::group(['prefix' => 'hero_slider_videos'], function () {
-        Route::get('/', [\App\Http\Controllers\API\HomeSliderImagesApiController::class, 'videos']);
-        Route::post('save', [\App\Http\Controllers\API\HomeSliderImagesApiController::class, 'saveVideo'])->name('hero_slider_videos.save');
-        Route::post('update', [\App\Http\Controllers\API\HomeSliderImagesApiController::class, 'updateVideo'])->name('hero_slider_videos.update');
-        Route::post('delete', [\App\Http\Controllers\API\HomeSliderImagesApiController::class, 'delete'])->name('hero_slider_videos.delete');
+        Route::get('/', [\App\Http\Controllers\API\HeroSliderVideosApiController::class, 'index']);
+        Route::post('save', [\App\Http\Controllers\API\HeroSliderVideosApiController::class, 'save'])->name('hero_slider_videos.save');
+        Route::post('update', [\App\Http\Controllers\API\HeroSliderVideosApiController::class, 'update'])->name('hero_slider_videos.update');
+        Route::post('delete', [\App\Http\Controllers\API\HeroSliderVideosApiController::class, 'delete'])->name('hero_slider_videos.delete');
     });
 
     Route::group(['prefix' => 'promo_code'], function () {
