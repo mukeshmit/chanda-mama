@@ -3216,6 +3216,7 @@ class ProductApisController extends Controller
                 'pv.id as product_variant_id',
                 'pv.type',
                 'pv.price',
+                'pv.purchase_price',
                 'pv.discounted_price',
                 'pv.measurement',
                 'pv.status as pv_status',
@@ -3294,6 +3295,12 @@ class ProductApisController extends Controller
         // Step 3: Group the products and handle loose variants
         $groupedProducts = [];
         foreach ($rawProducts as $product) {
+            $stock = (float) ($product->stock ?? 0);
+            $purchasePrice = (float) ($product->purchase_price ?? 0);
+            $salePrice = (float) (($product->discounted_price ?? 0) > 0 ? $product->discounted_price : $product->price);
+            $stockValue = round($stock * $purchasePrice, 2);
+            $salesValue = round($stock * $salePrice, 2);
+
             // Manually append the image_url using the product model accessor
             $productModel = $productsWithTranslations->get($product->product_id);
             if ($productModel) {
@@ -3369,6 +3376,8 @@ class ProductApisController extends Controller
                     $groupedProducts[$product->product_id]['discounted_price'] .= ',' . $product->discounted_price;
                     $groupedProducts[$product->product_id]['stock_unit_id'] .= ',' . $product->stock_unit_id;
                     $groupedProducts[$product->product_id]['stock'] += $product->stock;
+                    $groupedProducts[$product->product_id]['stock_value'] = round(((float) $groupedProducts[$product->product_id]['stock_value']) + $stockValue, 2);
+                    $groupedProducts[$product->product_id]['sales_value'] = round(((float) $groupedProducts[$product->product_id]['sales_value']) + $salesValue, 2);
                 } else {
                     // Initialize the first loose variant entry
                     $groupedProducts[$product->product_id] = [
@@ -3387,10 +3396,13 @@ class ProductApisController extends Controller
                         'product_variant_id' => $product->product_variant_id,
                         'type' => $product->type,
                         'price' => $product->price,
+                        'purchase_price' => $product->purchase_price,
                         'discounted_price' => $product->discounted_price,
                         'measurement' => $product->measurement,
                         'pv_status' => $product->pv_status,
                         'stock' => $product->stock,
+                        'stock_value' => number_format($stockValue, 2, '.', ''),
+                        'sales_value' => number_format($salesValue, 2, '.', ''),
                         'stock_unit_id' => $product->stock_unit_id,
                         'short_code' => $product->short_code,
                         'stock_unit' => $product->stock_unit,
@@ -3416,10 +3428,13 @@ class ProductApisController extends Controller
                     'product_variant_id' => $product->product_variant_id,
                     'type' => $product->type,
                     'price' => $product->price,
+                    'purchase_price' => $product->purchase_price,
                     'discounted_price' => $product->discounted_price,
                     'measurement' => $product->measurement,
                     'pv_status' => $product->pv_status,
                     'stock' => $product->stock,
+                    'stock_value' => number_format($stockValue, 2, '.', ''),
+                    'sales_value' => number_format($salesValue, 2, '.', ''),
                     'stock_unit_id' => $product->stock_unit_id,
                     'short_code' => $product->short_code,
                     'stock_unit' => $product->stock_unit,

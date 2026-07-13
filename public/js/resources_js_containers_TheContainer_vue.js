@@ -337,6 +337,11 @@ __webpack_require__.r(__webpack_exports__);
           icon: 'grid-fill',
           url: '/home_sliders',
           permission: 'home_slider_image_list'
+        }, {
+          name: 'Manage Hero Slider Video',
+          icon: 'grid-fill',
+          url: '/hero_slider_videos',
+          permission: 'home_slider_image_list'
         }]
       }, {
         name: __('offer_image'),

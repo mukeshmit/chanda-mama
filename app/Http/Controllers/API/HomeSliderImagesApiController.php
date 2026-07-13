@@ -14,6 +14,9 @@ class HomeSliderImagesApiController extends Controller
     public function index(){
 
         $sliders = Slider::with('category.translations', 'product.translations')
+            ->where(function ($query) {
+                $query->where('media_type', 'image')->orWhereNull('media_type');
+            })
             ->orderBy('id','DESC')
             ->get()
             ->map(function ($slider) {
@@ -84,9 +87,10 @@ class HomeSliderImagesApiController extends Controller
             $image = Storage::disk('public')->putFileAs('sliders', $file, $fileName);
         }
        $slider->image = $image;
+       $slider->media_type = 'image';
        $slider->slider_url = $request->slider_url;
        $slider->save();
-       return CommonHelper::responseSuccess('home_slider_images_saved_successfully');
+       return CommonHelper::responseSuccess('Home slider images saved successfully');
     }
 
     public function update(Request $request){
@@ -119,11 +123,114 @@ class HomeSliderImagesApiController extends Controller
                 $slider->image = $image;
             }
             $slider->slider_url = $request->slider_url;
+            $slider->media_type = 'image';
             $slider->save();
         }
 
 
-        return CommonHelper::responseSuccess('slider_updated_successfully');
+        return CommonHelper::responseSuccess('Slider updated successfully');
+    }
+
+    public function videos()
+    {
+        $videos = Slider::where('media_type', 'video')
+            ->orderBy('id', 'DESC')
+            ->get();
+
+        return CommonHelper::responseWithData($videos);
+    }
+
+    public function activeVideos()
+    {
+        $videos = Slider::where('media_type', 'video')
+            ->where('display_location', request()->get('display_location', 'hero_section'))
+            ->where('status', 1)
+            ->orderBy('id', 'DESC')
+            ->get()
+            ->makeHidden(['image', 'created_at', 'updated_at'])
+            ->map(function ($video) {
+                $video->type_id = $video->type_id ? intval($video->type_id) : 0;
+                $video->slider_url = $video->slider_url ?? "";
+                return $video;
+            })
+            ->values();
+
+        return CommonHelper::responseWithData($videos);
+    }
+
+    public function saveVideo(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'display_location' => 'required|string|in:hero_section,home_page,category_page,product_page',
+            'status' => 'required|in:0,1',
+            'video' => 'required|file|mimes:mp4,webm,ogg|max:20480',
+        ], [
+            'video.mimes' => 'Hero slider video must be MP4, WEBM, or OGG.',
+            'video.max' => 'Hero slider video must be 20 MB or smaller.',
+        ]);
+
+        if ($validator->fails()) {
+            return CommonHelper::responseError($validator->errors()->first());
+        }
+
+        $slider = new Slider();
+        $slider->name = $request->name;
+        $slider->type = 'video';
+        $slider->type_id = 0;
+        $slider->media_type = 'video';
+        $slider->display_location = $request->display_location;
+        $slider->status = $request->status;
+
+        $file = $request->file('video');
+        $fileName = time() . '_' . rand(1111, 99999) . '.' . $file->getClientOriginalExtension();
+        $slider->image = Storage::disk('public')->putFileAs('sliders/videos', $file, $fileName);
+        $slider->slider_url = asset('storage/' . $slider->image);
+        $slider->save();
+
+        return CommonHelper::responseSuccess('Hero slider video saved successfully');
+    }
+
+    public function updateVideo(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:sliders,id',
+            'name' => 'required|string|max:255',
+            'display_location' => 'required|string|in:hero_section,home_page,category_page,product_page',
+            'status' => 'required|in:0,1',
+            'video' => $request->hasFile('video') ? 'file|mimes:mp4,webm,ogg|max:20480' : '',
+        ], [
+            'video.mimes' => 'Hero slider video must be MP4, WEBM, or OGG.',
+            'video.max' => 'Hero slider video must be 20 MB or smaller.',
+        ]);
+
+        if ($validator->fails()) {
+            return CommonHelper::responseError($validator->errors()->first());
+        }
+
+        $slider = Slider::find($request->id);
+        if (!$slider) {
+            return CommonHelper::responseError('Video not found');
+        }
+
+        $slider->name = $request->name;
+        $slider->type = 'video';
+        $slider->type_id = 0;
+        $slider->status = $request->status;
+        $slider->media_type = 'video';
+        $slider->display_location = $request->display_location;
+
+        if ($request->hasFile('video')) {
+            @Storage::disk('public')->delete($slider->image);
+            $file = $request->file('video');
+            $fileName = time() . '_' . rand(1111, 99999) . '.' . $file->getClientOriginalExtension();
+            $slider->image = Storage::disk('public')->putFileAs('sliders/videos', $file, $fileName);
+        }
+        $slider->slider_url = $slider->image ? asset('storage/' . $slider->image) : '';
+
+        $slider->save();
+
+        return CommonHelper::responseSuccess('Hero slider video updated successfully');
     }
 
     public function delete(Request $request){
@@ -134,9 +241,9 @@ class HomeSliderImagesApiController extends Controller
             if($slider){
                 @Storage::disk('public')->delete($slider->image);
                 $slider->delete();
-                return CommonHelper::responseSuccess('slider_deleted_successfully');
+                return CommonHelper::responseSuccess('slider deleted successfully');
             }else{
-                return CommonHelper::responseSuccess('slider_already_deleted');
+                return CommonHelper::responseSuccess('Slider already deleted');
             }
         }
     }

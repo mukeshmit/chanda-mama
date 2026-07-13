@@ -398,6 +398,12 @@ export default {
                             icon: 'grid-fill',
                             url: '/home_sliders',
                             permission: 'home_slider_image_list',
+                        },
+                        {
+                            name: 'Manage Hero Slider Video',
+                            icon: 'grid-fill',
+                            url: '/hero_slider_videos',
+                            permission: 'home_slider_image_list',
                         }
                     ]
                 },
@@ -1011,5 +1017,15 @@ export default {
 .fade-enter,
 .fade-leave-to {
     opacity: 0;
+}
+
+.logo {
+    width: 230px;
+}
+
+.container-logo {
+    width: 230px;
+    max-width: 100%;
+    height: auto;
 }
 </style>

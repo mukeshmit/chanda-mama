@@ -53,6 +53,7 @@ const SellerWalletTransactions = () => import("../views/Seller/WalletTransaction
 
 //Home Slider Images
 const HomeSliders = () => import("../views/HomeSliders/HomeSliders");
+const HeroSliderVideos = () => import("../views/HomeSliders/HeroSliderVideos");
 
 //Promo Code
 const PromoCode = () => import("../views/PromoCode/PromoCode");
@@ -742,6 +743,17 @@ function configRoutes() {
                         permission: 'order_list',
                         role: adminRoles,
                         title: 'Home Sliders'
+
+                    },
+                },
+                {
+                    path: "hero_slider_videos",
+                    name: "HeroSliderVideos",
+                    component: HeroSliderVideos,
+                    meta: {
+                        permission: 'order_list',
+                        role: adminRoles,
+                        title: 'Hero Slider Videos'
 
                     },
                 },

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Slider extends Model
 {
     use HasFactory;
-    protected $appends = ['type_name','image_url'];
+    protected $appends = ['type_name','image_url','video_url'];
     public function category(){
 
         return $this->belongsTo(Category::class,'type_id','id');
@@ -37,6 +37,10 @@ class Slider extends Model
             return $image_url;
         }
         return $this->image;
+    }
+
+    public function getVideoUrlAttribute(){
+        return $this->getImageUrlAttribute();
     }
 
     protected $hidden = [];
