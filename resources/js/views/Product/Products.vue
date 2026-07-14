@@ -122,20 +122,6 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <template v-if="$roleSeller != login_user.role.name">
-                                        <div class="col-md-4">
-                                            <div class="figma-filter-group">
-                                                <label class="figma-filter-label">{{ __('seller') }}</label>
-                                                <select v-model="seller" @change="getRecords()"
-                                                    class="form-select modern-select">
-                                                    <option value="">{{ __('all_sellers') }}</option>
-                                                    <option v-for="seller in translatedSellers" :value="seller.id">{{
-                                                        seller.name }}
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </template>
                                 </div>
                             </div>
                         </b-collapse>
@@ -293,9 +279,8 @@ export default {
             fields: [
                 { key: 'select', label: '', visible: true, class: 'text-center' },
                 { key: 'product_variant_id', label: 'Sr. No.', visible: true, class: 'text-center' },
-                { key: 'product_id', label: __('product_id'), visible: true, sortable: true, sortDirection: 'desc', class: 'text-center' },
+                { key: 'product_id', label: __('item_code'), visible: true, sortable: true, sortDirection: 'desc', class: 'text-center' },
                 { key: 'tax_id', label: __('tax_id'), visible: false, sortable: true, class: 'text-center' },
-                { key: 'seller_name', label: __('seller_name'), visible: true, class: 'text-center', sortable: true },
                 { key: 'name', label: __('name'), visible: true, sortable: true, class: 'text-center' },
                 { key: 'image', label: __('image'), visible: true, class: 'text-center' },
                 { key: 'price', label: __('price') + '(' + this.$currency + ')', visible: true, class: 'text-center', sortable: true },

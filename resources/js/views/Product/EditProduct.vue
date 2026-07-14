@@ -73,7 +73,7 @@
                             </div>
                             <div class="card-body">
                                 <!-- Language Tabs -->
-                                <div class="col-md-12 mb-3" v-if="languages.length > 0">
+                                <div class="col-md-12 mb-3" v-if="false">
                                     <b-tabs v-model="activeLanguageTab" content-class="mt-3">
                                         <b-tab v-for="language in languages" :key="language.id" :title="language.name"
                                             lazy>
@@ -364,6 +364,238 @@
                                 <div v-else-if="isLoadingLanguages" class="text-center p-3 mb-3">
                                     <b-spinner label="Loading languages..."></b-spinner>
                                 </div>
+
+                                <!-- Direct form fields (without language tabs) -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="barcode">{{ __('barcode') }}</label>
+                                            <input type="text" id="barcode" class="form-control" :placeholder="__('barcode')"
+                                                v-model="barcode" @input="validateBarcode">
+                                            <p style="color:red" v-if="validationBarcodeMessage">{{
+                                                validationBarcodeMessage }}</p>
+                                            <p style="color:green" v-else-if="isBarcodeValid">Barcode is valid!
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label>{{ __('product_name') }} <i class="text-danger">*</i></label>
+                                            <input type="text" class="form-control"
+                                                :placeholder="__('enter_product_name')"
+                                                v-model="translations[1].name"
+                                                required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label>{{ __('slug') }}</label>
+                                            <input type="text" class="form-control"
+                                                :placeholder="__('enter_product_slug')" v-model="slug"
+                                                readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="tax_id">{{ __('tax') }}</label>
+                                            <select id="tax_id" name="tax_id"
+                                                class="form-control" v-model="tax_id">
+                                                <option value="0">{{ __('select_tax') }}</option>
+                                                <option v-for="tax in translatedTaxes" :value="tax.id">
+                                                    {{ tax.title }}
+                                                    ({{ tax.percentage }} %)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="brands">{{ __('brands') }}</label>
+                                            <multiselect id="brands" v-model="brand" :options="translatedBrands"
+                                                :placeholder="__('select_and_search_brands')"
+                                                label="name" track-by="id" required>
+                                                <template slot="singleLabel" slot-scope="props">
+                                                    <span class="option__desc">
+                                                        <span class="option__title">{{
+                                                            props.option.name }}</span>
+                                                    </span>
+                                                </template>
+                                                <template slot="option" slot-scope="props">
+                                                    <div class="option__desc">
+                                                        <span class="option__small">
+                                                            <img style="height: 25px; "
+                                                                class="option__image"
+                                                                :src="props.option.image_url"
+                                                                alt="Brand Logo">
+                                                        </span>
+                                                        <span class="option__title">{{
+                                                            props.option.name }}</span>
+                                                    </div>
+                                                </template>
+                                            </multiselect>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div
+                                            class="form-group mb-3 d-flex flex-wrap align-items-center">
+                                            <button type="button"
+                                                class="btn btn-outline-primary me-3 my-2 ai-generate-btn"
+                                                @click="generateDescription"
+                                                :disabled="isGeneratingAI">
+                                                <template v-if="isGeneratingAI">
+                                                    <span class="ai-spinner me-2"></span>
+                                                    <span class="ai-text-animate">AI is
+                                                        generating...</span>
+                                                </template>
+                                                <template v-else>
+                                                    <i class="fa fa-magic me-1"></i>
+                                                    {{ __('generate_description_with_ai') }}
+                                                </template>
+                                            </button>
+                                            <label class="my-2 d-flex align-items-center">
+                                                <input type="checkbox" v-model="useCustomPrompt"
+                                                    class="me-2" />
+                                                <span class="mt-1">{{ __('use_custom_prompt')
+                                                }}</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-3" v-if="useCustomPrompt">
+                                            <label>{{ __('custom_prompt') }}</label>
+                                            <textarea class="form-control" v-model="customPrompt"
+                                                rows="2"
+                                                placeholder="e.g. Write a fun and engaging description focusing on features and benefits"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-3">
+                                            <label>{{ __('description') }} <i class="text-danger">*</i></label>
+                                            <editor :placeholder="__('enter_product_description')"
+                                                v-model="translations[1].description"
+                                                :init="getEditorConfig()" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label>{{ __('main_image') }} <i
+                                                    class="text-danger">*</i></label>
+                                            <input type="file" name="image" accept="image/*"
+                                                ref="file_image" v-on:change="fileImage"
+                                                class="file-input">
+
+                                            <div class="file-input-div bg-gray-100"
+                                                @click="triggerRefClick('file_image')"
+                                                @drop="dropFile" @dragover="$dragoverFile"
+                                                @dragleave="$dragleaveFile">
+                                                <template v-if="main_image_name == ''">
+                                                    <label><i
+                                                            class="fa fa-cloud-upload-alt fa-2x"></i></label>
+                                                    <label>{{
+                                                        __('drop_files_here_or_click_to_upload')
+                                                        }}</label>
+                                                </template>
+                                                <template v-else>
+                                                    <label>{{ __('selected_file_name') }} {{
+                                                        main_image_name
+                                                        }}</label>
+                                                </template>
+                                            </div>
+                                            <span class="text text-primary">{{ __('please_choose_square_image_of_larger_than_350px_350px_and_smaller_than_550px_550px') }}</span>
+                                            <p v-if="mainImageerror" class="error">{{ mainImageerror
+                                                }}</p>
+
+                                            <div class="row" v-if="main_image_path">
+                                                <div class="col-md-4">
+                                                    <img class="custom-image" :src="main_image_path"
+                                                        title='Main Image' alt='Main Image' />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="other_images">{{
+                                                __('other_images_of_the_product') }}</label>
+
+                                            <input type="file" name="other_images[]"
+                                                accept="image/jpeg,image/png,image/gif,image/webp,video/mp4" id="other_images"
+                                                v-on:change="otherImage" multiple=""
+                                                ref="file_other_images" class="file-input">
+
+                                            <div class="file-input-div bg-gray-100"
+                                                @click="triggerRefClick('file_other_images')"
+                                                @drop="dropFileOtherImage" @dragover="$dragoverFile"
+                                                @dragleave="$dragleaveFile">
+                                                <template v-if="images.length === 0">
+                                                    <label><i
+                                                            class="fa fa-cloud-upload-alt fa-2x"></i></label>
+                                                    <label>{{
+                                                        __('drop_files_here_or_click_to_upload')
+                                                        }}</label>
+                                                </template>
+                                                <template v-else>
+                                                    <label>{{ images.length }} files selected</label>
+                                                    <span><small>Use the + button below to add more.</small></span>
+                                                </template>
+                                            </div>
+                                            <span class="text text-primary">Allowed media: JPG, JPEG, PNG, GIF, WEBP images or MP4 videos. Max 3 MB per file.</span>
+                                            <p v-if="otherImageerror" class="error">{{
+                                                otherImageerror }}</p>
+
+                                            <div class="row other-media-list" v-if="images && images.length !== 0">
+                                                <h6 class="mt-3">Selected Other Image List.</h6>
+                                                <div class="col-md-4 image-container"
+                                                    v-if="images.length !== 0"
+                                                    v-for="(image, index) in images">
+                                                    <video v-if="image.isVideo" class="img-thumbnail custom-image"
+                                                        :src="image.url" controls muted playsinline
+                                                        title='Selected Product Video'></video>
+                                                    <img v-else class="img-thumbnail custom-image"
+                                                        :src="image.url"
+                                                        title='Selected Other Image'
+                                                        alt='Selected Other Image' />
+                                                    <button type="button"
+                                                        @click="removeOtherImage(images.indexOf(image))"
+                                                        class="btn btn-sm btn-danger btn-remove"> <i
+                                                            class="fa fa-times-circle"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <button type="button"
+                                                        class="add-more-media-btn"
+                                                        @click="triggerRefClick('file_other_images')">
+                                                        <i class="fa fa-plus"></i>
+                                                        <span>Add More</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="row"
+                                                v-if="other_images && other_images.length !== 0">
+                                                <h6 class="mt-3">Uploaded Other Image List.</h6>
+                                                <div class="col-md-4 image-container"
+                                                    v-if="other_images.length !== 0"
+                                                    v-for="(image, index) in other_images">
+                                                    <video v-if="isVideoMedia(image.image)" class="img-thumbnail custom-image"
+                                                        :src="$storageUrl + image.image" controls muted playsinline
+                                                        title='Product Video'></video>
+                                                    <img v-else class="img-thumbnail custom-image"
+                                                        :src="$storageUrl + image.image"
+                                                        title='Other Image' alt='Other Image' />
+                                                    <button type="button"
+                                                        @click="deleteImage(index, image.id, true)"
+                                                        class="btn btn-sm btn-danger btn-remove"> <i
+                                                            class="fa fa-times-circle"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -379,10 +611,11 @@
                                 <div class="col-md-6">
                                     <div class="row">
                                         <div class="form-group col-md-6">
-                                            <label>{{ __('type') }} <i class="text-danger">*</i></label><br>
+                                            <label>{{ __('product_variants') }} <i class="text-danger">*</i></label><br>
                                             <b-form-radio-group v-model="type" :options="[
                                                 { text: __('packet'), 'value': 'packet' },
                                                 { text: __('loose'), 'value': 'loose' },
+                                                { text: __('both'), 'value': 'both' },
                                             ]" buttons button-variant="outline-primary"></b-form-radio-group>
                                         </div>
                                         <div class="form-group col-md-6">
@@ -401,6 +634,18 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group mb-3">
+                                                <label>{{ __('unit') }} <i class="text-danger">*</i></label>
+                                                <select class="form-control" @change="changeUnits()"
+                                                    v-model="input.packet_stock_unit_id">
+                                                    <option value="">{{ __('select_unit') }}</option>
+
+                                                    <option v-for="(unit, key) in units" :value="unit.id">{{
+                                                        unit.short_code }}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-3">
                                                 <label>{{ __('measurement') }}</label>
                                                 <input type="number" min="0" step="any" class="form-control"
                                                     placeholder="0" v-model="input.packet_measurement">
@@ -409,15 +654,14 @@
 
                                         <div class="col-md-4">
                                             <div class="form-group mb-3">
-                                                <label>{{ __('price') }} ( {{ $currency }} ) <i
-                                                        class="text-danger">*</i></label>
+                                                <label>MPR ( {{ $currency }} ) <i class="text-danger">*</i></label>
                                                 <input type="number" min="0" step="any" class="form-control"
                                                     placeholder="0.00" v-model="input.packet_price" required>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group mb-3">
-                                                <label>{{ __('purchase_price') }} ( {{ $currency }} )
+                                                <label>Purchase Price ( {{ $currency }} )
                                                     <i class="fa fa-info-circle text-muted" v-b-tooltip.hover
                                                         title="This field is used to calculate in your report"></i>
                                                 </label>
@@ -427,26 +671,41 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group mb-3">
-                                                <label>Profit ( {{ $currency }} )</label>
+                                                <label>Sale Price ( {{ $currency }} )</label>
                                                 <input type="text" class="form-control bg-light"
-                                                    :value="getPacketProfit(input)" readonly>
+                                                    :value="getPacketSalePrice(input)" readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group mb-3">
-                                                <label>Margin %</label>
-                                                <input type="text" class="form-control bg-light"
-                                                    :value="getPacketMargin(input)" readonly>
+                                                <label>Discount on MRP(%)</label>
+                                                <input type="number" min="0" step="any" class="form-control"
+                                                    placeholder="0.00" v-model="input.discount_percentage"
+                                                    @input="calculatePacketDiscount(input)">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group mb-3">
-                                                <label>{{ __('discounted_price') }} ( {{ $currency }} )</label>
+                                                <label>Discount on MRP(Rs)</label>
                                                 <input type="number" min="0" step="any" class="form-control"
                                                     placeholder="0.00" v-model="input.discounted_price"
-                                                    @input="validateDiscountedPrice(input)">
+                                                    @input="calculatePacketDiscountFromRs(input)">
                                                 <span v-if="input.validationErrorDiscountedPrice" class="error">{{
                                                     input.validationErrorDiscountedPrice }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-3">
+                                                <label>Profit(%)</label>
+                                                <input type="text" class="form-control bg-light"
+                                                    :value="getPacketProfitPercentage(input)" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-3">
+                                                <label>Profit(Rs)</label>
+                                                <input type="text" class="form-control bg-light"
+                                                    :value="getPacketProfit(input)" readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-4" v-if="is_unlimited_stock != 1">
@@ -454,18 +713,6 @@
                                                 <label>Available Stock <i class="text-danger">*</i></label>
                                                 <input type="number" step="any" min="0" class="form-control"
                                                     placeholder="0" name="packate_stock[]" v-model="input.packet_stock">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group mb-3">
-                                                <label>{{ __('unit') }} <i class="text-danger">*</i></label>
-                                                <select class="form-control" @change="changeUnits()"
-                                                    v-model="input.packet_stock_unit_id">
-                                                    <option value="">{{ __('select_unit') }}</option>
-
-                                                    <option v-for="(unit, key) in units" :value="unit.id">{{
-                                                        unit.short_code }}</option>
-                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -541,6 +788,17 @@
                                     <div class="list-group-item" v-for="(input, k) in inputs" :key="k">
                                         <div class="row">
                                             <div class="col-md-4">
+                                                <div class="form-group mb-3">
+                                                    <label>{{ __('unit') }} <i class="text-danger">*</i></label>
+                                                    <select class="form-control" name="loose_stock_unit_id"
+                                                        v-model="loose_stock_unit_id">
+                                                        <option value="">{{ __('select_unit') }}</option>
+                                                        <option v-for="(unit, key) in units" :value="unit.id">{{ unit.short_code
+                                                            }}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
                                                 <div class="form-group loose_div">
                                                     <label>{{ __('measurement') }}</label>
                                                     <input type="number" step="any" min="0" class="form-control"
@@ -550,24 +808,57 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group mb-3 loose_div">
-                                                    <label>{{ __('price') }} ( {{ $currency }} ): <i
-                                                            class="text-danger">*</i></label>
+                                                    <label>MPR ( {{ $currency }} ): <i class="text-danger">*</i></label>
                                                     <input type="number" step="any" min="0" class="form-control"
                                                         placeholder="0.00" v-model="input.loose_price" required>
                                                 </div>
                                             </div>
-                                     
+
                                             <div class="col-md-4">
                                                 <div class="form-group mb-3 loose_div">
-                                                    <label for="discounted_price">{{ __('discounted_price') }} ( {{
-                                                        $currency }} ):</label>
+                                                    <label>Purchase Price ( {{ $currency }} )</label>
                                                     <input type="number" step="any" min="0" class="form-control"
-                                                        placeholder="0.00" id="discounted_price"
-                                                        v-model="input.loose_discounted_price"
-                                                        @input="validateDiscountedPriceLoose(input)">
-                                                    <span v-if="input.validationErrorDiscountedPriceLoose"
+                                                        placeholder="0.00" v-model="loose_purchase_price">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group mb-3 loose_div">
+                                                    <label>Sale Price ( {{ $currency }} )</label>
+                                                    <input type="text" class="form-control bg-light"
+                                                        :value="getLooseSalePrice()" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group mb-3 loose_div">
+                                                    <label>Discount on MRP(%)</label>
+                                                    <input type="number" step="any" min="0" class="form-control"
+                                                        placeholder="0.00" v-model="loose_discount_percentage"
+                                                        @input="calculateLooseDiscount()">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group mb-3 loose_div">
+                                                    <label>Discount on MRP(Rs)</label>
+                                                    <input type="number" step="any" min="0" class="form-control"
+                                                        placeholder="0.00" v-model="inputs[0].loose_discounted_price"
+                                                        @input="calculateLooseDiscountFromRs()">
+                                                    <span v-if="inputs[0].validationErrorDiscountedPriceLoose"
                                                         class="error">{{
-                                                            input.validationErrorDiscountedPriceLoose }}</span>
+                                                            inputs[0].validationErrorDiscountedPriceLoose }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group mb-3 loose_div">
+                                                    <label>Profit(%)</label>
+                                                    <input type="text" class="form-control bg-light"
+                                                        :value="getLooseProfitPercentage()" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group mb-3 loose_div">
+                                                    <label>Profit(Rs)</label>
+                                                    <input type="text" class="form-control bg-light"
+                                                        :value="getLooseProfit()" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-12 hidden">
@@ -856,7 +1147,7 @@
                             </div>
                             <div class="card-body">
                                 <!-- Language Tabs for SEO -->
-                                <div class="col-md-12 mb-3" v-if="languages.length > 0">
+                                <div class="col-md-12 mb-3" v-if="false">
                                     <b-tabs v-model="activeLanguageTab" content-class="mt-3">
                                         <b-tab v-for="language in languages" :key="language.id" :title="language.name"
                                             lazy>
@@ -993,6 +1284,7 @@ export default {
             status: 1,
             is_unlimited_stock: 0,
             loose_purchase_price: 0,
+            loose_discount_percentage: 0,
             tax_included_in_price: 0,
             pincode_ids_exc: null,
 
@@ -1005,7 +1297,7 @@ export default {
             categories: null,
             order_status: null,
 
-            inputs: [{ 'name': '', 'packet_status': '', 'packet_stock_unit_id': '' }],
+            inputs: [{ 'name': '', 'packet_status': '', 'packet_stock_unit_id': '', 'discount_percentage': 0 }],
 
             image: null,
             main_image_path: "",
@@ -1850,6 +2142,9 @@ export default {
                     this.countries = data.data;
                     if (this.cachedData && this.cachedData.made_in) {
                         this.made_in = this.countries.find(c => c.id === this.cachedData.made_in.id) || null;
+                    } else {
+                        // Set default to India
+                        this.made_in = this.countries.find(c => c.name === 'India') || null;
                     }
                 });
         },
@@ -2042,6 +2337,7 @@ export default {
                                     'packet_price': item.price,
                                     'packet_purchase_price': item.purchase_price,
                                     'discounted_price': item.discounted_price,
+                                    'discount_percentage': item.discount_percentage || 0,
                                     'packet_stock': item.stock,
                                     'packet_stock_unit_id': item.stock_unit_id,
                                     'packet_status': item.status,
@@ -2076,6 +2372,7 @@ export default {
                             this.loose_stock = loose_stock;
                             this.loose_stock_unit_id = loose_stock_unit_id;
                             this.loose_purchase_price = this.record.variants[0] ? this.record.variants[0].purchase_price : 0;
+                            this.loose_discount_percentage = this.record.variants[0] ? (this.record.variants[0].discount_percentage || 0) : 0;
                             this.status = status;
                         }
                     } else {
@@ -2144,7 +2441,7 @@ export default {
             formData.append('meta_description', defaultTranslation.meta_description || '');
 
             /*packet*/
-            if (this.type === 'packet') {
+            if (this.type === 'packet' || this.type === 'both') {
                 for (let i = 0; i < this.inputs.length; i++) {
 
                     formData.append('variant_id[]', (this.inputs[i].id) ? this.inputs[i].id : "");
@@ -2153,6 +2450,7 @@ export default {
                     formData.append('packet_price[]', (this.inputs[i].packet_price != undefined) ? this.inputs[i].packet_price : 0);
                     formData.append('packet_purchase_price[]', (this.inputs[i].packet_purchase_price != undefined) ? this.inputs[i].packet_purchase_price : 0);
                     formData.append('discounted_price[]', (this.inputs[i].discounted_price != undefined) ? this.inputs[i].discounted_price : 0);
+                    formData.append('discount_percentage[]', (this.inputs[i].discount_percentage != undefined) ? this.inputs[i].discount_percentage : 0);
                     formData.append('packet_stock[]', (this.inputs[i].packet_stock != undefined) ? this.inputs[i].packet_stock : 0);
                     formData.append('packet_stock_unit_id[]', (this.inputs[i].packet_stock_unit_id != undefined) ? this.inputs[i].packet_stock_unit_id : 0);
                     formData.append('packet_status[]', (this.inputs[i].packet_status != undefined) ? this.inputs[i].packet_status : 0);
@@ -2170,7 +2468,7 @@ export default {
             }
 
             /*loose*/
-            if (this.type === 'loose') {
+            if (this.type === 'loose' || this.type === 'both') {
                 for (let i = 0; i < this.inputs.length; i++) {
                     formData.append('variant_id[]', (this.inputs[i].id) ? this.inputs[i].id : "");
                     formData.append('loose_measurement[]', this.inputs[i].loose_measurement || 1);
@@ -2179,6 +2477,7 @@ export default {
                     formData.append('loose_price[]', (this.inputs[i].loose_price != undefined) ? this.inputs[i].loose_price : 0);
 
                     formData.append('loose_discounted_price[]', (this.inputs[i].loose_discounted_price != undefined) ? this.inputs[i].loose_discounted_price : 0);
+                    formData.append('loose_discount_percentage[]', (this.loose_discount_percentage != undefined) ? this.loose_discount_percentage : 0);
                     formData.append('packet_stock[]', (this.inputs[i].packet_stock != undefined) ? this.inputs[i].packet_stock : 0);
 
                     // Safely handle loose variant images refs (can be undefined when card is hidden in non-default language tab)
@@ -2374,6 +2673,36 @@ export default {
             return this.formatMoney(sellingPrice - purchasePrice);
         },
 
+        getPacketSalePrice(input) {
+            const sellingPrice = this.getSellingPrice(input.packet_price, input.discounted_price);
+            return this.formatMoney(sellingPrice);
+        },
+
+        getPacketProfitPercentage(input) {
+            const sellingPrice = this.getSellingPrice(input.packet_price, input.discounted_price);
+            const purchasePrice = this.toNumber(input.packet_purchase_price);
+            if (purchasePrice <= 0) return '0.00';
+            return (((sellingPrice - purchasePrice) / purchasePrice) * 100).toFixed(2);
+        },
+
+        calculatePacketDiscount(input) {
+            const mrp = this.toNumber(input.packet_price);
+            const discountPercent = this.toNumber(input.discount_percentage);
+            if (mrp > 0 && discountPercent >= 0) {
+                const discountAmount = (mrp * discountPercent) / 100;
+                input.discounted_price = discountAmount.toFixed(2);
+            }
+        },
+
+        calculatePacketDiscountFromRs(input) {
+            const mrp = this.toNumber(input.packet_price);
+            const discountAmount = this.toNumber(input.discounted_price);
+            if (mrp > 0 && discountAmount >= 0) {
+                const discountPercent = (discountAmount / mrp) * 100;
+                input.discount_percentage = discountPercent.toFixed(2);
+            }
+        },
+
         getPacketMargin(input) {
             const sellingPrice = this.getSellingPrice(input.packet_price, input.discounted_price);
             return this.getMarginPercent(sellingPrice, input.packet_purchase_price);
@@ -2384,6 +2713,40 @@ export default {
             const sellingPrice = this.getSellingPrice(firstVariant.loose_price, firstVariant.loose_discounted_price);
             const purchasePrice = this.toNumber(this.loose_purchase_price);
             return this.formatMoney(sellingPrice - purchasePrice);
+        },
+
+        getLooseSalePrice() {
+            const firstVariant = this.inputs[0] || {};
+            const sellingPrice = this.getSellingPrice(firstVariant.loose_price, firstVariant.loose_discounted_price);
+            return this.formatMoney(sellingPrice);
+        },
+
+        getLooseProfitPercentage() {
+            const firstVariant = this.inputs[0] || {};
+            const sellingPrice = this.getSellingPrice(firstVariant.loose_price, firstVariant.loose_discounted_price);
+            const purchasePrice = this.toNumber(this.loose_purchase_price);
+            if (purchasePrice <= 0) return '0.00';
+            return (((sellingPrice - purchasePrice) / purchasePrice) * 100).toFixed(2);
+        },
+
+        calculateLooseDiscount() {
+            const firstVariant = this.inputs[0] || {};
+            const mrp = this.toNumber(firstVariant.loose_price);
+            const discountPercent = this.toNumber(this.loose_discount_percentage);
+            if (mrp > 0 && discountPercent >= 0) {
+                const discountAmount = (mrp * discountPercent) / 100;
+                firstVariant.loose_discounted_price = discountAmount.toFixed(2);
+            }
+        },
+
+        calculateLooseDiscountFromRs() {
+            const firstVariant = this.inputs[0] || {};
+            const mrp = this.toNumber(firstVariant.loose_price);
+            const discountAmount = this.toNumber(firstVariant.loose_discounted_price);
+            if (mrp > 0 && discountAmount >= 0) {
+                const discountPercent = (discountAmount / mrp) * 100;
+                this.loose_discount_percentage = discountPercent.toFixed(2);
+            }
         },
 
         getLooseMargin() {
