@@ -664,7 +664,9 @@ class ProductApisController extends Controller
             'seller_id' => 'required',
 
             'id' => 'nullable|integer',
-            'image' => $request->id ? 'nullable' : 'required|image|mimes:jpeg,png,jpg,gif,webp|max:3072',
+            'image' => $request->id
+                ? ($request->hasFile('image') ? 'image|mimes:jpeg,png,jpg,gif,webp|max:3072' : 'nullable')
+                : 'required|image|mimes:jpeg,png,jpg,gif,webp|max:3072',
             'other_images.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,mp4|max:3072',
             'description' => 'required',
 
@@ -1066,7 +1068,7 @@ class ProductApisController extends Controller
             'description' => 'required',
             'type' => 'required',
             'is_unlimited_stock' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:3072',
+            'image' => $request->hasFile('image') ? 'image|mimes:jpeg,png,jpg,gif,webp|max:3072' : 'nullable',
             'other_images.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,mp4|max:3072',
 
             'packet_measurement.*' => ['required_if:type,packet', 'numeric', Rule::notIn([0]),],

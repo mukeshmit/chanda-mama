@@ -243,7 +243,7 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group mb-3">
                                                                 <label>{{ __('main_image') }} <i
-                                                                        class="text-danger">*</i></label>
+                                                                        class="text-danger" v-if="!id">*</i></label>
                                                                 <input type="file" name="image" accept="image/*"
                                                                     ref="file_image" v-on:change="fileImage"
                                                                     class="file-input">
@@ -485,7 +485,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
                                             <label>{{ __('main_image') }} <i
-                                                    class="text-danger">*</i></label>
+                                                    class="text-danger" v-if="!id">*</i></label>
                                             <input type="file" name="image" accept="image/*"
                                                 ref="file_image" v-on:change="fileImage"
                                                 class="file-input">
@@ -2281,7 +2281,7 @@ export default {
                         this.is_unlimited_stock = this.record.is_unlimited_stock;
                         this.main_image_path = this.$storageUrl + this.record.image;
                         this.other_images = this.record.images;
-                        this.image = this.record.image;
+                        this.image = null;
                         this.meta_title = this.record.meta_title;
                         this.meta_keywords = this.record.meta_keywords;
                         this.schema_markup = this.record.schema_markup;
@@ -2493,7 +2493,9 @@ export default {
 
             formData.append('is_approved', this.is_approved);
             formData.append('tax_included_in_price', this.tax_included_in_price);
-            formData.append('image', this.image);
+            if (this.image instanceof File) {
+                formData.append('image', this.image);
+            }
             // Other Images - Use files from images array to maintain correct indexing
             for (var i = 0; i < this.images.length; i++) {
                 let file = this.images[i].file;
