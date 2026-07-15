@@ -50,6 +50,8 @@ Route::get('cities', [\App\Http\Controllers\API\CityApiController::class, 'getCi
 
 Route::get('policies', [\App\Http\Controllers\SellerController::class, 'getPolicies']);
 
+Route::get('home_slider_images', [\App\Http\Controllers\API\HomeSliderImagesApiController::class, 'index']);
+
 Route::middleware('auth:api')->group(function () {
     Route::get('admin_settings', [\App\Http\Controllers\Controller::class, 'getAdminSettings']);
     Route::get('dashboard', [\App\Http\Controllers\Controller::class, 'index']);
@@ -167,7 +169,6 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::group(['prefix' => 'home_slider_images'], function () {
-        Route::get('/', [\App\Http\Controllers\API\HomeSliderImagesApiController::class, 'index']);
         Route::post('save', [\App\Http\Controllers\API\HomeSliderImagesApiController::class, 'save'])->name('home_slider_images.save');
         Route::post('update', [\App\Http\Controllers\API\HomeSliderImagesApiController::class, 'update'])->name('home_slider_images.update');
         Route::post('delete', [\App\Http\Controllers\API\HomeSliderImagesApiController::class, 'delete'])->name('home_slider_images.delete');
