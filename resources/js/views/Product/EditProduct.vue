@@ -53,7 +53,11 @@
 
             <div class="row">
                 <div class="col-12 col-md-12 order-md-1 order-last" id="mymodal">
-                    <form ref="my-form" @submit.prevent="saveRecord" @keydown.enter="$event.preventDefault()">
+                    <div v-if="isLoadingLanguages" class="text-center py-5">
+                        <b-spinner label="Loading..."></b-spinner>
+                        <p class="mt-2">Loading languages...</p>
+                    </div>
+                    <form ref="my-form" @submit.prevent="saveRecord" @keydown.enter="$event.preventDefault()" v-else>
                         <div class="card">
                             <div class="card-header">
                                 <h4><template v-if="clone">{{ __('clone') }}</template><template v-else-if="id">{{
@@ -378,12 +382,12 @@
                                             </p>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6" v-if="defaultLanguageId">
                                         <div class="form-group mb-3">
                                             <label>{{ __('product_name') }} <i class="text-danger">*</i></label>
                                             <input type="text" class="form-control"
                                                 :placeholder="__('enter_product_name')"
-                                                v-model="translations[1].name"
+                                                v-model="translations[defaultLanguageId].name"
                                                 required>
                                         </div>
                                     </div>
@@ -469,11 +473,11 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-12">
+                                    <div class="col-md-12" v-if="defaultLanguageId">
                                         <div class="form-group mb-3">
                                             <label>{{ __('description') }} <i class="text-danger">*</i></label>
                                             <editor :placeholder="__('enter_product_description')"
-                                                v-model="translations[1].description"
+                                                v-model="translations[defaultLanguageId].description"
                                                 :init="getEditorConfig()" />
                                         </div>
                                     </div>
@@ -601,9 +605,8 @@
 
                         
 
-                        <!-- Product Variants: Only show in default language tab -->
-                        <div class="card"
-                            v-if="languages.length > 0 && languages[activeLanguageTab] && languages[activeLanguageTab].is_default">
+                        <!-- Product Variants: Show regardless of language tabs since they are hidden -->
+                        <div class="card">
                             <div class="card-header">
                                 <h4>{{ __('product_variants') }}</h4>
                             </div>
@@ -615,7 +618,6 @@
                                             <b-form-radio-group v-model="type" :options="[
                                                 { text: __('packet'), 'value': 'packet' },
                                                 { text: __('loose'), 'value': 'loose' },
-                                                { text: __('both'), 'value': 'both' },
                                             ]" buttons button-variant="outline-primary"></b-form-radio-group>
                                         </div>
                                         <div class="form-group col-md-6">
@@ -979,9 +981,8 @@
                         </div>
 
 
-                        <!-- Non-translatable Fields: Only show in default language tab -->
-                        <div class="card"
-                            v-if="languages.length > 0 && languages[activeLanguageTab] && languages[activeLanguageTab].is_default">
+                        <!-- Non-translatable Fields: Show regardless of language tabs since they are hidden -->
+                        <div class="card">
                             <div class="card-header">
                                 <h4>{{ __('product_settings') }}</h4>
                             </div>
@@ -1141,75 +1142,44 @@
                             </div>
                             
                         </div>
-                        <div class="card">
+                        <div class="card" v-if="defaultLanguageId">
                             <div class="card-header">
                                 <h4>{{ __('seo_settings') }}</h4>
                             </div>
                             <div class="card-body">
-                                <!-- Language Tabs for SEO -->
-                                <div class="col-md-12 mb-3" v-if="false">
-                                    <b-tabs v-model="activeLanguageTab" content-class="mt-3">
-                                        <b-tab v-for="language in languages" :key="language.id" :title="language.name"
-                                            lazy>
-                                            <template #title>
-                                                <span :class="{ 'text-primary font-weight-bold': language.is_default }">
-                                                    {{ language.name }}
-                                                </span>
-                                            </template>
-
-                                            <div v-if="translations[language.id]">
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group mb-3">
-                                                            <label>{{ __('meta_title') }} </label>
-                                                            <input type="text" class="form-control"
-                                                                v-model="translations[language.id].meta_title"
-                                                                :placeholder="__('enter_meta_title')"
-                                                                @input="handleDefaultLanguageInput('meta_title', language)">
-                                                        </div>
-                                                        <div class="form-group mb-3">
-                                                            <label>{{ __('meta_keywords') }} </label>
-                                                            <input type="text" class="form-control"
-                                                                v-model="translations[language.id].meta_keywords"
-                                                                :placeholder="__('enter_meta_keywords')"
-                                                                @input="handleDefaultLanguageInput('meta_keywords', language)">
-                                                        </div>
-                                                        <div class="form-group mb-3">
-                                                            <label>{{ __('schema_markup') }} </label>
-                                                            <input type="text" class="form-control"
-                                                                v-model="translations[language.id].schema_markup"
-                                                                :placeholder="__('enter_schema_markup')"
-                                                                @input="handleDefaultLanguageInput('schema_markup', language)">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group mb-3">
-                                                            <label>{{ __('meta_description') }} </label>
-                                                            <textarea type="text" class="form-control"
-                                                                v-model="translations[language.id].meta_description"
-                                                                :placeholder="__('enter_meta_description')" rows="2"
-                                                                @input="handleDefaultLanguageInput('meta_description', language)"></textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </b-tab>
-                                    </b-tabs>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label>{{ __('meta_title') }} </label>
+                                            <input type="text" class="form-control"
+                                                v-model="translations[defaultLanguageId].meta_title"
+                                                :placeholder="__('enter_meta_title')">
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label>{{ __('meta_keywords') }} </label>
+                                            <input type="text" class="form-control"
+                                                v-model="translations[defaultLanguageId].meta_keywords"
+                                                :placeholder="__('enter_meta_keywords')">
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label>{{ __('schema_markup') }} </label>
+                                            <input type="text" class="form-control"
+                                                v-model="translations[defaultLanguageId].schema_markup"
+                                                :placeholder="__('enter_schema_markup')">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label>{{ __('meta_description') }} </label>
+                                            <textarea type="text" class="form-control"
+                                                v-model="translations[defaultLanguageId].meta_description"
+                                                :placeholder="__('enter_meta_description')" rows="2"></textarea>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <!-- Save and Clear buttons for non-default language tabs -->
-                            <div class="card-footer"
-                                v-if="languages.length > 0 && languages[activeLanguageTab] && !languages[activeLanguageTab].is_default">
-                                <b-button type="submit" @keydown.enter="saveRecord" variant="primary"
-                                    :disabled="isLoading"> {{ __('save') }}
-                                    <b-spinner v-if="isLoading" small label="Spinning"></b-spinner>
-                                </b-button>
-                                <button type="button" class="btn btn-danger" @click="clearForm">{{ __('clear')
-                                    }}</button>
-                            </div>
-                            <!-- Save and Clear buttons for default language tab only -->
-                            <div class="card-footer"
-                                v-if="languages.length === 0 || (languages[activeLanguageTab] && languages[activeLanguageTab].is_default)">
+                            <!-- Save and Clear buttons -->
+                            <div class="card-footer">
                                 <b-button type="submit" @keydown.enter="saveRecord" variant="primary"
                                     :disabled="isLoading"> {{ __('save') }}
                                     <b-spinner v-if="isLoading" small label="Spinning"></b-spinner>
@@ -2336,8 +2306,8 @@ export default {
                                     'packet_measurement': item.measurement,
                                     'packet_price': item.price,
                                     'packet_purchase_price': item.purchase_price,
-                                    'discounted_price': item.discounted_price,
-                                    'discount_percentage': item.discount_percentage || 0,
+                                    'discounted_price': vm.getDiscountAmountFromSalePrice(item.price, item.discounted_price),
+                                    'discount_percentage': item.discount_percentage || vm.getDiscountPercentFromSalePrice(item.price, item.discounted_price),
                                     'packet_stock': item.stock,
                                     'packet_stock_unit_id': item.stock_unit_id,
                                     'packet_status': item.status,
@@ -2360,7 +2330,7 @@ export default {
                                     'loose_measurement': item.measurement,
                                     'loose_custom_title': item.custom_title ?? "",
                                     'loose_price': item.price,
-                                    'loose_discounted_price': item.discounted_price,
+                                    'loose_discounted_price': vm.getDiscountAmountFromSalePrice(item.price, item.discounted_price),
                                     'packet_stock': item.stock,
                                     'loose_images': item.images,
                                 };
@@ -2372,7 +2342,7 @@ export default {
                             this.loose_stock = loose_stock;
                             this.loose_stock_unit_id = loose_stock_unit_id;
                             this.loose_purchase_price = this.record.variants[0] ? this.record.variants[0].purchase_price : 0;
-                            this.loose_discount_percentage = this.record.variants[0] ? (this.record.variants[0].discount_percentage || 0) : 0;
+                            this.loose_discount_percentage = this.record.variants[0] ? (this.record.variants[0].discount_percentage || this.getDiscountPercentFromSalePrice(this.record.variants[0].price, this.record.variants[0].discounted_price)) : 0;
                             this.status = status;
                         }
                     } else {
@@ -2441,7 +2411,7 @@ export default {
             formData.append('meta_description', defaultTranslation.meta_description || '');
 
             /*packet*/
-            if (this.type === 'packet' || this.type === 'both') {
+            if (this.type === 'packet') {
                 for (let i = 0; i < this.inputs.length; i++) {
 
                     formData.append('variant_id[]', (this.inputs[i].id) ? this.inputs[i].id : "");
@@ -2449,7 +2419,7 @@ export default {
 
                     formData.append('packet_price[]', (this.inputs[i].packet_price != undefined) ? this.inputs[i].packet_price : 0);
                     formData.append('packet_purchase_price[]', (this.inputs[i].packet_purchase_price != undefined) ? this.inputs[i].packet_purchase_price : 0);
-                    formData.append('discounted_price[]', (this.inputs[i].discounted_price != undefined) ? this.inputs[i].discounted_price : 0);
+                    formData.append('discounted_price[]', this.getPacketSalePriceRaw(this.inputs[i]));
                     formData.append('discount_percentage[]', (this.inputs[i].discount_percentage != undefined) ? this.inputs[i].discount_percentage : 0);
                     formData.append('packet_stock[]', (this.inputs[i].packet_stock != undefined) ? this.inputs[i].packet_stock : 0);
                     formData.append('packet_stock_unit_id[]', (this.inputs[i].packet_stock_unit_id != undefined) ? this.inputs[i].packet_stock_unit_id : 0);
@@ -2468,7 +2438,7 @@ export default {
             }
 
             /*loose*/
-            if (this.type === 'loose' || this.type === 'both') {
+            if (this.type === 'loose') {
                 for (let i = 0; i < this.inputs.length; i++) {
                     formData.append('variant_id[]', (this.inputs[i].id) ? this.inputs[i].id : "");
                     formData.append('loose_measurement[]', this.inputs[i].loose_measurement || 1);
@@ -2476,7 +2446,7 @@ export default {
 
                     formData.append('loose_price[]', (this.inputs[i].loose_price != undefined) ? this.inputs[i].loose_price : 0);
 
-                    formData.append('loose_discounted_price[]', (this.inputs[i].loose_discounted_price != undefined) ? this.inputs[i].loose_discounted_price : 0);
+                    formData.append('loose_discounted_price[]', this.getLooseSalePriceRaw(this.inputs[i]));
                     formData.append('loose_discount_percentage[]', (this.loose_discount_percentage != undefined) ? this.loose_discount_percentage : 0);
                     formData.append('packet_stock[]', (this.inputs[i].packet_stock != undefined) ? this.inputs[i].packet_stock : 0);
 
@@ -2644,10 +2614,33 @@ export default {
             }
         },
 
-        getSellingPrice(price, discountedPrice) {
-            const regularPrice = this.toNumber(price);
-            const salePrice = this.toNumber(discountedPrice);
-            return salePrice > 0 ? salePrice : regularPrice;
+        hasValue(value) {
+            return value !== null && value !== undefined && value !== '';
+        },
+
+        getSellingPrice(price, discountPercent, discountAmount) {
+            const mrp = this.toNumber(price);
+            if (mrp <= 0) return 0;
+
+            if (this.hasValue(discountPercent)) {
+                return Math.max(mrp - ((mrp * this.toNumber(discountPercent)) / 100), 0);
+            }
+
+            return Math.max(mrp - this.toNumber(discountAmount), 0);
+        },
+
+        getDiscountAmountFromSalePrice(price, salePrice) {
+            const mrp = this.toNumber(price);
+            const sale = this.toNumber(salePrice);
+            if (mrp <= 0 || sale <= 0 || sale >= mrp) return 0;
+            return (mrp - sale).toFixed(2);
+        },
+
+        getDiscountPercentFromSalePrice(price, salePrice) {
+            const mrp = this.toNumber(price);
+            const sale = this.toNumber(salePrice);
+            if (mrp <= 0 || sale <= 0 || sale >= mrp) return 0;
+            return (100 - ((sale * 100) / mrp)).toFixed(2);
         },
 
         toNumber(value) {
@@ -2668,18 +2661,21 @@ export default {
         },
 
         getPacketProfit(input) {
-            const sellingPrice = this.getSellingPrice(input.packet_price, input.discounted_price);
+            const sellingPrice = this.getPacketSalePriceRaw(input);
             const purchasePrice = this.toNumber(input.packet_purchase_price);
             return this.formatMoney(sellingPrice - purchasePrice);
         },
 
+        getPacketSalePriceRaw(input) {
+            return this.getSellingPrice(input.packet_price, input.discount_percentage, input.discounted_price);
+        },
+
         getPacketSalePrice(input) {
-            const sellingPrice = this.getSellingPrice(input.packet_price, input.discounted_price);
-            return this.formatMoney(sellingPrice);
+            return this.formatMoney(this.getPacketSalePriceRaw(input));
         },
 
         getPacketProfitPercentage(input) {
-            const sellingPrice = this.getSellingPrice(input.packet_price, input.discounted_price);
+            const sellingPrice = this.getPacketSalePriceRaw(input);
             const purchasePrice = this.toNumber(input.packet_purchase_price);
             if (purchasePrice <= 0) return '0.00';
             return (((sellingPrice - purchasePrice) / purchasePrice) * 100).toFixed(2);
@@ -2689,7 +2685,8 @@ export default {
             const mrp = this.toNumber(input.packet_price);
             const discountPercent = this.toNumber(input.discount_percentage);
             if (mrp > 0 && discountPercent >= 0) {
-                const discountAmount = (mrp * discountPercent) / 100;
+                const salePrice = this.getSellingPrice(mrp, discountPercent, '');
+                const discountAmount = mrp - salePrice;
                 input.discounted_price = discountAmount.toFixed(2);
             }
         },
@@ -2704,26 +2701,29 @@ export default {
         },
 
         getPacketMargin(input) {
-            const sellingPrice = this.getSellingPrice(input.packet_price, input.discounted_price);
+            const sellingPrice = this.getPacketSalePriceRaw(input);
             return this.getMarginPercent(sellingPrice, input.packet_purchase_price);
         },
 
         getLooseProfit() {
             const firstVariant = this.inputs[0] || {};
-            const sellingPrice = this.getSellingPrice(firstVariant.loose_price, firstVariant.loose_discounted_price);
+            const sellingPrice = this.getLooseSalePriceRaw(firstVariant);
             const purchasePrice = this.toNumber(this.loose_purchase_price);
             return this.formatMoney(sellingPrice - purchasePrice);
         },
 
+        getLooseSalePriceRaw(input) {
+            return this.getSellingPrice(input.loose_price, this.loose_discount_percentage, input.loose_discounted_price);
+        },
+
         getLooseSalePrice() {
             const firstVariant = this.inputs[0] || {};
-            const sellingPrice = this.getSellingPrice(firstVariant.loose_price, firstVariant.loose_discounted_price);
-            return this.formatMoney(sellingPrice);
+            return this.formatMoney(this.getLooseSalePriceRaw(firstVariant));
         },
 
         getLooseProfitPercentage() {
             const firstVariant = this.inputs[0] || {};
-            const sellingPrice = this.getSellingPrice(firstVariant.loose_price, firstVariant.loose_discounted_price);
+            const sellingPrice = this.getLooseSalePriceRaw(firstVariant);
             const purchasePrice = this.toNumber(this.loose_purchase_price);
             if (purchasePrice <= 0) return '0.00';
             return (((sellingPrice - purchasePrice) / purchasePrice) * 100).toFixed(2);
@@ -2734,7 +2734,8 @@ export default {
             const mrp = this.toNumber(firstVariant.loose_price);
             const discountPercent = this.toNumber(this.loose_discount_percentage);
             if (mrp > 0 && discountPercent >= 0) {
-                const discountAmount = (mrp * discountPercent) / 100;
+                const salePrice = this.getSellingPrice(mrp, discountPercent, '');
+                const discountAmount = mrp - salePrice;
                 firstVariant.loose_discounted_price = discountAmount.toFixed(2);
             }
         },
@@ -2751,7 +2752,7 @@ export default {
 
         getLooseMargin() {
             const firstVariant = this.inputs[0] || {};
-            const sellingPrice = this.getSellingPrice(firstVariant.loose_price, firstVariant.loose_discounted_price);
+            const sellingPrice = this.getLooseSalePriceRaw(firstVariant);
             return this.getMarginPercent(sellingPrice, this.loose_purchase_price);
         },
 

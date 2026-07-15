@@ -14,8 +14,12 @@ class AddPricingFieldsToProductVariantsTable extends Migration
     public function up()
     {
         Schema::table('product_variants', function (Blueprint $table) {
-            $table->float('purchase_price', 11, 2)->default(0)->after('price');
-            $table->float('discount_percentage', 11, 2)->default(0)->after('discounted_price');
+            if (!Schema::hasColumn('product_variants', 'purchase_price')) {
+                $table->float('purchase_price', 11, 2)->default(0)->after('price');
+            }
+            if (!Schema::hasColumn('product_variants', 'discount_percentage')) {
+                $table->float('discount_percentage', 11, 2)->default(0)->after('discounted_price');
+            }
         });
     }
 
@@ -27,7 +31,9 @@ class AddPricingFieldsToProductVariantsTable extends Migration
     public function down()
     {
         Schema::table('product_variants', function (Blueprint $table) {
-            $table->dropColumn(['purchase_price', 'discount_percentage']);
+            if (Schema::hasColumn('product_variants', 'discount_percentage')) {
+                $table->dropColumn('discount_percentage');
+            }
         });
     }
 }
