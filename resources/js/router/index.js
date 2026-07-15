@@ -30,7 +30,7 @@ const NotificationPanel = () => import("../views/NotificationPanel.vue");
 const ManageCategories = () => import("../views/Category/ManageCategories");
 const ManageSubcategories = () => import("../views/Category/ManageSubcategories");
 const ManageSubSubcategories = () => import("../views/Category/ManageSubSubcategories");
-const ManageSubSubSubcategories = () => import("../views/Category/ManageSubSubSubcategories");
+const ManageSubSubSubcategories = () => import("../views/Category/ManageSubSubSubcategories.vue");
 const CategoriesOrder = () => import("../views/Category/CategoriesOrder");
 
 // Products

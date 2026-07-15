@@ -95,7 +95,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         'name': '',
         'packet_status': '',
         'packet_stock_unit_id': '',
-        'discount_percentage': 0
+        'discount_percentage': 0,
+        'discounted_price': 0,
+        'discount_mode': 'percent',
+        'loose_discounted_price': 0,
+        'loose_discount_mode': 'percent'
       }],
       image: null,
       main_image_path: "",
@@ -612,11 +616,16 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         this.inputs.push({
           'name': '',
           'packet_status': '',
-          'packet_stock_unit_id': ''
+          'packet_stock_unit_id': '',
+          'discount_percentage': 0,
+          'discounted_price': 0,
+          'discount_mode': 'percent'
         });
       } else {
         this.inputs.push({
-          'name': ''
+          'name': '',
+          'loose_discounted_price': 0,
+          'loose_discount_mode': 'percent'
         });
       }
     },
@@ -1092,6 +1101,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
                 'packet_purchase_price': item.purchase_price,
                 'discounted_price': vm.getDiscountAmountFromSalePrice(item.price, item.discounted_price),
                 'discount_percentage': item.discount_percentage || vm.getDiscountPercentFromSalePrice(item.price, item.discounted_price),
+                'discount_mode': item.discount_percentage ? 'percent' : 'amount',
                 'packet_stock': item.stock,
                 'packet_stock_unit_id': item.stock_unit_id,
                 'packet_status': item.status,
@@ -1113,6 +1123,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
                 'loose_custom_title': (_item$custom_title = item.custom_title) !== null && _item$custom_title !== void 0 ? _item$custom_title : "",
                 'loose_price': item.price,
                 'loose_discounted_price': vm.getDiscountAmountFromSalePrice(item.price, item.discounted_price),
+                'loose_discount_mode': item.discount_percentage ? 'percent' : 'amount',
                 'packet_stock': item.stock,
                 'loose_images': item.images
               };
@@ -1199,7 +1210,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           formData.append('packet_price[]', this.inputs[_i].packet_price != undefined ? this.inputs[_i].packet_price : 0);
           formData.append('packet_purchase_price[]', this.inputs[_i].packet_purchase_price != undefined ? this.inputs[_i].packet_purchase_price : 0);
           formData.append('discounted_price[]', this.getPacketSalePriceRaw(this.inputs[_i]));
-          formData.append('discount_percentage[]', this.inputs[_i].discount_percentage != undefined ? this.inputs[_i].discount_percentage : 0);
+          formData.append('discount_percentage[]', this.getPacketDiscountPercentage(this.inputs[_i]));
           formData.append('packet_stock[]', this.inputs[_i].packet_stock != undefined ? this.inputs[_i].packet_stock : 0);
           formData.append('packet_stock_unit_id[]', this.inputs[_i].packet_stock_unit_id != undefined ? this.inputs[_i].packet_stock_unit_id : 0);
           formData.append('packet_status[]', this.inputs[_i].packet_status != undefined ? this.inputs[_i].packet_status : 0);
@@ -1224,7 +1235,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           formData.append('loose_custom_title[]', this.inputs[_i2].loose_custom_title);
           formData.append('loose_price[]', this.inputs[_i2].loose_price != undefined ? this.inputs[_i2].loose_price : 0);
           formData.append('loose_discounted_price[]', this.getLooseSalePriceRaw(this.inputs[_i2]));
-          formData.append('loose_discount_percentage[]', this.loose_discount_percentage != undefined ? this.loose_discount_percentage : 0);
+          formData.append('loose_discount_percentage[]', this.getLooseDiscountPercentage(this.inputs[_i2]));
           formData.append('packet_stock[]', this.inputs[_i2].packet_stock != undefined ? this.inputs[_i2].packet_stock : 0);
 
           // Safely handle loose variant images refs (can be undefined when card is hidden in non-default language tab)
@@ -1378,9 +1389,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       return value !== null && value !== undefined && value !== '';
     },
     getSellingPrice: function getSellingPrice(price, discountPercent, discountAmount) {
+      var discountMode = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'percent';
       var mrp = this.toNumber(price);
       if (mrp <= 0) return 0;
-      if (this.hasValue(discountPercent)) {
+      if (discountMode === 'percent' && this.hasValue(discountPercent)) {
         return Math.max(mrp - mrp * this.toNumber(discountPercent) / 100, 0);
       }
       return Math.max(mrp - this.toNumber(discountAmount), 0);
@@ -1417,7 +1429,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       return this.formatMoney(sellingPrice - purchasePrice);
     },
     getPacketSalePriceRaw: function getPacketSalePriceRaw(input) {
-      return this.getSellingPrice(input.packet_price, input.discount_percentage, input.discounted_price);
+      return this.getSellingPrice(input.packet_price, input.discount_percentage, input.discounted_price, input.discount_mode || 'percent');
     },
     getPacketSalePrice: function getPacketSalePrice(input) {
       return this.formatMoney(this.getPacketSalePriceRaw(input));
@@ -1428,21 +1440,20 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       if (purchasePrice <= 0) return '0.00';
       return ((sellingPrice - purchasePrice) / purchasePrice * 100).toFixed(2);
     },
-    calculatePacketDiscount: function calculatePacketDiscount(input) {
+    getPacketDiscountPercentage: function getPacketDiscountPercentage(input) {
       var mrp = this.toNumber(input.packet_price);
-      var discountPercent = this.toNumber(input.discount_percentage);
-      if (mrp > 0 && discountPercent >= 0) {
-        var salePrice = this.getSellingPrice(mrp, discountPercent, '');
-        var discountAmount = mrp - salePrice;
-        input.discounted_price = discountAmount.toFixed(2);
+      if (mrp <= 0) return '0.00';
+      if ((input.discount_mode || 'percent') === 'amount') {
+        return (this.toNumber(input.discounted_price) / mrp * 100).toFixed(2);
       }
+      return this.formatMoney(input.discount_percentage);
     },
-    calculatePacketDiscountFromRs: function calculatePacketDiscountFromRs(input) {
+    setPacketDiscountMode: function setPacketDiscountMode(input, mode) {
+      input.discount_mode = mode;
+      input.validationErrorDiscountedPrice = null;
       var mrp = this.toNumber(input.packet_price);
-      var discountAmount = this.toNumber(input.discounted_price);
-      if (mrp > 0 && discountAmount >= 0) {
-        var discountPercent = discountAmount / mrp * 100;
-        input.discount_percentage = discountPercent.toFixed(2);
+      if (mode === 'amount' && mrp > 0 && this.toNumber(input.discounted_price) > mrp) {
+        input.validationErrorDiscountedPrice = 'Discount amount must be less than MRP';
       }
     },
     getPacketMargin: function getPacketMargin(input) {
@@ -1456,7 +1467,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       return this.formatMoney(sellingPrice - purchasePrice);
     },
     getLooseSalePriceRaw: function getLooseSalePriceRaw(input) {
-      return this.getSellingPrice(input.loose_price, this.loose_discount_percentage, input.loose_discounted_price);
+      return this.getSellingPrice(input.loose_price, this.loose_discount_percentage, input.loose_discounted_price, input.loose_discount_mode || 'percent');
     },
     getLooseSalePrice: function getLooseSalePrice() {
       var firstVariant = this.inputs[0] || {};
@@ -1469,23 +1480,21 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       if (purchasePrice <= 0) return '0.00';
       return ((sellingPrice - purchasePrice) / purchasePrice * 100).toFixed(2);
     },
-    calculateLooseDiscount: function calculateLooseDiscount() {
-      var firstVariant = this.inputs[0] || {};
-      var mrp = this.toNumber(firstVariant.loose_price);
-      var discountPercent = this.toNumber(this.loose_discount_percentage);
-      if (mrp > 0 && discountPercent >= 0) {
-        var salePrice = this.getSellingPrice(mrp, discountPercent, '');
-        var discountAmount = mrp - salePrice;
-        firstVariant.loose_discounted_price = discountAmount.toFixed(2);
+    getLooseDiscountPercentage: function getLooseDiscountPercentage(input) {
+      var mrp = this.toNumber(input.loose_price);
+      if (mrp <= 0) return '0.00';
+      if ((input.loose_discount_mode || 'percent') === 'amount') {
+        return (this.toNumber(input.loose_discounted_price) / mrp * 100).toFixed(2);
       }
+      return this.formatMoney(this.loose_discount_percentage);
     },
-    calculateLooseDiscountFromRs: function calculateLooseDiscountFromRs() {
+    setLooseDiscountMode: function setLooseDiscountMode(mode) {
       var firstVariant = this.inputs[0] || {};
+      firstVariant.loose_discount_mode = mode;
+      firstVariant.validationErrorDiscountedPriceLoose = null;
       var mrp = this.toNumber(firstVariant.loose_price);
-      var discountAmount = this.toNumber(firstVariant.loose_discounted_price);
-      if (mrp > 0 && discountAmount >= 0) {
-        var discountPercent = discountAmount / mrp * 100;
-        this.loose_discount_percentage = discountPercent.toFixed(2);
+      if (mode === 'amount' && mrp > 0 && this.toNumber(firstVariant.loose_discounted_price) > mrp) {
+        firstVariant.validationErrorDiscountedPriceLoose = 'Discount amount must be less than MRP';
       }
     },
     getLooseMargin: function getLooseMargin() {
@@ -2667,7 +2676,7 @@ var render = function render() {
           if ($event.target.composing) return;
           _vm.$set(_input, "discount_percentage", $event.target.value);
         }, function ($event) {
-          return _vm.calculatePacketDiscount(_input);
+          return _vm.setPacketDiscountMode(_input, "percent");
         }]
       }
     })])]), _vm._v(" "), _c("div", {
@@ -2696,7 +2705,7 @@ var render = function render() {
           if ($event.target.composing) return;
           _vm.$set(_input, "discounted_price", $event.target.value);
         }, function ($event) {
-          return _vm.calculatePacketDiscountFromRs(_input);
+          return _vm.setPacketDiscountMode(_input, "amount");
         }]
       }
     }), _vm._v(" "), _input.validationErrorDiscountedPrice ? _c("span", {
@@ -3082,7 +3091,7 @@ var render = function render() {
           if ($event.target.composing) return;
           _vm.loose_discount_percentage = $event.target.value;
         }, function ($event) {
-          return _vm.calculateLooseDiscount();
+          return _vm.setLooseDiscountMode("percent");
         }]
       }
     })])]), _vm._v(" "), _c("div", {
@@ -3111,7 +3120,7 @@ var render = function render() {
           if ($event.target.composing) return;
           _vm.$set(_vm.inputs[0], "loose_discounted_price", $event.target.value);
         }, function ($event) {
-          return _vm.calculateLooseDiscountFromRs();
+          return _vm.setLooseDiscountMode("amount");
         }]
       }
     }), _vm._v(" "), _vm.inputs[0].validationErrorDiscountedPriceLoose ? _c("span", {
