@@ -683,7 +683,7 @@
                                                 <label>Discount on MRP(%)</label>
                                                 <input type="number" min="0" step="any" class="form-control"
                                                     placeholder="0.00" v-model="input.discount_percentage"
-                                                    @input="calculatePacketDiscount(input)">
+                                                    @input="setPacketDiscountMode(input, 'percent')">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -691,7 +691,7 @@
                                                 <label>Discount on MRP(Rs)</label>
                                                 <input type="number" min="0" step="any" class="form-control"
                                                     placeholder="0.00" v-model="input.discounted_price"
-                                                    @input="calculatePacketDiscountFromRs(input)">
+                                                    @input="setPacketDiscountMode(input, 'amount')">
                                                 <span v-if="input.validationErrorDiscountedPrice" class="error">{{
                                                     input.validationErrorDiscountedPrice }}</span>
                                             </div>
@@ -835,7 +835,7 @@
                                                     <label>Discount on MRP(%)</label>
                                                     <input type="number" step="any" min="0" class="form-control"
                                                         placeholder="0.00" v-model="loose_discount_percentage"
-                                                        @input="calculateLooseDiscount()">
+                                                        @input="setLooseDiscountMode('percent')">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -843,7 +843,7 @@
                                                     <label>Discount on MRP(Rs)</label>
                                                     <input type="number" step="any" min="0" class="form-control"
                                                         placeholder="0.00" v-model="inputs[0].loose_discounted_price"
-                                                        @input="calculateLooseDiscountFromRs()">
+                                                        @input="setLooseDiscountMode('amount')">
                                                     <span v-if="inputs[0].validationErrorDiscountedPriceLoose"
                                                         class="error">{{
                                                             inputs[0].validationErrorDiscountedPriceLoose }}</span>
@@ -1267,7 +1267,7 @@ export default {
             categories: null,
             order_status: null,
 
-            inputs: [{ 'name': '', 'packet_status': '', 'packet_stock_unit_id': '', 'discount_percentage': 0 }],
+            inputs: [{ 'name': '', 'packet_status': '', 'packet_stock_unit_id': '', 'discount_percentage': 0, 'discounted_price': 0, 'discount_mode': 'percent', 'loose_discounted_price': 0, 'loose_discount_mode': 'percent' }],
 
             image: null,
             main_image_path: "",
@@ -1804,9 +1804,9 @@ export default {
         },
         addRow() {
             if (this.type === 'packet') {
-                this.inputs.push({ 'name': '', 'packet_status': '', 'packet_stock_unit_id': '' })
+                this.inputs.push({ 'name': '', 'packet_status': '', 'packet_stock_unit_id': '', 'discount_percentage': 0, 'discounted_price': 0, 'discount_mode': 'percent' })
             } else {
-                this.inputs.push({ 'name': '' })
+                this.inputs.push({ 'name': '', 'loose_discounted_price': 0, 'loose_discount_mode': 'percent' })
             }
         },
         remove(index) {
@@ -2308,6 +2308,7 @@ export default {
                                     'packet_purchase_price': item.purchase_price,
                                     'discounted_price': vm.getDiscountAmountFromSalePrice(item.price, item.discounted_price),
                                     'discount_percentage': item.discount_percentage || vm.getDiscountPercentFromSalePrice(item.price, item.discounted_price),
+                                    'discount_mode': item.discount_percentage ? 'percent' : 'amount',
                                     'packet_stock': item.stock,
                                     'packet_stock_unit_id': item.stock_unit_id,
                                     'packet_status': item.status,
@@ -2331,6 +2332,7 @@ export default {
                                     'loose_custom_title': item.custom_title ?? "",
                                     'loose_price': item.price,
                                     'loose_discounted_price': vm.getDiscountAmountFromSalePrice(item.price, item.discounted_price),
+                                    'loose_discount_mode': item.discount_percentage ? 'percent' : 'amount',
                                     'packet_stock': item.stock,
                                     'loose_images': item.images,
                                 };
@@ -2420,7 +2422,7 @@ export default {
                     formData.append('packet_price[]', (this.inputs[i].packet_price != undefined) ? this.inputs[i].packet_price : 0);
                     formData.append('packet_purchase_price[]', (this.inputs[i].packet_purchase_price != undefined) ? this.inputs[i].packet_purchase_price : 0);
                     formData.append('discounted_price[]', this.getPacketSalePriceRaw(this.inputs[i]));
-                    formData.append('discount_percentage[]', (this.inputs[i].discount_percentage != undefined) ? this.inputs[i].discount_percentage : 0);
+                    formData.append('discount_percentage[]', this.getPacketDiscountPercentage(this.inputs[i]));
                     formData.append('packet_stock[]', (this.inputs[i].packet_stock != undefined) ? this.inputs[i].packet_stock : 0);
                     formData.append('packet_stock_unit_id[]', (this.inputs[i].packet_stock_unit_id != undefined) ? this.inputs[i].packet_stock_unit_id : 0);
                     formData.append('packet_status[]', (this.inputs[i].packet_status != undefined) ? this.inputs[i].packet_status : 0);
@@ -2447,7 +2449,7 @@ export default {
                     formData.append('loose_price[]', (this.inputs[i].loose_price != undefined) ? this.inputs[i].loose_price : 0);
 
                     formData.append('loose_discounted_price[]', this.getLooseSalePriceRaw(this.inputs[i]));
-                    formData.append('loose_discount_percentage[]', (this.loose_discount_percentage != undefined) ? this.loose_discount_percentage : 0);
+                    formData.append('loose_discount_percentage[]', this.getLooseDiscountPercentage(this.inputs[i]));
                     formData.append('packet_stock[]', (this.inputs[i].packet_stock != undefined) ? this.inputs[i].packet_stock : 0);
 
                     // Safely handle loose variant images refs (can be undefined when card is hidden in non-default language tab)
@@ -2618,11 +2620,11 @@ export default {
             return value !== null && value !== undefined && value !== '';
         },
 
-        getSellingPrice(price, discountPercent, discountAmount) {
+        getSellingPrice(price, discountPercent, discountAmount, discountMode = 'percent') {
             const mrp = this.toNumber(price);
             if (mrp <= 0) return 0;
 
-            if (this.hasValue(discountPercent)) {
+            if (discountMode === 'percent' && this.hasValue(discountPercent)) {
                 return Math.max(mrp - ((mrp * this.toNumber(discountPercent)) / 100), 0);
             }
 
@@ -2667,7 +2669,7 @@ export default {
         },
 
         getPacketSalePriceRaw(input) {
-            return this.getSellingPrice(input.packet_price, input.discount_percentage, input.discounted_price);
+            return this.getSellingPrice(input.packet_price, input.discount_percentage, input.discounted_price, input.discount_mode || 'percent');
         },
 
         getPacketSalePrice(input) {
@@ -2681,22 +2683,24 @@ export default {
             return (((sellingPrice - purchasePrice) / purchasePrice) * 100).toFixed(2);
         },
 
-        calculatePacketDiscount(input) {
+        getPacketDiscountPercentage(input) {
             const mrp = this.toNumber(input.packet_price);
-            const discountPercent = this.toNumber(input.discount_percentage);
-            if (mrp > 0 && discountPercent >= 0) {
-                const salePrice = this.getSellingPrice(mrp, discountPercent, '');
-                const discountAmount = mrp - salePrice;
-                input.discounted_price = discountAmount.toFixed(2);
+            if (mrp <= 0) return '0.00';
+
+            if ((input.discount_mode || 'percent') === 'amount') {
+                return ((this.toNumber(input.discounted_price) / mrp) * 100).toFixed(2);
             }
+
+            return this.formatMoney(input.discount_percentage);
         },
 
-        calculatePacketDiscountFromRs(input) {
+        setPacketDiscountMode(input, mode) {
+            input.discount_mode = mode;
+            input.validationErrorDiscountedPrice = null;
+
             const mrp = this.toNumber(input.packet_price);
-            const discountAmount = this.toNumber(input.discounted_price);
-            if (mrp > 0 && discountAmount >= 0) {
-                const discountPercent = (discountAmount / mrp) * 100;
-                input.discount_percentage = discountPercent.toFixed(2);
+            if (mode === 'amount' && mrp > 0 && this.toNumber(input.discounted_price) > mrp) {
+                input.validationErrorDiscountedPrice = 'Discount amount must be less than MRP';
             }
         },
 
@@ -2713,7 +2717,7 @@ export default {
         },
 
         getLooseSalePriceRaw(input) {
-            return this.getSellingPrice(input.loose_price, this.loose_discount_percentage, input.loose_discounted_price);
+            return this.getSellingPrice(input.loose_price, this.loose_discount_percentage, input.loose_discounted_price, input.loose_discount_mode || 'percent');
         },
 
         getLooseSalePrice() {
@@ -2729,24 +2733,25 @@ export default {
             return (((sellingPrice - purchasePrice) / purchasePrice) * 100).toFixed(2);
         },
 
-        calculateLooseDiscount() {
-            const firstVariant = this.inputs[0] || {};
-            const mrp = this.toNumber(firstVariant.loose_price);
-            const discountPercent = this.toNumber(this.loose_discount_percentage);
-            if (mrp > 0 && discountPercent >= 0) {
-                const salePrice = this.getSellingPrice(mrp, discountPercent, '');
-                const discountAmount = mrp - salePrice;
-                firstVariant.loose_discounted_price = discountAmount.toFixed(2);
+        getLooseDiscountPercentage(input) {
+            const mrp = this.toNumber(input.loose_price);
+            if (mrp <= 0) return '0.00';
+
+            if ((input.loose_discount_mode || 'percent') === 'amount') {
+                return ((this.toNumber(input.loose_discounted_price) / mrp) * 100).toFixed(2);
             }
+
+            return this.formatMoney(this.loose_discount_percentage);
         },
 
-        calculateLooseDiscountFromRs() {
+        setLooseDiscountMode(mode) {
             const firstVariant = this.inputs[0] || {};
+            firstVariant.loose_discount_mode = mode;
+            firstVariant.validationErrorDiscountedPriceLoose = null;
+
             const mrp = this.toNumber(firstVariant.loose_price);
-            const discountAmount = this.toNumber(firstVariant.loose_discounted_price);
-            if (mrp > 0 && discountAmount >= 0) {
-                const discountPercent = (discountAmount / mrp) * 100;
-                this.loose_discount_percentage = discountPercent.toFixed(2);
+            if (mode === 'amount' && mrp > 0 && this.toNumber(firstVariant.loose_discounted_price) > mrp) {
+                firstVariant.validationErrorDiscountedPriceLoose = 'Discount amount must be less than MRP';
             }
         },
 
