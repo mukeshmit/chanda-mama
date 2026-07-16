@@ -88,7 +88,7 @@
                         </div>
 
                         <div class="form-group" v-if="language.is_default">
-                            <label>{{ __('image') }}</label><i class="text-danger">*</i>
+                            <label>{{ __('image') }}</label>
                             <p class="text-muted">{{ __('please_choose_square_image_of_larger_than_350px_350px_and_smaller_than_550px_550px') }}</p>
                             <span v-if="error" class="error">{{ error }}</span>
 
@@ -577,12 +577,6 @@ export default {
             if (Number(this.parent_id) === 0) {
                 this.switchToDefaultLanguageTab();
                 this.showError('Please select Sub SubCategory');
-                return false;
-            }
-
-            if (!this.id && !this.image && !this.image_url) {
-                this.switchToDefaultLanguageTab();
-                this.showError(__('please_fill_default_language_required_fields'));
                 return false;
             }
 

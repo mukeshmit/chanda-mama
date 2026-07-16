@@ -656,7 +656,7 @@
 
                                         <div class="col-md-4">
                                             <div class="form-group mb-3">
-                                                <label>MPR ( {{ $currency }} ) <i class="text-danger">*</i></label>
+                                                <label>MRP ( {{ $currency }} ) <i class="text-danger">*</i></label>
                                                 <input type="number" min="0" step="any" class="form-control"
                                                     placeholder="0.00" v-model="input.packet_price" required>
                                             </div>

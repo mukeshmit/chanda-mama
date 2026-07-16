@@ -133,14 +133,11 @@ class BasicApiController extends Controller
         }
 
         $categoryArray['cat_active_childs'] = $formattedChildren;
+        $categoryArray['childs'] = $formattedChildren;
+        $categoryArray['subcategories'] = $formattedChildren;
 
-        if ($isRoot) {
-            $categoryArray['childs'] = [];
-            $categoryArray['subcategories'] = [];
-        } else {
-            unset($categoryArray['childs']);
-            unset($categoryArray['subcategories']);
-        }
+        unset($categoryArray['all_active_childs']);
+        unset($categoryArray['active_childs']);
         unset($categoryArray['subcat']);
 
         return $categoryArray;

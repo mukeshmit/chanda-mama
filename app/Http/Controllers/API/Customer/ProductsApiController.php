@@ -38,6 +38,23 @@ class ProductsApiController extends Controller
         $this->productRepository = $productRepository;
         $this->categoryRepository = $categoryRepository;
     }
+
+    public function getProductsByBrand(Request $request, $brand_id = null)
+    {
+        $brandId = $brand_id ?: $request->get('brand_id');
+        if (!$brandId || !is_numeric($brandId)) {
+            return CommonHelper::responseError('The brand id field is required.');
+        }
+
+        $request->merge([
+            'brand_id' => (int) $brandId,
+            'limit' => $request->get('limit', 10),
+            'offset' => $request->get('offset', 0),
+        ]);
+
+        return $this->getProducts($request);
+    }
+
     public function getProducts(Request $request)
     {
         $validator = Validator::make($request->all(), [

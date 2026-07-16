@@ -1075,7 +1075,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           _this24.is_unlimited_stock = _this24.record.is_unlimited_stock;
           _this24.main_image_path = _this24.$storageUrl + _this24.record.image;
           _this24.other_images = _this24.record.images;
-          _this24.image = _this24.record.image;
+          _this24.image = null;
           _this24.meta_title = _this24.record.meta_title;
           _this24.meta_keywords = _this24.record.meta_keywords;
           _this24.schema_markup = _this24.record.schema_markup;
@@ -1271,7 +1271,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       formData.append('max_allowed_quantity', this.max_allowed_quantity);
       formData.append('is_approved', this.is_approved);
       formData.append('tax_included_in_price', this.tax_included_in_price);
-      formData.append('image', this.image);
+      if (this.image instanceof File) {
+        formData.append('image', this.image);
+      }
       // Other Images - Use files from images array to maintain correct indexing
       for (var i = 0; i < this.images.length; i++) {
         var _file3 = this.images[i].file;
@@ -2276,9 +2278,9 @@ var render = function render() {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group mb-3"
-  }, [_c("label", [_vm._v(_vm._s(_vm.__("main_image")) + " "), _c("i", {
+  }, [_c("label", [_vm._v(_vm._s(_vm.__("main_image")) + " "), !_vm.id ? _c("i", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
     ref: "file_image",
     staticClass: "file-input",
     attrs: {
