@@ -59,7 +59,7 @@
                         </div>
 
                         <div class="table-responsive mb-0">
-                            <b-table :items="translatedCategories" :fields="fields" :filter="filter"
+                            <b-table :items="paginatedTranslatedCategories" :fields="fields" :filter="filter"
                                 :filter-included-fields="filterOn" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
                                 show-empty small :empty-text="__('no_records_to_show')"
                                 :empty-filtered-text="__('no_records_to_show')" class="mb-0">
@@ -223,6 +223,10 @@ export default {
                 return translatedCategory;
             });
         },
+        paginatedTranslatedCategories: function () {
+            const start = (this.currentPage - 1) * this.perPage;
+            return this.translatedCategories.slice(start, start + this.perPage);
+        },
     },
     mounted() {
     },
@@ -306,8 +310,7 @@ export default {
         getSubcategories() {
             return axios.get(this.$apiUrl + '/categories', {
                 params: {
-                    status: 1,
-                    limit: 1000
+                    status: 1
                 }
             })
                 .then((response) => {
@@ -330,7 +333,7 @@ export default {
         },
 
         getParentCategoryName(parentId) {
-            const parent = this.subcategories.find(cat => cat.id === parentId);
+            const parent = this.subcategories.find(cat => Number(cat.id) === Number(parentId));
             return parent ? parent.name : '-';
         },
 
@@ -340,8 +343,6 @@ export default {
             const currentRequestId = this.latestRequestId;
 
             const params = {
-                offset: this.currentPage,
-                limit: this.perPage,
                 filter: this.filter,
                 status: null,
                 _t: Date.now()
