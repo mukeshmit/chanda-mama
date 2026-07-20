@@ -650,11 +650,38 @@ class ProductApisController extends Controller
         return CommonHelper::responseWithData($products);
     }
 
+    private function normalizeProductVariantStockStatus(Request $request): void
+    {
+        if ($request->input('type') === 'packet') {
+            $stocks = $request->input('packet_stock', []);
+            $statuses = $request->input('packet_status', []);
+
+            foreach ($stocks as $index => $stock) {
+                if ((int) $request->input('is_unlimited_stock') === 0 && (float) $stock <= 0) {
+                    $statuses[$index] = 0;
+                } elseif (!isset($statuses[$index]) || $statuses[$index] === '') {
+                    $statuses[$index] = 1;
+                }
+            }
+
+            $request->merge(['packet_status' => $statuses]);
+        }
+
+        if ($request->input('type') === 'loose') {
+            $looseStock = $request->input('loose_stock');
+
+            if ((int) $request->input('is_unlimited_stock') === 0 && (float) $looseStock <= 0 && !$request->filled('status')) {
+                $request->merge(['status' => 0]);
+            }
+        }
+    }
+
     public function save(Request $request)
     {
         if (!$request->filled('seller_id')) {
             $request->merge(['seller_id' => $this->getDefaultSellerId()]);
         }
+        $this->normalizeProductVariantStockStatus($request);
 
         $validator = Validator::make($request->all(), [
             'name' => [
@@ -1057,6 +1084,7 @@ class ProductApisController extends Controller
         if (!$request->filled('seller_id')) {
             $request->merge(['seller_id' => $this->getDefaultSellerId()]);
         }
+        $this->normalizeProductVariantStockStatus($request);
 
         $validator = Validator::make($request->all(), [
             'name' => [

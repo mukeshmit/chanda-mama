@@ -1248,7 +1248,7 @@ export default {
             categories: null,
             order_status: null,
 
-            inputs: [{ 'name': '', 'packet_status': '', 'packet_stock_unit_id': '', 'discount_percentage': 0, 'discounted_price': 0, 'discount_mode': 'percent', 'loose_discounted_price': 0, 'loose_discount_mode': 'percent' }],
+            inputs: [{ 'name': '', 'packet_status': 0, 'packet_stock': 0, 'packet_stock_unit_id': '', 'discount_percentage': 0, 'discounted_price': 0, 'discount_mode': 'percent', 'loose_discounted_price': 0, 'loose_discount_mode': 'percent' }],
 
             image: null,
             main_image_path: "",
@@ -1790,7 +1790,7 @@ export default {
         },
         addRow() {
             if (this.type === 'packet') {
-                this.inputs.push({ 'name': '', 'packet_status': '', 'packet_stock_unit_id': '', 'discount_percentage': 0, 'discounted_price': 0, 'discount_mode': 'percent' })
+                this.inputs.push({ 'name': '', 'packet_status': 0, 'packet_stock': 0, 'packet_stock_unit_id': '', 'discount_percentage': 0, 'discounted_price': 0, 'discount_mode': 'percent' })
             } else {
                 this.inputs.push({ 'name': '', 'loose_discounted_price': 0, 'loose_discount_mode': 'percent' })
             }
@@ -2411,7 +2411,7 @@ export default {
                     formData.append('discount_percentage[]', this.getPacketDiscountPercentage(this.inputs[i]));
                     formData.append('packet_stock[]', (this.inputs[i].packet_stock != undefined) ? this.inputs[i].packet_stock : 0);
                     formData.append('packet_stock_unit_id[]', (this.inputs[i].packet_stock_unit_id != undefined) ? this.inputs[i].packet_stock_unit_id : 0);
-                    formData.append('packet_status[]', (this.inputs[i].packet_status != undefined) ? this.inputs[i].packet_status : 0);
+                    formData.append('packet_status[]', this.getPacketStatusForSave(this.inputs[i]));
 
                     // Safely handle packet variant images refs (can be undefined when card is hidden in non-default language tab)
                     const packetRef = this.$refs['packet_variant_images_' + i];
@@ -2654,6 +2654,17 @@ export default {
             return amount.toFixed(2);
         },
 
+        getPacketStatusForSave(input) {
+            const stock = this.toNumber(input.packet_stock);
+            const status = input.packet_status;
+
+            if (Number(this.is_unlimited_stock) === 0 && stock <= 0) {
+                return 0;
+            }
+
+            return status !== undefined && status !== '' ? status : 1;
+        },
+
         getMarginPercent(sellingPrice, purchasePrice) {
             const sale = this.toNumber(sellingPrice);
             const cost = this.toNumber(purchasePrice);
@@ -2859,7 +2870,7 @@ export default {
                 categoryOptions: '<option value="">' + __('select_category') + '</option>',
                 till_status: '', cod_allowed_status: 1, max_allowed_quantity: 0,
                 is_approved: 1, tax_included_in_price: 0, status: 1, loose_stock: 0,
-                loose_stock_unit_id: '', inputs: [{ 'name': '', 'packet_status': '', 'packet_stock_unit_id': '' }],
+                loose_stock_unit_id: '', inputs: [{ 'name': '', 'packet_status': 0, 'packet_stock': 0, 'packet_stock_unit_id': '' }],
                 image: null, main_image_path: '', main_image_name: '', other_images: null,
                 images: [], variantImages: {}, deleteImageIds: [], useCustomPrompt: false, customPrompt: '',
                 activeLanguageTab: 0
