@@ -1023,6 +1023,17 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group mb-3">
+                                            <label>Sub Sub SubCategory</label>
+                                            <select class="form-control" v-model="product_sub_sub_subcategory_id"
+                                                :disabled="!product_sub_subcategory_id">
+                                                <option value="">Select Sub Sub SubCategory</option>
+                                                <option v-for="category in subSubSubCategoryOptions" :key="category.id"
+                                                    :value="category.id">{{ category.name }}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
                                             <label>{{ __('product_type') }} </label>
                                             <select class="form-control" v-model="product_type">
                                                 <option value="">{{ __('select_type') }}</option>
@@ -1031,28 +1042,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                                        <template v-if="isSellerRole">
-                                            <input type="hidden" v-model="is_approved">
-                                        </template>
-                                        <template v-else>
-                                            <div class="form-group mb-3">
-                                                <label>{{ __('product_status') }}</label><br>
-                                                <div id="status" class="btn-group">
-                                                    <label class="btn btn-primary" data-toggle-class="btn-primary"
-                                                        data-toggle-passive-class="btn-default">
-                                                        <input type="radio" v-model="is_approved" value="1"> {{
-                                                            __('approved') }}
-                                                    </label>
-                                                    <label class="btn btn-danger" data-toggle-class="btn-danger"
-                                                        data-toggle-passive-class="btn-default">
-                                                        <input type="radio" v-model="is_approved" value="0">
-                                                        {{ __('not_approved') }}
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </template>
-                                    </div>
+                                    <input type="hidden" v-model="is_approved">
 
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
@@ -1074,16 +1064,6 @@
                                                 </template>
                                             </multiselect>
 
-                                        </div>
-                                    </div>
-
-
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-3">
-                                            <label for="max_allowed_quantity">{{ __('total_allowed_quantity') }} ({{ __('keep_blank_if_no_such_limit')
-                                                }}) </label>
-                                            <input type="number" id="max_allowed_quantity" min="0" class="form-control"
-                                                v-model="max_allowed_quantity">
                                         </div>
                                     </div>
 
@@ -1228,6 +1208,7 @@ export default {
             product_category_id: '',
             product_subcategory_id: '',
             product_sub_subcategory_id: '',
+            product_sub_sub_subcategory_id: '',
             product_type: '',
             made_in: '',
             tag: '',
@@ -1488,8 +1469,13 @@ export default {
                 return Number(category.parent_id) === Number(this.product_subcategory_id);
             });
         },
+        subSubSubCategoryOptions() {
+            return this.productCategoryList.filter(category => {
+                return Number(category.parent_id) === Number(this.product_sub_subcategory_id);
+            });
+        },
         selectedProductCategoryId() {
-            return this.product_sub_subcategory_id || this.product_subcategory_id || this.product_category_id || '';
+            return this.product_sub_sub_subcategory_id || this.product_sub_subcategory_id || this.product_subcategory_id || this.product_category_id || '';
         },
     },
 
@@ -2607,14 +2593,25 @@ export default {
                 this.product_category_id = selected.id;
                 this.product_subcategory_id = '';
                 this.product_sub_subcategory_id = '';
+                this.product_sub_sub_subcategory_id = '';
             } else if (parent && Number(parent.parent_id) === 0) {
                 this.product_category_id = parent.id;
                 this.product_subcategory_id = selected.id;
                 this.product_sub_subcategory_id = '';
+                this.product_sub_sub_subcategory_id = '';
             } else if (parent && grandParent) {
-                this.product_category_id = grandParent.id;
-                this.product_subcategory_id = parent.id;
-                this.product_sub_subcategory_id = selected.id;
+                const greatGrandParent = grandParent ? categoryMap[Number(grandParent.parent_id)] : null;
+                if (greatGrandParent) {
+                    this.product_category_id = greatGrandParent.id;
+                    this.product_subcategory_id = grandParent.id;
+                    this.product_sub_subcategory_id = parent.id;
+                    this.product_sub_sub_subcategory_id = selected.id;
+                } else {
+                    this.product_category_id = grandParent.id;
+                    this.product_subcategory_id = parent.id;
+                    this.product_sub_subcategory_id = selected.id;
+                    this.product_sub_sub_subcategory_id = '';
+                }
             }
         },
 
@@ -2776,6 +2773,7 @@ export default {
                     product_category_id: this.product_category_id,
                     product_subcategory_id: this.product_subcategory_id,
                     product_sub_subcategory_id: this.product_sub_subcategory_id,
+                    product_sub_sub_subcategory_id: this.product_sub_sub_subcategory_id,
                     product_type: this.product_type,
                     made_in: this.made_in ? { id: this.made_in.id } : null, return_status: this.return_status,
                     return_days: (parseInt(this.return_days, 10) > 0) ? this.return_days : 1,
@@ -2856,7 +2854,7 @@ export default {
                 description: '', type: 'packet', is_unlimited_stock: 0,
                 barcode: '', meta_title: '', meta_keywords: '', schema_markup: '',
                 meta_description: '', category_id: '', product_category_id: '', product_subcategory_id: '',
-                product_sub_subcategory_id: '', product_type: '',
+                product_sub_subcategory_id: '', product_sub_sub_subcategory_id: '', product_type: '',
                 made_in: null, return_status: 0, return_days: 1, cancelable_status: 0,
                 categoryOptions: '<option value="">' + __('select_category') + '</option>',
                 till_status: '', cod_allowed_status: 1, max_allowed_quantity: 0,
@@ -2928,6 +2926,7 @@ export default {
             if (!hasSubcategory) {
                 this.product_subcategory_id = '';
                 this.product_sub_subcategory_id = '';
+                this.product_sub_sub_subcategory_id = '';
             }
             if (!this.id && !this.clone) this.debouncedSave();
         },
@@ -2937,10 +2936,20 @@ export default {
             });
             if (!hasSubSubcategory) {
                 this.product_sub_subcategory_id = '';
+                this.product_sub_sub_subcategory_id = '';
             }
             if (!this.id && !this.clone) this.debouncedSave();
         },
-        product_sub_subcategory_id: function () { if (!this.id && !this.clone) this.debouncedSave(); },
+        product_sub_subcategory_id: function () {
+            const hasSubSubSubcategory = this.subSubSubCategoryOptions.some(category => {
+                return Number(category.id) === Number(this.product_sub_sub_subcategory_id);
+            });
+            if (!hasSubSubSubcategory) {
+                this.product_sub_sub_subcategory_id = '';
+            }
+            if (!this.id && !this.clone) this.debouncedSave();
+        },
+        product_sub_sub_subcategory_id: function () { if (!this.id && !this.clone) this.debouncedSave(); },
         product_type: function () { if (!this.id && !this.clone) this.debouncedSave(); },
         made_in: { handler: function () { if (!this.id && !this.clone) this.debouncedSave(); }, deep: true },
         return_status: function () {

@@ -57,11 +57,6 @@
                                 </div>
                             </template>
 
-                            <template #cell(parent_id)="row">
-                                <p v-if="row.item.parent_id!==null">{{ row.item.parent_id }}</p>
-                                <p v-else>-</p>
-                            </template>
-
                             <template #cell(conversion)="row">
                                 <p v-if="row.item.conversion!==null">{{ row.item.conversion }}</p>
                                 <p v-else>-</p>
@@ -90,10 +85,9 @@
         data: function() {
             return {
                 fields: [
-                    { key: 'id', label: __('id'), sortable: true, sortDirection: 'desc' },
+                    { key: 'id', label: __('Sr. No.'), sortable: true, sortDirection: 'desc' },
                     { key: 'name', label: __('name'), sortable: true, class: 'text-center' },
                     { key: 'short_code', label: __('short_code'), sortable: true, class: 'text-center' },
-                    { key: 'parent_id', label: __('parent_id'),  class: 'text-center' },
                     { key: 'conversion', label: __('conversion'),  class: 'text-center' }
                 ],
                 totalRows: 1,

@@ -279,13 +279,12 @@ export default {
             fields: [
                 { key: 'select', label: '', visible: true, class: 'text-center' },
                 { key: 'product_variant_id', label: 'Sr. No.', visible: true, class: 'text-center' },
-                { key: 'product_id', label: __('item_code'), visible: true, sortable: true, sortDirection: 'desc', class: 'text-center' },
+                { key: 'barcode', label: __('item_code'), visible: true, sortable: true, sortDirection: 'desc', class: 'text-center' },
                 { key: 'tax_id', label: __('tax_id'), visible: false, sortable: true, class: 'text-center' },
                 { key: 'name', label: __('name'), visible: true, sortable: true, class: 'text-center' },
                 { key: 'image', label: __('image'), visible: true, class: 'text-center' },
                 { key: 'price', label: __('price') + '(' + this.$currency + ')', visible: true, class: 'text-center', sortable: true },
                 { key: 'discounted_price', label: __('discounted_price') + '(' + this.$currency + ')', visible: true, class: 'text-center', sortable: true },
-                { key: 'is_approved', label: __('is_approved'), visible: true, class: 'text-center', sortable: true },
                 { key: 'return_status', label: __('return'), visible: false, class: 'text-center', sortable: true },
                 { key: 'cancelable_status', label: __('cancellation'), visible: false, class: 'text-center', sortable: true },
                 { key: 'actions', label: __('actions'), visible: true }

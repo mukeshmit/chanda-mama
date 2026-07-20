@@ -52,7 +52,7 @@
                         </template>
 
                         <template #cell(id)="row">
-                            {{ row.item.id }}
+                            {{ (currentPage - 1) * perPage + row.index + 1 }}
                         </template>
 
                         <template #cell(image)="row">
@@ -109,7 +109,7 @@ export default {
     data() {
         return {
             fields: [
-                { key: 'id', label: __('id'), class: 'text-center', sortable: true, sortDirection: 'desc' },
+                { key: 'id', label: __('Sr. No.'), class: 'text-center', sortable: true, sortDirection: 'desc' },
                 { key: 'name', label: __('name'), class: 'text-center' },
                 { key: 'image', label: __('image'), class: 'text-center' },
                 {

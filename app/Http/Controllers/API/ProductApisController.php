@@ -136,6 +136,7 @@ class ProductApisController extends Controller
         $products = DB::table('products as p')->select(
             'p.id as id',
             'p.id as product_id',
+            'p.barcode',
             'p.name',
             'p.seller_id',
             'p.status',

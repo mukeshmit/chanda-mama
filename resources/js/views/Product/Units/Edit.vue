@@ -12,7 +12,8 @@
 
 
             <!-- Language Tabs with lazy rendering (lazy avoids hidden required fields triggering "not focusable" error) -->
-            <b-tabs :key="tabsKey" v-model="activeLanguageTab" content-class="mt-3" v-if="languages.length > 0">
+            <b-tabs :key="tabsKey" v-model="activeLanguageTab" content-class="mt-3"
+                :nav-class="languages.length === 1 ? 'd-none' : ''" v-if="languages.length > 0">
 
                 <b-tab v-for="language in languages" :key="language.id" :title="language.name" lazy>
 
@@ -61,13 +62,6 @@
                                     :required="language.is_default ? true : undefined"
                                     v-model="translations[language.id].short_code"
                                     placeholder="Enter short code of unit name.">
-                            </div>
-                            <div class="form-group" v-if="language.is_default">
-                                <label>{{ __('parent_id') }}</label>
-                                <select class="form-control form-select" v-model="parent_id">
-                                    <option value="0">{{ __('units') }}</option>
-                                    <option v-for="unit in units" :value="unit.id">{{ unit.name }}</option>
-                                </select>
                             </div>
                             <div class="form-group" v-if="language.is_default">
                                 <label>{{ __('conversion') }}</label>

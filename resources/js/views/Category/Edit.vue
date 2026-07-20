@@ -16,7 +16,8 @@
 
         <form v-else ref="my-form" @submit.prevent="saveRecord" novalidate>
             <!-- Language Tabs with lazy rendering -->
-            <b-tabs v-model="activeLanguageTab" content-class="mt-3" v-if="languages.length > 0">
+            <b-tabs v-model="activeLanguageTab" content-class="mt-3"
+                :nav-class="languages.length === 1 ? 'd-none' : ''" v-if="languages.length > 0">
                 <b-tab v-for="language in languages" :key="language.id" :title="language.name" lazy>
                     <template #title>
                         <span :class="{ 'text-primary font-weight-bold': language.is_default }">

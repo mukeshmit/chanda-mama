@@ -62,12 +62,6 @@
                                         style="object-fit: cover; cursor: pointer; border-radius: 4px;"
                                         @click="openImageModal(row.item.image_url)" />
                                 </template>
-                                <template #cell(status)="row">
-                                    <span class='badge bg-success' v-if="row.item.status == 1">{{ __('activate')
-                                    }}</span>
-                                    <span class='badge bg-danger' v-if="row.item.status == 0">{{ __('deactivate')
-                                    }}</span>
-                                </template>
                                 <template #cell(actions)="row">
                                     <div class="d-flex gap-2 justify-content-center">
                                         <button class="figma-action-btn" @click="edit_record = row.item"
@@ -125,9 +119,7 @@ export default {
             fields: [
                 { key: 'id', label: __('Sr. No.'), class: 'text-center', sortable: true, sortDirection: 'asc' },
                 { key: 'name', label: __('name'), class: 'text-center', sortable: true },
-                { key: 'subtitle', label: __('subtitle'), class: 'text-center', sortable: true },
                 { key: 'image', label: __('image'), class: 'text-center' },
-                { key: 'status', label: __('status'), class: 'text-center' },
                 { key: 'actions', label: __('actions'), class: 'text-center' }
             ],
             totalRows: 1,

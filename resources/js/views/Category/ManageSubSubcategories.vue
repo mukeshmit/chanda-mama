@@ -82,11 +82,8 @@
                                 <template #cell(parent_category)="row">
                                     {{ getParentCategoryName(row.item.parent_id) }}
                                 </template>
-                                <template #cell(status)="row">
-                                    <span class='badge bg-success' v-if="row.item.status == 1">{{ __('activate')
-                                    }}</span>
-                                    <span class='badge bg-danger' v-if="row.item.status == 0">{{ __('deactivate')
-                                    }}</span>
+                                <template #cell(parent_subcategory)="row">
+                                    {{ getParentSubCategoryName(row.item.parent_id) }}
                                 </template>
                                 <template #cell(actions)="row">
                                     <div class="d-flex gap-2 justify-content-center">
@@ -145,9 +142,9 @@ export default {
             fields: [
                 { key: 'id', label: __('Sr. No.'), class: 'text-center', sortable: true, sortDirection: 'asc' },
                 { key: 'name', label: __('name'), class: 'text-center', sortable: true },
-                { key: 'parent_category', label: __('parent_subcategory'), class: 'text-center' },
+                { key: 'parent_category', label: __('parent_category'), class: 'text-center' },
+                { key: 'parent_subcategory', label: __('parent_subcategory'), class: 'text-center' },
                 { key: 'image', label: __('image'), class: 'text-center' },
-                { key: 'status', label: __('status'), class: 'text-center' },
                 { key: 'actions', label: __('actions'), class: 'text-center' }
             ],
             totalRows: 1,
@@ -333,6 +330,13 @@ export default {
         },
 
         getParentCategoryName(parentId) {
+            const subcategory = this.subcategories.find(cat => Number(cat.id) === Number(parentId));
+            if (!subcategory) return '-';
+            const parent = this.parentCategories.find(cat => Number(cat.id) === Number(subcategory.parent_id));
+            return parent ? parent.name : '-';
+        },
+
+        getParentSubCategoryName(parentId) {
             const parent = this.subcategories.find(cat => Number(cat.id) === Number(parentId));
             return parent ? parent.name : '-';
         },
