@@ -107,6 +107,14 @@ Vue.prototype.$setWindowSize();
 window.addEventListener('resize', Vue.prototype.$setWindowSize);
 window.addEventListener('DOMContentLoaded', Vue.prototype.$setWindowSize);
 
+Vue.prototype.$titleLabel = function (value) {
+    return String(value || '')
+        .replace(/_/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .replace(/\b\w/g, char => char.toUpperCase());
+};
+
 window.Swal = Swal;
 window.moment = require('moment');
 window.toastr = require('toastr');

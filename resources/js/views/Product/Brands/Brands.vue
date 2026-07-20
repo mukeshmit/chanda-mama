@@ -109,15 +109,15 @@ export default {
     data() {
         return {
             fields: [
-                { key: 'id', label: __('Sr. No.'), class: 'text-center', sortable: true, sortDirection: 'desc' },
-                { key: 'name', label: __('name'), class: 'text-center' },
-                { key: 'image', label: __('image'), class: 'text-center' },
+                { key: 'id', label: 'Sr. No.', class: 'text-center', sortable: true, sortDirection: 'desc' },
+                { key: 'name', label: this.$titleLabel('name'), class: 'text-center' },
+                { key: 'image', label: this.$titleLabel('image'), class: 'text-center' },
                 {
-                    key: 'status', label: __('status'), class: 'text-center', formatter: (value) => {
+                    key: 'status', label: this.$titleLabel('status'), class: 'text-center', formatter: (value) => {
                         return value == 1 ? __('active') : __('deactive');
                     }
                 },
-                { key: 'actions', label: __('actions') }
+                { key: 'actions', label: this.$titleLabel('actions') }
             ],
             totalRows: 0,
             currentPage: 1,

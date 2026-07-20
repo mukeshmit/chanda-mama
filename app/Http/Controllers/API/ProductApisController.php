@@ -177,6 +177,7 @@ class ProductApisController extends Controller
             $columns = [
                 'p.id',
                 'pv.id',
+                'p.barcode',
                 'p.name',
                 's.name',
                 'pv.price',

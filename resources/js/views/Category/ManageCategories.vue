@@ -44,7 +44,7 @@
                         <div class="table-responsive mb-0">
                             <b-table :items="translatedCategories" :fields="fields" :filter="filter"
                                 :filter-included-fields="filterOn" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
-                                show-empty small :empty-text="__('no_records_to_show')"
+                                :busy="isLoading" show-empty small :empty-text="__('no_records_to_show')"
                                 :empty-filtered-text="__('no_records_to_show')" class="mb-0">
 
                                 <template #table-busy>
@@ -117,10 +117,10 @@ export default {
     data: function () {
         return {
             fields: [
-                { key: 'id', label: __('Sr. No.'), class: 'text-center', sortable: true, sortDirection: 'asc' },
-                { key: 'name', label: __('name'), class: 'text-center', sortable: true },
-                { key: 'image', label: __('image'), class: 'text-center' },
-                { key: 'actions', label: __('actions'), class: 'text-center' }
+                { key: 'id', label: 'Sr. No.', class: 'text-center', sortable: true, sortDirection: 'asc' },
+                { key: 'name', label: this.$titleLabel('name'), class: 'text-center', sortable: true },
+                { key: 'image', label: this.$titleLabel('image'), class: 'text-center' },
+                { key: 'actions', label: this.$titleLabel('actions'), class: 'text-center' }
             ],
             totalRows: 1,
             currentPage: 1,

@@ -85,10 +85,10 @@
         data: function() {
             return {
                 fields: [
-                    { key: 'id', label: __('Sr. No.'), sortable: true, sortDirection: 'desc' },
-                    { key: 'name', label: __('name'), sortable: true, class: 'text-center' },
-                    { key: 'short_code', label: __('short_code'), sortable: true, class: 'text-center' },
-                    { key: 'conversion', label: __('conversion'),  class: 'text-center' }
+                    { key: 'id', label: 'Sr. No.', sortable: true, sortDirection: 'desc' },
+                    { key: 'name', label: this.$titleLabel('name'), sortable: true, class: 'text-center' },
+                    { key: 'short_code', label: this.$titleLabel('short_code'), sortable: true, class: 'text-center' },
+                    { key: 'conversion', label: this.$titleLabel('conversion'),  class: 'text-center' }
                 ],
                 totalRows: 1,
                 currentPage: 1,

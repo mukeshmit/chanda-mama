@@ -151,6 +151,10 @@
                                     {{ pageStart + row.index }}
                                 </template>
 
+                                <template #cell(barcode)="row">
+                                    {{ row.item.barcode || '-' }}
+                                </template>
+
                                 <template #cell(seller_name)="row">
                                     {{ row.item.seller_name }}
                                 </template>
@@ -279,15 +283,15 @@ export default {
             fields: [
                 { key: 'select', label: '', visible: true, class: 'text-center' },
                 { key: 'product_variant_id', label: 'Sr. No.', visible: true, class: 'text-center' },
-                { key: 'barcode', label: __('item_code'), visible: true, sortable: true, sortDirection: 'desc', class: 'text-center' },
-                { key: 'tax_id', label: __('tax_id'), visible: false, sortable: true, class: 'text-center' },
-                { key: 'name', label: __('name'), visible: true, sortable: true, class: 'text-center' },
-                { key: 'image', label: __('image'), visible: true, class: 'text-center' },
-                { key: 'price', label: __('price') + '(' + this.$currency + ')', visible: true, class: 'text-center', sortable: true },
-                { key: 'discounted_price', label: __('discounted_price') + '(' + this.$currency + ')', visible: true, class: 'text-center', sortable: true },
-                { key: 'return_status', label: __('return'), visible: false, class: 'text-center', sortable: true },
-                { key: 'cancelable_status', label: __('cancellation'), visible: false, class: 'text-center', sortable: true },
-                { key: 'actions', label: __('actions'), visible: true }
+                { key: 'barcode', label: this.$titleLabel('item_code'), visible: true, sortable: true, sortDirection: 'desc', class: 'text-center' },
+                { key: 'tax_id', label: this.$titleLabel('tax_id'), visible: false, sortable: true, class: 'text-center' },
+                { key: 'name', label: this.$titleLabel('name'), visible: true, sortable: true, class: 'text-center' },
+                { key: 'image', label: this.$titleLabel('image'), visible: true, class: 'text-center' },
+                { key: 'price', label: this.$titleLabel('price') + '(' + this.$currency + ')', visible: true, class: 'text-center', sortable: true },
+                { key: 'discounted_price', label: this.$titleLabel('discounted_price') + '(' + this.$currency + ')', visible: true, class: 'text-center', sortable: true },
+                { key: 'return_status', label: this.$titleLabel('return'), visible: false, class: 'text-center', sortable: true },
+                { key: 'cancelable_status', label: this.$titleLabel('cancellation'), visible: false, class: 'text-center', sortable: true },
+                { key: 'actions', label: this.$titleLabel('actions'), visible: true }
             ],
             totalRows: 1,
             currentPage: 1,
