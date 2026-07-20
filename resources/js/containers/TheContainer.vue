@@ -72,7 +72,11 @@
         </div>
         <div id="main">
             <vertical-header></vertical-header>
-            <div class="main-content">
+            <div class="main-content route-loader-wrapper">
+                <div v-if="routeLoading" class="route-loader-overlay">
+                    <b-spinner class="align-middle"></b-spinner>
+                    <strong>{{ __('loading') }}...</strong>
+                </div>
                 <router-view></router-view>
             </div>
             <the-footer></the-footer>
@@ -101,6 +105,7 @@ export default {
         '$route': 'checkPermissions'
     },
     mounted() {
+        window.addEventListener('app-route-loading', this.setRouteLoading);
         if (window.localStorage.getItem('lang')) {
             this.lang = window.localStorage.getItem('lang');
             console.log(this.lang);
@@ -209,6 +214,7 @@ export default {
             lang: 'en',
             search: '',
             isLoading: false,
+            routeLoading: false,
             suspecious: null,
             sidebarItems: [
                 {
@@ -885,7 +891,13 @@ export default {
             return this.databasedownloadBtn;
         }
     },
+    beforeDestroy() {
+        window.removeEventListener('app-route-loading', this.setRouteLoading);
+    },
     methods: {
+        setRouteLoading(event) {
+            this.routeLoading = !!event.detail;
+        },
 
         filterItem() {
 
@@ -1033,5 +1045,25 @@ export default {
     width: 230px;
     max-width: 100%;
     height: auto;
+}
+
+.route-loader-wrapper {
+    position: relative;
+}
+
+.route-loader-overlay {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.78);
+    bottom: 0;
+    color: #0f2544;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    left: 0;
+    min-height: 260px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 20;
 }
 </style>

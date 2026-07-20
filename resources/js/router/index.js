@@ -253,6 +253,7 @@ var roleName = "Super Admin";
 var appName = window.appName;
 
 router.beforeEach((to, from, next) => {
+    window.dispatchEvent(new CustomEvent('app-route-loading', { detail: true }));
     //if (to.matched.some(record => record.meta.requiresAuth) ) {
     if (isInstalled) {
         if (to.name == 'install') {
@@ -333,6 +334,17 @@ router.beforeEach((to, from, next) => {
     }
 
 });
+
+router.afterEach(() => {
+    setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('app-route-loading', { detail: false }));
+    }, 150);
+});
+
+router.onError(() => {
+    window.dispatchEvent(new CustomEvent('app-route-loading', { detail: false }));
+});
+
 export default router;
 
 function configRoutes() {

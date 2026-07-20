@@ -60,7 +60,11 @@
 
         <div id="main">
             <vertical-header></vertical-header>
-            <div class="main-content">
+            <div class="main-content route-loader-wrapper">
+                <div v-if="routeLoading" class="route-loader-overlay">
+                    <b-spinner class="align-middle"></b-spinner>
+                    <strong>{{ __('loading') }}...</strong>
+                </div>
                 <router-view></router-view>
             </div>
             <the-footer></the-footer>
@@ -110,6 +114,7 @@ export default {
         '$route': 'checkPermissions'
     },
     mounted() {
+        window.addEventListener('app-route-loading', this.setRouteLoading);
         //lang
         if (window.localStorage.getItem('lang')) {
             this.lang = window.localStorage.getItem('lang');
@@ -189,6 +194,7 @@ export default {
 
     },
     beforeDestroy() {
+        window.removeEventListener('app-route-loading', this.setRouteLoading);
         // Clear the status check interval when component is destroyed
         if (this.statusCheckInterval) {
             clearInterval(this.statusCheckInterval);
@@ -199,6 +205,7 @@ export default {
             lang: 'en',
             statusCheckInterval: null,
             remark: '',
+            routeLoading: false,
             stats: {
                 order_count: 0,
                 pending_orders: 0,
@@ -254,6 +261,9 @@ export default {
         }
     },
     methods: {
+        setRouteLoading(event) {
+            this.routeLoading = !!event.detail;
+        },
         subIsActive(item) {
             const paths = Array.isArray(item.submenu) ? item.submenu : [];
             return paths.some(path => {
@@ -390,5 +400,25 @@ export default {
 .fade-enter,
 .fade-leave-to {
     opacity: 0;
+}
+
+.route-loader-wrapper {
+    position: relative;
+}
+
+.route-loader-overlay {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.78);
+    bottom: 0;
+    color: #0f2544;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    left: 0;
+    min-height: 260px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 20;
 }
 </style>
