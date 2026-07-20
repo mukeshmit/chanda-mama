@@ -283,7 +283,7 @@ export default {
             fields: [
                 { key: 'select', label: '', visible: true, class: 'text-center' },
                 { key: 'product_variant_id', label: 'Sr. No.', visible: true, class: 'text-center' },
-                { key: 'barcode', label: this.$titleLabel('item_code'), visible: true, sortable: true, sortDirection: 'desc', class: 'text-center' },
+                { key: 'barcode', label: 'Barcode', visible: true, sortable: true, sortDirection: 'desc', class: 'text-center' },
                 { key: 'tax_id', label: this.$titleLabel('tax_id'), visible: false, sortable: true, class: 'text-center' },
                 { key: 'name', label: this.$titleLabel('name'), visible: true, sortable: true, class: 'text-center' },
                 { key: 'image', label: this.$titleLabel('image'), visible: true, class: 'text-center' },
