@@ -76,9 +76,9 @@ Route::middleware('auth:api')->group(function () {
 
     Route::group(['prefix' => 'sub_sub_subcategories'], function () {
         Route::get('/', [\App\Http\Controllers\API\SubSubSubCategoryApiController::class, 'index']);
-        Route::post('save', [\App\Http\Controllers\API\CategoryApiController::class, 'save'])->name('sub_sub_subcategories.save');
-        Route::post('update', [\App\Http\Controllers\API\CategoryApiController::class, 'update'])->name('sub_sub_subcategories.update');
-        Route::post('delete', [\App\Http\Controllers\API\CategoryApiController::class, 'delete'])->name('sub_sub_subcategories.delete');
+        Route::post('save', [\App\Http\Controllers\API\SubSubSubCategoryApiController::class, 'save'])->name('sub_sub_subcategories.save');
+        Route::post('update', [\App\Http\Controllers\API\SubSubSubCategoryApiController::class, 'update'])->name('sub_sub_subcategories.update');
+        Route::post('delete', [\App\Http\Controllers\API\SubSubSubCategoryApiController::class, 'delete'])->name('sub_sub_subcategories.delete');
     });
 
     Route::group(['prefix' => 'blog_categories'], function () {

@@ -269,6 +269,7 @@ export default {
                 offset: this.currentPage,
                 limit: this.perPage,
                 filter: this.filter,
+                parent_id: 0,
                 status: null, // Explicitly request all categories (active and inactive)
                 _t: Date.now()
             };

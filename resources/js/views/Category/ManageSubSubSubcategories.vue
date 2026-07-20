@@ -393,20 +393,20 @@ export default {
             const currentRequestId = this.latestRequestId;
 
             const params = {
-                offset: 1,
-                limit: 1000,
                 filter: this.filter,
                 status: null,
                 _t: Date.now()
             };
-            axios.get(this.$apiUrl + '/sub_sub_subcategories', { params })
+            axios.get(this.$apiUrl + '/categories', { params })
                 .then((response) => {
                     if (currentRequestId !== this.latestRequestId) {
                         return;
                     }
                     this.isLoading = false;
                     const data = response.data || {};
-                    this.categories = Array.isArray(data.data) ? data.data : [];
+                    const allCategories = Array.isArray(data.data) ? data.data : [];
+                    const subSubCategoryIds = this.subSubcategories.map(cat => Number(cat.id));
+                    this.categories = allCategories.filter(cat => subSubCategoryIds.includes(Number(cat.parent_id)));
                     this.totalRows = this.categories.length;
                 })
                 .catch(() => {
