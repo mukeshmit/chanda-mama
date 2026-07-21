@@ -15,36 +15,9 @@
         </div>
 
         <form v-else ref="my-form" @submit.prevent="saveRecord" novalidate>
-            <!-- Language Tabs with lazy rendering -->
-            <b-tabs v-model="activeLanguageTab" content-class="mt-3" v-if="languages.length > 0">
-                <b-tab v-for="language in languages" :key="language.id" :title="language.name" lazy>
-                    <template #title>
-                        <span :class="{ 'text-primary font-weight-bold': language.is_default }">
-                            {{ language.name }}
-                        </span>
-                    </template>
-
-                    <!-- Translate buttons -->
-                    <div class="mb-3" v-if="language.is_default && languages.length > 1">
-                        <b-button size="sm" variant="outline-primary" class="mr-2" @click="translateEmpty(language)"
-                            v-b-tooltip.hover
-                            :title="__('only_empty_fields_will_be_translated_existing_content_will_not_be_changed')"
-                            :disabled="loadingEmpty">
-                            <span v-if="!loadingEmpty">{{ __('translate_empty_fields') }}</span>
-                            <b-spinner v-else small></b-spinner>
-                        </b-button>
-
-                        <b-button size="sm" variant="outline-danger" @click="translateOverwrite(language)"
-                            v-b-tooltip.hover
-                            :title="__('all_fields_will_be_translated_and_existing_content_will_be_overwritten')"
-                            :disabled="loadingOverwrite">
-                            <span v-if="!loadingOverwrite">{{ __('translate_and_overwrite') }}</span>
-                            <b-spinner v-else small></b-spinner>
-                        </b-button>
-                    </div>
-                    <!-- Translate buttons END -->
-
-                    <div class="row">
+            <div v-if="defaultLanguage">
+                <template v-for="language in [defaultLanguage]">
+                    <div class="row" :key="language.id">
                         <!-- Parent category chain (only show in default language tab) -->
                         <div class="form-group" v-if="language.is_default">
                             <label>{{ __("category") }}<i class="text-danger">*</i></label>
@@ -165,8 +138,8 @@
                             </div>
                         </div>
                     </div>
-                </b-tab>
-            </b-tabs>
+                </template>
+            </div>
 
             <!-- Loading state -->
             <div v-else class="text-center p-5">
@@ -235,6 +208,9 @@ export default {
         modal_title: function () {
             let title = this.id ? 'Edit Sub Sub SubCategory' : 'Add Sub Sub SubCategory';
             return title;
+        },
+        defaultLanguage() {
+            return this.languages.find(language => Number(language.id) === Number(this.defaultLanguageId)) || null;
         },
         filteredParentSubcategories() {
             return this.parent_subcategories.filter(subcategory => {
@@ -660,6 +636,7 @@ export default {
 
                     // Translatable fields
                     formData.append('name', translation.name || '');
+                    formData.append('subtitle', '');
                     formData.append('meta_title', translation.meta_title || '');
                     formData.append('meta_keywords', translation.meta_keywords || '');
                     formData.append('schema_markup', translation.schema_markup || '');
@@ -681,6 +658,10 @@ export default {
                                 'Content-Type': 'multipart/form-data'
                             }
                         });
+
+                        if (!response.data || Number(response.data.status) !== 1) {
+                            throw new Error((response.data && response.data.message) || __('something_went_wrong'));
+                        }
 
                         // If this was the first save (default language), get the category ID
                         if (!categoryId && response.data.data && response.data.data.id) {

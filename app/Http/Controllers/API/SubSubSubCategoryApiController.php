@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Language;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -198,14 +199,27 @@ class SubSubSubCategoryApiController extends Controller
 
     private function saveCategoryTranslation(Category $category, Request $request)
     {
-        $category->saveTranslation($request->language_id, [
+        if (!Schema::hasTable('category_translations')) {
+            Log::warning('Skipped Sub Sub SubCategory translation save because category_translations table is missing.', [
+                'category_id' => $category->id,
+                'language_id' => $request->language_id,
+            ]);
+            return;
+        }
+
+        $translationData = [
             'name' => $request->name ?? '',
             'subtitle' => '',
             'meta_title' => $request->meta_title ?? '',
             'meta_keywords' => $request->meta_keywords ?? '',
             'schema_markup' => $request->schema_markup ?? '',
             'meta_description' => $request->meta_description ?? '',
-        ]);
+        ];
+
+        $existingColumns = array_flip(Schema::getColumnListing('category_translations'));
+        $translationData = array_intersect_key($translationData, $existingColumns);
+
+        $category->saveTranslation($request->language_id, $translationData);
     }
 
     private function hasValidSubSubCategoryParent(Request $request)
