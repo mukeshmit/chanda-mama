@@ -14,8 +14,10 @@ use Illuminate\Support\Facades\Validator;
 
 class SubSubSubCategoryApiController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
+        $request = request();
+
         try {
             if ($request->filled('id')) {
                 $categories = Category::where('id', (int) $request->id)
