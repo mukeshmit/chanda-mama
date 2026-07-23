@@ -45,7 +45,7 @@
                             <label>{{ __('Sub Sub category name') }}</label>
                             <i class="text-danger" v-if="language.is_default">*</i>
                             <input type="text" class="form-control"
-                                v-model="translations[language.id].name" :placeholder="__('enter sub subcategory name')">
+                                v-model="translations[language.id].name" :placeholder="__('enter sub sub category name')">
                         </div>
 
                         <div class="form-group" v-if="language.is_default">
@@ -192,7 +192,7 @@ export default {
 
     computed: {
         modal_title: function () {
-            let title = this.id ? __('edit_sub_subcategory') : __('Add Sub Sub category');
+            let title = this.id ? __('Edit sub sub category') : __('Add Sub Sub category');
             return title;
         },
         defaultLanguage() {
@@ -637,7 +637,7 @@ export default {
             // Execute sequential save
             saveSequentially()
                 .then(() => {
-                    const message = __('sub_subcategory_saved_successfully') || 'Sub-subcategory saved successfully';
+                    const message = __('Sub sub category saved successfully') || 'Sub sub category saved successfully';
                     // Emit to parent only (parent shows toast once)
                     vm.$emit('saved', message);
                     // Notify other pages to refresh list only (no toast)

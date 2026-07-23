@@ -19,10 +19,10 @@
                 <template v-for="language in [defaultLanguage]">
                     <div class="row">
                         <div class="form-group" :class="{ required: language.is_default }">
-                            <label>{{ parent_id > 0 ? __('subcategory name') : __('category name') }}</label>
+                            <label>{{ parent_id > 0 ? __('sub category name') : __('category name') }}</label>
                             <i class="text-danger" v-if="language.is_default">*</i>
                             <input type="text" class="form-control"
-                                v-model="translations[language.id].name" :placeholder="parent_id > 0 ? __('enter subcategory name') : __('enter_category_name')">
+                                v-model="translations[language.id].name" :placeholder="parent_id > 0 ? __('enter sub category name') : __('enter_category_name')">
                         </div>
 
                         <div class="form-group" v-if="language.is_default">

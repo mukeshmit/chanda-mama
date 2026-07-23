@@ -174,7 +174,7 @@ export default {
 
     computed: {
         modal_title: function () {
-            let title = this.id ? __('edit_subcategory') : __('Add Sub Category');
+            let title = this.id ? __('Edit Sub Category') : __('Add Sub Category');
             return title;
         },
         defaultLanguage() {
@@ -593,7 +593,7 @@ export default {
             // Execute sequential save
             saveSequentially()
                 .then(() => {
-                    const message = __('subcategory_saved_successfully') || 'Subcategory saved successfully';
+                    const message = __('sub category saved successfully') || 'Sub category saved successfully';
                     // Emit to parent only (parent shows toast once)
                     vm.$emit('saved', message);
                     // Notify other pages to refresh list only (no toast)
