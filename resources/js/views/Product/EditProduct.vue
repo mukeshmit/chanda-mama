@@ -621,7 +621,7 @@
                                             ]" buttons button-variant="outline-primary"></b-form-radio-group>
                                         </div>
                                         <div class="form-group col-md-6">
-                                            <label class="control-label">Available Stock <i
+                                            <label class="control-label">Available Quantity <i
                                                     class="text-danger">*</i></label><br>
                                             <b-form-radio-group v-model="is_unlimited_stock" :options="[
                                                 { text: __('limited'), 'value': 0 },
@@ -712,7 +712,7 @@
                                         </div>
                                         <div class="col-md-4" v-if="is_unlimited_stock != 1">
                                             <div class="form-group mb-3">
-                                                <label>Available Stock <i class="text-danger">*</i></label>
+                                                <label>Available Quantity <i class="text-danger">*</i></label>
                                                 <input type="number" step="any" min="0" class="form-control"
                                                     placeholder="0" name="packate_stock[]" v-model="input.packet_stock">
                                             </div>
@@ -950,7 +950,7 @@
 
                                     <div class="col-md-4">
                                         <div class="form-group mb-3" v-if="is_unlimited_stock != 1">
-                                            <label>Available Stock <i class="text-danger">*</i></label>
+                                            <label>Available Quantity <i class="text-danger">*</i></label>
                                             <input type="number" step="any" min="0" class="form-control"
                                                 v-model="loose_stock"><br>
                                         </div>
