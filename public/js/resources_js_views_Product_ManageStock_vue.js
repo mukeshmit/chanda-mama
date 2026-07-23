@@ -25,45 +25,41 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
     return {
       fields: [{
         key: 'product_variant_id',
-        label: __('Sr. No.'),
+        label: 'Sr. No.',
         "class": 'text-center',
         sortable: true,
         sortDirection: 'desc'
       }, {
         key: 'image_url',
-        label: __('image'),
+        label: this.$titleLabel('image'),
         "class": 'text-center'
       }, {
         key: 'name',
-        label: __('name'),
-        "class": 'text-center'
-      }, {
-        key: 'variant',
-        label: __('measurement'),
+        label: this.$titleLabel('name'),
         "class": 'text-center'
       }, {
         key: 'type',
-        label: __('type'),
+        label: this.$titleLabel('type'),
         "class": 'text-center'
       }, {
         key: 'stock',
-        label: __('stock'),
+        label: 'Available Quantity',
         "class": 'text-center'
       }, {
         key: 'stock_value',
-        label: __('stock_value'),
+        label: this.$titleLabel('stock_value'),
         "class": 'text-center'
       }, {
         key: 'sales_value',
-        label: __('sales_value'),
+        label: this.$titleLabel('sales_value'),
         "class": 'text-center'
       }, {
         key: 'pv_status',
-        label: __('status'),
+        label: this.$titleLabel('status'),
         "class": 'text-center'
       }, {
         key: 'actions',
-        label: __('actions')
+        label: this.$titleLabel('actions')
       }],
       totalRows: 0,
       currentPage: 1,

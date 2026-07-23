@@ -253,19 +253,19 @@ export default {
                             permission: 'category_list',
                         },
                         {
-                            name: 'SubCategory',
+                            name: 'Sub Category',
                             icon: 'grid-fill',
                             url: '/manage_subcategories',
                             permission: 'category_list',
                         },
                         {
-                            name: 'Sub SubCategory',
+                            name: 'Sub Sub Category',
                             icon: 'grid-fill',
                             url: '/manage_sub_subcategories',
                             permission: 'category_list',
                         },
                         {
-                            name: 'Sub Sub SubCategory',
+                            name: 'Sub Sub Sub Category',
                             icon: 'grid-fill',
                             url: '/manage_sub_sub_subcategories',
                             permission: 'category_list',

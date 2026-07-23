@@ -39,6 +39,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     var _this = this;
+    window.addEventListener('app-route-loading', this.setRouteLoading);
     //lang
     if (window.localStorage.getItem('lang')) {
       this.lang = window.localStorage.getItem('lang');
@@ -151,6 +152,7 @@ __webpack_require__.r(__webpack_exports__);
     document.querySelector('.sidebar-item.active').scrollIntoView(false);
   },
   beforeDestroy: function beforeDestroy() {
+    window.removeEventListener('app-route-loading', this.setRouteLoading);
     // Clear the status check interval when component is destroyed
     if (this.statusCheckInterval) {
       clearInterval(this.statusCheckInterval);
@@ -161,6 +163,7 @@ __webpack_require__.r(__webpack_exports__);
       lang: 'en',
       statusCheckInterval: null,
       remark: '',
+      routeLoading: false,
       sidebarItems: [{
         name: __('dashboard'),
         icon: 'tachometer-alt',
@@ -272,6 +275,9 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
+    setRouteLoading: function setRouteLoading(event) {
+      this.routeLoading = !!event.detail;
+    },
     subIsActive: function subIsActive(item) {
       var _this2 = this;
       var paths = Array.isArray(item.submenu) ? item.submenu : [];
@@ -1179,8 +1185,12 @@ var render = function render() {
       id: "main"
     }
   }, [_c("vertical-header"), _vm._v(" "), _c("div", {
-    staticClass: "main-content"
-  }, [_c("router-view")], 1), _vm._v(" "), _c("the-footer")], 1), _vm._v(" "), _c("b-modal", {
+    staticClass: "main-content route-loader-wrapper"
+  }, [_vm.routeLoading ? _c("div", {
+    staticClass: "route-loader-overlay"
+  }, [_c("b-spinner", {
+    staticClass: "align-middle"
+  }), _vm._v(" "), _c("strong", [_vm._v(_vm._s(_vm.__("loading")) + "...")])], 1) : _vm._e(), _vm._v(" "), _c("router-view")], 1), _vm._v(" "), _c("the-footer")], 1), _vm._v(" "), _c("b-modal", {
     attrs: {
       id: "seller-blocked-modal",
       title: "Account Blocked",
@@ -1883,7 +1893,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.fade-enter-active[data-v-0baa285e],\n.fade-leave-active[data-v-0baa285e] {\n    transition: opacity 0.3s;\n}\n.fade-enter[data-v-0baa285e],\n.fade-leave-to[data-v-0baa285e] {\n    opacity: 0;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.fade-enter-active[data-v-0baa285e],\n.fade-leave-active[data-v-0baa285e] {\n    transition: opacity 0.3s;\n}\n.fade-enter[data-v-0baa285e],\n.fade-leave-to[data-v-0baa285e] {\n    opacity: 0;\n}\n.route-loader-wrapper[data-v-0baa285e] {\n    position: relative;\n}\n.route-loader-overlay[data-v-0baa285e] {\n    align-items: center;\n    background: rgba(255, 255, 255, 0.78);\n    bottom: 0;\n    color: #0f2544;\n    display: flex;\n    gap: 10px;\n    justify-content: center;\n    left: 0;\n    min-height: 260px;\n    position: absolute;\n    right: 0;\n    top: 0;\n    z-index: 20;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

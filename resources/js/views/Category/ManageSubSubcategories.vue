@@ -3,12 +3,12 @@
         <div class="page-heading">
             <div class="page-title mb-2">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3 class="modern-page-title mb-0">Sub SubCategory</h3>
+                    <h3 class="modern-page-title mb-0">Sub Sub Category</h3>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item"><router-link to="/dashboard" class="text-muted">{{
                                     __('dashboard') }}</router-link></li>
-                            <li class="breadcrumb-item active text-primary" aria-current="page">Sub SubCategory</li>
+                            <li class="breadcrumb-item active text-primary" aria-current="page">Sub Sub Category</li>
                         </ol>
                     </nav>
                 </div>
@@ -20,7 +20,6 @@
                         <!-- Check if parent categories exist -->
                         <div v-if="!hasParentCategories" class="alert alert-warning m-3">
                             <i class="fa fa-exclamation-triangle"></i>
-                            {{ __('no_parent_categories_found') }}
                             <router-link to="/manage_categories/create" class="btn btn-primary btn-sm ml-2">
                                 {{ __('create_category_first') }}
                             </router-link>
@@ -59,8 +58,8 @@
                         </div>
 
                         <div class="table-responsive mb-0">
-                            <b-table :items="paginatedTranslatedCategories" :fields="fields" :filter="filter"
-                                :filter-included-fields="filterOn" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
+                            <b-table :items="paginatedTranslatedCategories" :fields="fields"
+                                :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
                                 :busy="isLoading" show-empty small :empty-text="__('no_records_to_show')"
                                 :empty-filtered-text="__('no_records_to_show')" class="mb-0">
 
@@ -191,14 +190,6 @@ export default {
         pageEnd() {
             return Math.min(this.currentPage * this.perPage, this.totalRows);
         },
-        filteredCategories: function () {
-            const list = Array.isArray(this.categories) ? this.categories : [];
-            const query = this.filter ? this.filter.toLowerCase() : '';
-            return list.filter(category => {
-                const name = (category.name || '').toString().toLowerCase();
-                return name.includes(query);
-            });
-        },
         translatedCategories: function () {
             const list = Array.isArray(this.categories) ? this.categories : [];
             if (!this.currentLanguageId || list.length === 0) {
@@ -221,8 +212,7 @@ export default {
             });
         },
         paginatedTranslatedCategories: function () {
-            const start = (this.currentPage - 1) * this.perPage;
-            return this.translatedCategories.slice(start, start + this.perPage);
+            return this.translatedCategories;
         },
     },
     mounted() {
@@ -238,10 +228,9 @@ export default {
             this.getCategories();
         },
         filter(newFilter, oldFilter) {
-            if (this.currentPage === 1) {
-                this.getCategories();
-            } else {
+            if (newFilter !== oldFilter) {
                 this.currentPage = 1;
+                this.getCategories();
             }
         }
     },
@@ -348,7 +337,10 @@ export default {
 
             const params = {
                 filter: this.filter,
+                category_level: 'sub_subcategory',
                 status: null,
+                limit: this.perPage,
+                offset: this.currentPage,
                 _t: Date.now()
             };
             axios.get(this.$apiUrl + '/categories', { params })
@@ -358,11 +350,8 @@ export default {
                     }
                     this.isLoading = false;
                     const data = response.data || {};
-                    // Filter to only show sub-subcategories (categories whose parent is a subcategory)
-                    const allCategories = Array.isArray(data.data) ? data.data : [];
-                    const subcategoryIds = this.subcategories.map(cat => Number(cat.id));
-                    this.categories = allCategories.filter(cat => subcategoryIds.includes(Number(cat.parent_id)));
-                    this.totalRows = this.categories.length;
+                    this.categories = Array.isArray(data.data) ? data.data : [];
+                    this.totalRows = Number(data.total || 0);
                 })
                 .catch(() => {
                     if (currentRequestId !== this.latestRequestId) {

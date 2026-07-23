@@ -30,28 +30,28 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     return {
       fields: [{
         key: 'id',
-        label: __('id'),
+        label: 'Sr. No.',
         "class": 'text-center',
         sortable: true,
         sortDirection: 'desc'
       }, {
         key: 'name',
-        label: __('name'),
+        label: this.$titleLabel('name'),
         "class": 'text-center'
       }, {
         key: 'image',
-        label: __('image'),
+        label: this.$titleLabel('image'),
         "class": 'text-center'
       }, {
         key: 'status',
-        label: __('status'),
+        label: this.$titleLabel('status'),
         "class": 'text-center',
         formatter: function formatter(value) {
           return value == 1 ? __('active') : __('deactive');
         }
       }, {
         key: 'actions',
-        label: __('actions')
+        label: this.$titleLabel('actions')
       }],
       totalRows: 0,
       currentPage: 1,
@@ -648,7 +648,7 @@ var render = function render() {
     }, {
       key: "cell(id)",
       fn: function fn(row) {
-        return [_vm._v("\n                        " + _vm._s(row.item.id) + "\n                    ")];
+        return [_vm._v("\n                        " + _vm._s((_vm.currentPage - 1) * _vm.perPage + row.index + 1) + "\n                    ")];
       }
     }, {
       key: "cell(image)",

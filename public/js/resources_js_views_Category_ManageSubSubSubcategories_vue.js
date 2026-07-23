@@ -70,24 +70,30 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       var title = this.id ? 'Edit Sub Sub SubCategory' : 'Add Sub Sub SubCategory';
       return title;
     },
-    filteredParentSubcategories: function filteredParentSubcategories() {
+    defaultLanguage: function defaultLanguage() {
       var _this = this;
+      return this.languages.find(function (language) {
+        return Number(language.id) === Number(_this.defaultLanguageId);
+      }) || null;
+    },
+    filteredParentSubcategories: function filteredParentSubcategories() {
+      var _this2 = this;
       return this.parent_subcategories.filter(function (subcategory) {
-        return Number(subcategory.parent_id) === Number(_this.parent_category_id);
+        return Number(subcategory.parent_id) === Number(_this2.parent_category_id);
       });
     },
     filteredParentSubSubcategories: function filteredParentSubSubcategories() {
-      var _this2 = this;
+      var _this3 = this;
       return this.parent_sub_subcategories.filter(function (subSubcategory) {
-        return Number(subSubcategory.parent_id) === Number(_this2.parent_subcategory_id);
+        return Number(subSubcategory.parent_id) === Number(_this3.parent_subcategory_id);
       });
     }
   },
   watch: {
     parent_category_id: function parent_category_id() {
-      var _this3 = this;
+      var _this4 = this;
       var hasSelectedSubcategory = this.filteredParentSubcategories.some(function (subcategory) {
-        return Number(subcategory.id) === Number(_this3.parent_subcategory_id);
+        return Number(subcategory.id) === Number(_this4.parent_subcategory_id);
       });
       if (!hasSelectedSubcategory) {
         this.parent_subcategory_id = 0;
@@ -95,9 +101,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }
     },
     parent_subcategory_id: function parent_subcategory_id() {
-      var _this4 = this;
+      var _this5 = this;
       var hasSelectedSubSubcategory = this.filteredParentSubSubcategories.some(function (subSubcategory) {
-        return Number(subSubcategory.id) === Number(_this4.parent_id);
+        return Number(subSubcategory.id) === Number(_this5.parent_id);
       });
       if (!hasSelectedSubSubcategory) {
         this.parent_id = 0;
@@ -110,42 +116,42 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       return this.validateDefaultLanguage();
     },
     deferDataLoad: function deferDataLoad() {
-      var _this5 = this;
+      var _this6 = this;
       this.isLoadingData = true;
 
       // Load languages and parent subcategories in parallel
       Promise.all([this.fetchActiveLanguages(), this.getParentSubcategories()]).then(function () {
         // Find default language
-        var defaultLang = _this5.languages.find(function (lang) {
+        var defaultLang = _this6.languages.find(function (lang) {
           return lang.is_default === 1;
         });
         if (defaultLang) {
-          _this5.defaultLanguageId = defaultLang.id;
+          _this6.defaultLanguageId = defaultLang.id;
         }
 
         // Initialize translations efficiently (single operation)
-        _this5.initializeTranslations();
+        _this6.initializeTranslations();
 
         // Load translations only if editing
-        if (_this5.id) {
-          return _this5.loadCategoryWithTranslations();
+        if (_this6.id) {
+          return _this6.loadCategoryWithTranslations();
         } else {
           // For new category, no translations to load
-          _this5.isLoadingData = false;
+          _this6.isLoadingData = false;
         }
       })["catch"](function (error) {
         console.error('Error loading data:', error);
-        _this5.isLoadingData = false;
+        _this6.isLoadingData = false;
       });
     },
     fetchActiveLanguages: function fetchActiveLanguages() {
-      var _this6 = this;
+      var _this7 = this;
       return new Promise(function (resolve, reject) {
         // Fetch from API directly - no caching
-        axios__WEBPACK_IMPORTED_MODULE_0___default().get(_this6.$apiUrl + '/active_languages').then(function (response) {
+        axios__WEBPACK_IMPORTED_MODULE_0___default().get(_this7.$apiUrl + '/active_languages').then(function (response) {
           if (response.data.data) {
-            _this6.languages = response.data.data;
-            resolve(_this6.languages);
+            _this7.languages = response.data.data;
+            resolve(_this7.languages);
           } else {
             reject(new Error('No languages found'));
           }
@@ -170,7 +176,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       this.translations = allTranslations;
     },
     loadCategoryWithTranslations: function loadCategoryWithTranslations() {
-      var _this7 = this;
+      var _this8 = this;
       return axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/sub_sub_subcategories', {
         params: {
           id: this.id
@@ -181,19 +187,19 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           var categories = Array.isArray(response.data.data) ? response.data.data : [response.data.data];
           var category = categories.length > 0 ? categories[0] : null;
           if (!category) {
-            _this7.isLoadingData = false;
+            _this8.isLoadingData = false;
             return;
           }
 
           // Load base data
-          _this7.slug = category.slug;
-          _this7.parent_id = category.parent_id;
-          _this7.setParentCategoryChainFromSubSubcategory();
-          _this7.image_url = category.image_url;
-          _this7.status = category.status;
+          _this8.slug = category.slug;
+          _this8.parent_id = category.parent_id;
+          _this8.setParentCategoryChainFromSubSubcategory();
+          _this8.image_url = category.image_url;
+          _this8.status = category.status;
 
           // Load translations from the category object
-          var updatedTranslations = _objectSpread({}, _this7.translations);
+          var updatedTranslations = _objectSpread({}, _this8.translations);
           if (category.translations && Array.isArray(category.translations)) {
             category.translations.forEach(function (trans) {
               var langId = trans.language_id;
@@ -206,7 +212,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               };
             });
           }
-          _this7.languages.forEach(function (language) {
+          _this8.languages.forEach(function (language) {
             if (!updatedTranslations[language.id] || !updatedTranslations[language.id].name) {
               if (language.is_default) {
                 updatedTranslations[language.id] = {
@@ -221,16 +227,16 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           });
 
           // Single assignment for reactivity
-          _this7.translations = updatedTranslations;
+          _this8.translations = updatedTranslations;
         }
-        _this7.isLoadingData = false;
+        _this8.isLoadingData = false;
       })["catch"](function (error) {
-        _this7.isLoadingData = false;
+        _this8.isLoadingData = false;
         throw error;
       });
     },
     createSlug: function createSlug() {
-      var _this8 = this;
+      var _this9 = this;
       if (!this.defaultLanguageId) return Promise.resolve();
       var name = this.translations[this.defaultLanguageId].name;
       if (name !== "") {
@@ -239,20 +245,20 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         // Check for uniqueness
         return axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + "/categories/check-slug/".concat(slug)).then(function (response) {
           if (response.data.unique) {
-            _this8.slug = slug;
+            _this9.slug = slug;
           } else {
-            _this8.slug = slug + '-' + response.data.count;
+            _this9.slug = slug + '-' + response.data.count;
           }
         })["catch"](function (error) {
           console.error('Error checking slug uniqueness: ' + error);
           // Fallback: use slug without uniqueness check
-          _this8.slug = slug;
+          _this9.slug = slug;
         });
       }
       return Promise.resolve();
     },
     getParentSubcategories: function getParentSubcategories() {
-      var _this9 = this;
+      var _this0 = this;
       return axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/categories', {
         params: {
           status: 1,
@@ -265,30 +271,30 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           map[category.id] = category;
           return map;
         }, {});
-        _this9.parent_categories = allCategories.filter(function (cat) {
+        _this0.parent_categories = allCategories.filter(function (cat) {
           return Number(cat.parent_id) === 0;
         });
-        _this9.parent_subcategories = allCategories.filter(function (cat) {
+        _this0.parent_subcategories = allCategories.filter(function (cat) {
           var parent = categoryMap[cat.parent_id];
           return Number(cat.parent_id) > 0 && parent && Number(parent.parent_id) === 0;
         });
-        var subcategoryIds = _this9.parent_subcategories.map(function (cat) {
+        var subcategoryIds = _this0.parent_subcategories.map(function (cat) {
           return Number(cat.id);
         });
-        _this9.parent_sub_subcategories = allCategories.filter(function (cat) {
+        _this0.parent_sub_subcategories = allCategories.filter(function (cat) {
           return subcategoryIds.includes(Number(cat.parent_id));
         });
-        _this9.setParentCategoryChainFromSubSubcategory();
+        _this0.setParentCategoryChainFromSubSubcategory();
       });
     },
     setParentCategoryChainFromSubSubcategory: function setParentCategoryChainFromSubSubcategory() {
-      var _this0 = this;
+      var _this1 = this;
       var selectedSubSubcategory = this.parent_sub_subcategories.find(function (subSubcategory) {
-        return Number(subSubcategory.id) === Number(_this0.parent_id);
+        return Number(subSubcategory.id) === Number(_this1.parent_id);
       });
       this.parent_subcategory_id = selectedSubSubcategory ? selectedSubSubcategory.parent_id : 0;
       var selectedSubcategory = this.parent_subcategories.find(function (subcategory) {
-        return Number(subcategory.id) === Number(_this0.parent_subcategory_id);
+        return Number(subcategory.id) === Number(_this1.parent_subcategory_id);
       });
       this.parent_category_id = selectedSubcategory ? selectedSubcategory.parent_id : 0;
     },
@@ -383,18 +389,13 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         this.showError('Please select Sub SubCategory');
         return false;
       }
-      if (!this.id && !this.image && !this.image_url) {
-        this.switchToDefaultLanguageTab();
-        this.showError(__('please_fill_default_language_required_fields'));
-        return false;
-      }
       return true;
     },
     triggerFileInput: function triggerFileInput() {
-      var _this1 = this;
+      var _this10 = this;
       // Use nextTick to ensure DOM is ready
       this.$nextTick(function () {
-        var fileInput = _this1.$refs.file_image;
+        var fileInput = _this10.$refs.file_image;
         if (fileInput) {
           // Handle both direct element and array of elements
           var element = Array.isArray(fileInput) ? fileInput[0] : fileInput;
@@ -406,9 +407,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     },
     // Switches to default language tab so user sees the required fields. Caller shows the specific error.
     switchToDefaultLanguageTab: function switchToDefaultLanguageTab() {
-      var _this10 = this;
+      var _this11 = this;
       var defaultLangIndex = this.languages.findIndex(function (lang) {
-        return lang.id === _this10.defaultLanguageId;
+        return lang.id === _this11.defaultLanguageId;
       });
       if (defaultLangIndex !== -1) {
         this.activeLanguageTab = defaultLangIndex;
@@ -416,7 +417,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     },
     saveRecord: function () {
       var _saveRecord = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
-        var _this11 = this;
+        var _this12 = this;
         var vm, languagesToSave, defaultLang, saveSequentially;
         return _regenerator().w(function (_context2) {
           while (1) switch (_context2.n) {
@@ -444,12 +445,12 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               this.languages.forEach(function (language) {
                 if (language.is_default) return; // Skip default, already added
 
-                var translation = _this11.translations[language.id];
-                var hasData = _this11.translatableFields.some(function (field) {
+                var translation = _this12.translations[language.id];
+                var hasData = _this12.translatableFields.some(function (field) {
                   var val = translation[field];
                   return val != null && String(val).trim() !== '';
                 });
-                if (hasData || _this11.id) {
+                if (hasData || _this12.id) {
                   languagesToSave.push(language);
                 }
               });
@@ -461,38 +462,39 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
                   return _regenerator().w(function (_context) {
                     while (1) switch (_context.p = _context.n) {
                       case 0:
-                        categoryId = _this11.id; // For edit mode
+                        categoryId = _this12.id; // For edit mode
                         i = 0;
                       case 1:
                         if (!(i < languagesToSave.length)) {
-                          _context.n = 6;
+                          _context.n = 7;
                           break;
                         }
                         language = languagesToSave[i];
-                        translation = _this11.translations[language.id];
+                        translation = _this12.translations[language.id];
                         formData = new FormData(); // Basic fields
                         if (categoryId) {
                           formData.append('id', categoryId);
                         }
                         formData.append('language_id', language.id);
-                        formData.append('slug', _this11.slug);
-                        formData.append('status', _this11.status);
-                        formData.append('parent_id', parseInt(_this11.parent_id) || 0);
+                        formData.append('slug', _this12.slug);
+                        formData.append('status', _this12.status);
+                        formData.append('parent_id', parseInt(_this12.parent_id) || 0);
 
                         // Translatable fields
                         formData.append('name', translation.name || '');
+                        formData.append('subtitle', '');
                         formData.append('meta_title', translation.meta_title || '');
                         formData.append('meta_keywords', translation.meta_keywords || '');
                         formData.append('schema_markup', translation.schema_markup || '');
                         formData.append('meta_description', translation.meta_description || '');
 
                         // Image (only send with default language)
-                        if (language.is_default && _this11.image) {
-                          formData.append('image', _this11.image);
+                        if (language.is_default && _this12.image) {
+                          formData.append('image', _this12.image);
                         }
-                        url = _this11.$apiUrl + '/sub_sub_subcategories/save';
+                        url = _this12.$apiUrl + '/sub_sub_subcategories/save';
                         if (categoryId) {
-                          url = _this11.$apiUrl + '/sub_sub_subcategories/update';
+                          url = _this12.$apiUrl + '/sub_sub_subcategories/update';
                         }
                         _context.p = 2;
                         _context.n = 3;
@@ -503,25 +505,31 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
                         });
                       case 3:
                         response = _context.v;
+                        if (!(!response.data || Number(response.data.status) !== 1)) {
+                          _context.n = 4;
+                          break;
+                        }
+                        throw new Error(response.data && response.data.message || __('something_went_wrong'));
+                      case 4:
                         // If this was the first save (default language), get the category ID
                         if (!categoryId && response.data.data && response.data.data.id) {
                           categoryId = response.data.data.id;
                         }
-                        _context.n = 5;
+                        _context.n = 6;
                         break;
-                      case 4:
-                        _context.p = 4;
+                      case 5:
+                        _context.p = 5;
                         _t = _context.v;
                         console.error('Save failed:', _t);
                         throw _t;
-                      case 5:
+                      case 6:
                         i++;
                         _context.n = 1;
                         break;
-                      case 6:
+                      case 7:
                         return _context.a(2, true);
                     }
-                  }, _callee, null, [[2, 4]]);
+                  }, _callee, null, [[2, 5]]);
                 }));
                 return function saveSequentially() {
                   return _ref.apply(this, arguments);
@@ -561,10 +569,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     }()
   },
   mounted: function mounted() {
-    var _this12 = this;
+    var _this13 = this;
     this.showModal();
     this.$nextTick(function () {
-      _this12.deferDataLoad();
+      _this13.deferDataLoad();
     });
   }
 });
@@ -597,30 +605,34 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     return {
       fields: [{
         key: 'id',
-        label: __('Sr. No.'),
+        label: 'Sr. No.',
         "class": 'text-center',
         sortable: true,
         sortDirection: 'asc'
       }, {
         key: 'name',
-        label: __('name'),
+        label: this.$titleLabel('name'),
         "class": 'text-center',
         sortable: true
       }, {
         key: 'parent_category',
-        label: 'Parent Sub SubCategory',
+        label: this.$titleLabel('parent_category'),
+        "class": 'text-center'
+      }, {
+        key: 'parent_subcategory',
+        label: this.$titleLabel('parent_subcategory'),
+        "class": 'text-center'
+      }, {
+        key: 'parent_sub_subcategory',
+        label: this.$titleLabel('parent_sub_subcategory'),
         "class": 'text-center'
       }, {
         key: 'image',
-        label: __('image'),
-        "class": 'text-center'
-      }, {
-        key: 'status',
-        label: __('status'),
+        label: this.$titleLabel('image'),
         "class": 'text-center'
       }, {
         key: 'actions',
-        label: __('actions'),
+        label: this.$titleLabel('actions'),
         "class": 'text-center'
       }],
       totalRows: 1,
@@ -671,14 +683,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     pageEnd: function pageEnd() {
       return Math.min(this.currentPage * this.perPage, this.totalRows);
     },
-    filteredCategories: function filteredCategories() {
-      var list = Array.isArray(this.categories) ? this.categories : [];
-      var query = this.filter ? this.filter.toLowerCase() : '';
-      return list.filter(function (category) {
-        var name = (category.name || '').toString().toLowerCase();
-        return name.includes(query);
-      });
-    },
     translatedCategories: function translatedCategories() {
       var _this = this;
       var list = Array.isArray(this.categories) ? this.categories : [];
@@ -699,8 +703,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       });
     },
     paginatedTranslatedCategories: function paginatedTranslatedCategories() {
-      var start = (this.currentPage - 1) * this.perPage;
-      return this.translatedCategories.slice(start, start + this.perPage);
+      return this.translatedCategories;
     }
   },
   mounted: function mounted() {},
@@ -715,6 +718,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       this.getCategories();
     },
     filter: function filter(newFilter, oldFilter) {
+      if (newFilter === oldFilter) {
+        return;
+      }
       if (this.currentPage === 1) {
         this.getCategories();
       } else {
@@ -802,6 +808,30 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       });
     },
     getParentCategoryName: function getParentCategoryName(parentId) {
+      var subSubcategory = this.subSubcategories.find(function (cat) {
+        return Number(cat.id) === Number(parentId);
+      });
+      if (!subSubcategory) return '-';
+      var subcategory = this.subcategories.find(function (cat) {
+        return Number(cat.id) === Number(subSubcategory.parent_id);
+      });
+      if (!subcategory) return '-';
+      var parent = this.parentCategories.find(function (cat) {
+        return Number(cat.id) === Number(subcategory.parent_id);
+      });
+      return parent ? parent.name : '-';
+    },
+    getParentSubCategoryName: function getParentSubCategoryName(parentId) {
+      var subSubcategory = this.subSubcategories.find(function (cat) {
+        return Number(cat.id) === Number(parentId);
+      });
+      if (!subSubcategory) return '-';
+      var parent = this.subcategories.find(function (cat) {
+        return Number(cat.id) === Number(subSubcategory.parent_id);
+      });
+      return parent ? parent.name : '-';
+    },
+    getParentSubSubCategoryName: function getParentSubSubCategoryName(parentId) {
       var parent = this.subSubcategories.find(function (cat) {
         return Number(cat.id) === Number(parentId);
       });
@@ -835,10 +865,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       this.latestRequestId++;
       var currentRequestId = this.latestRequestId;
       var params = {
-        offset: 1,
-        limit: 1000,
         filter: this.filter,
-        status: null,
+        limit: this.perPage,
+        offset: this.currentPage,
         _t: Date.now()
       };
       axios.get(this.$apiUrl + '/sub_sub_subcategories', {
@@ -850,7 +879,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         _this7.isLoading = false;
         var data = response.data || {};
         _this7.categories = Array.isArray(data.data) ? data.data : [];
-        _this7.totalRows = _this7.categories.length;
+        _this7.totalRows = Number(data.total || 0);
       })["catch"](function () {
         if (currentRequestId !== _this7.latestRequestId) {
           return;
@@ -988,85 +1017,9 @@ var render = function render() {
         return _vm.saveRecord.apply(null, arguments);
       }
     }
-  }, [_vm.languages.length > 0 ? _c("b-tabs", {
-    attrs: {
-      "content-class": "mt-3"
-    },
-    model: {
-      value: _vm.activeLanguageTab,
-      callback: function callback($$v) {
-        _vm.activeLanguageTab = $$v;
-      },
-      expression: "activeLanguageTab"
-    }
-  }, _vm._l(_vm.languages, function (language) {
-    return _c("b-tab", {
+  }, [_vm.defaultLanguage ? _c("div", [_vm._l([_vm.defaultLanguage], function (language) {
+    return [_c("div", {
       key: language.id,
-      attrs: {
-        title: language.name,
-        lazy: ""
-      },
-      scopedSlots: _vm._u([{
-        key: "title",
-        fn: function fn() {
-          return [_c("span", {
-            "class": {
-              "text-primary font-weight-bold": language.is_default
-            }
-          }, [_vm._v("\n                        " + _vm._s(language.name) + "\n                    ")])];
-        },
-        proxy: true
-      }], null, true)
-    }, [_vm._v(" "), language.is_default && _vm.languages.length > 1 ? _c("div", {
-      staticClass: "mb-3"
-    }, [_c("b-button", {
-      directives: [{
-        name: "b-tooltip",
-        rawName: "v-b-tooltip.hover",
-        modifiers: {
-          hover: true
-        }
-      }],
-      staticClass: "mr-2",
-      attrs: {
-        size: "sm",
-        variant: "outline-primary",
-        title: _vm.__("only_empty_fields_will_be_translated_existing_content_will_not_be_changed"),
-        disabled: _vm.loadingEmpty
-      },
-      on: {
-        click: function click($event) {
-          return _vm.translateEmpty(language);
-        }
-      }
-    }, [!_vm.loadingEmpty ? _c("span", [_vm._v(_vm._s(_vm.__("translate_empty_fields")))]) : _c("b-spinner", {
-      attrs: {
-        small: ""
-      }
-    })], 1), _vm._v(" "), _c("b-button", {
-      directives: [{
-        name: "b-tooltip",
-        rawName: "v-b-tooltip.hover",
-        modifiers: {
-          hover: true
-        }
-      }],
-      attrs: {
-        size: "sm",
-        variant: "outline-danger",
-        title: _vm.__("all_fields_will_be_translated_and_existing_content_will_be_overwritten"),
-        disabled: _vm.loadingOverwrite
-      },
-      on: {
-        click: function click($event) {
-          return _vm.translateOverwrite(language);
-        }
-      }
-    }, [!_vm.loadingOverwrite ? _c("span", [_vm._v(_vm._s(_vm.__("translate_and_overwrite")))]) : _c("b-spinner", {
-      attrs: {
-        small: ""
-      }
-    })], 1)], 1) : _vm._e(), _vm._v(" "), _c("div", {
       staticClass: "row"
     }, [language.is_default ? _c("div", {
       staticClass: "form-group"
@@ -1206,9 +1159,7 @@ var render = function render() {
       }
     })]), _vm._v(" "), language.is_default ? _c("div", {
       staticClass: "form-group"
-    }, [_c("label", [_vm._v(_vm._s(_vm.__("image")))]), _c("i", {
-      staticClass: "text-danger"
-    }, [_vm._v("*")]), _vm._v(" "), _c("p", {
+    }, [_c("label", [_vm._v(_vm._s(_vm.__("image")))]), _vm._v(" "), _c("p", {
       staticClass: "text-muted"
     }, [_vm._v(_vm._s(_vm.__("please_choose_square_image_of_larger_than_350px_350px_and_smaller_than_550px_550px")))]), _vm._v(" "), _vm.error ? _c("span", {
       staticClass: "error"
@@ -1382,8 +1333,8 @@ var render = function render() {
         },
         expression: "status"
       }
-    })], 1)]) : _vm._e()])]);
-  }), 1) : _c("div", {
+    })], 1)]) : _vm._e()])];
+  })], 2) : _c("div", {
     staticClass: "text-center p-5"
   }, [_c("b-spinner", {
     attrs: {
@@ -1396,7 +1347,7 @@ var render = function render() {
     staticStyle: {
       display: "none"
     }
-  })], 1)]);
+  })])]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -1426,7 +1377,7 @@ var render = function render() {
     staticClass: "d-flex justify-content-between align-items-center"
   }, [_c("h3", {
     staticClass: "modern-page-title mb-0"
-  }, [_vm._v("Sub Sub SubCategory")]), _vm._v(" "), _c("nav", {
+  }, [_vm._v("Sub Sub Sub Category")]), _vm._v(" "), _c("nav", {
     attrs: {
       "aria-label": "breadcrumb"
     }
@@ -1444,7 +1395,7 @@ var render = function render() {
     attrs: {
       "aria-current": "page"
     }
-  }, [_vm._v("Sub Sub SubCategory")])])])])]), _vm._v(" "), _c("section", {
+  }, [_vm._v("Sub Sub Sub Category")])])])])]), _vm._v(" "), _c("section", {
     staticClass: "section"
   }, [_c("div", {
     staticClass: "figma-main-section-card"
@@ -1454,7 +1405,7 @@ var render = function render() {
     staticClass: "alert alert-warning m-3"
   }, [_c("i", {
     staticClass: "fa fa-exclamation-triangle"
-  }), _vm._v("\n                        " + _vm._s(_vm.__("no_parent_categories_found")) + "\n                        "), _c("router-link", {
+  }), _vm._v(" "), _c("router-link", {
     staticClass: "btn btn-primary btn-sm ml-2",
     attrs: {
       to: "/manage_categories/create"
@@ -1536,17 +1487,16 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fa fa-plus"
-  }), _vm._v(" "), _c("span", [_vm._v("Add Sub Sub SubCategory")])]) : _vm._e()])]), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _c("span", [_vm._v("Add Sub Sub Sub Category")])]) : _vm._e()])]), _vm._v(" "), _c("div", {
     staticClass: "table-responsive mb-0"
   }, [_c("b-table", {
     staticClass: "mb-0",
     attrs: {
       items: _vm.paginatedTranslatedCategories,
       fields: _vm.fields,
-      filter: _vm.filter,
-      "filter-included-fields": _vm.filterOn,
       "sort-by": _vm.sortBy,
       "sort-desc": _vm.sortDesc,
+      busy: _vm.isLoading,
       "show-empty": "",
       small: "",
       "empty-text": _vm.__("no_records_to_show"),
@@ -1608,13 +1558,14 @@ var render = function render() {
         return [_vm._v("\n                                " + _vm._s(_vm.getParentCategoryName(row.item.parent_id)) + "\n                            ")];
       }
     }, {
-      key: "cell(status)",
+      key: "cell(parent_subcategory)",
       fn: function fn(row) {
-        return [row.item.status == 1 ? _c("span", {
-          staticClass: "badge bg-success"
-        }, [_vm._v(_vm._s(_vm.__("activate")))]) : _vm._e(), _vm._v(" "), row.item.status == 0 ? _c("span", {
-          staticClass: "badge bg-danger"
-        }, [_vm._v(_vm._s(_vm.__("deactivate")))]) : _vm._e()];
+        return [_vm._v("\n                                " + _vm._s(_vm.getParentSubCategoryName(row.item.parent_id)) + "\n                            ")];
+      }
+    }, {
+      key: "cell(parent_sub_subcategory)",
+      fn: function fn(row) {
+        return [_vm._v("\n                                " + _vm._s(_vm.getParentSubSubCategoryName(row.item.parent_id)) + "\n                            ")];
       }
     }, {
       key: "cell(actions)",

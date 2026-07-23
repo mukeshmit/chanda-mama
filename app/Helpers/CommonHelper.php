@@ -739,6 +739,27 @@ class CommonHelper
         $sellerIds = self::getSellerIdsfromCityIds($cityIds);
         return $sellerIds;
     }
+
+    public static function getDefaultLocation(): array
+    {
+        $latitude = Setting::get_value('map_latitude');
+        $longitude = Setting::get_value('map_longitude');
+
+        return [
+            'latitude' => is_numeric($latitude) ? $latitude : '28.6139',
+            'longitude' => is_numeric($longitude) ? $longitude : '77.2090',
+        ];
+    }
+
+    public static function applyDefaultLocation($request): void
+    {
+        if ($request->filled('latitude') && $request->filled('longitude')) {
+            return;
+        }
+
+        $request->merge(self::getDefaultLocation());
+    }
+
     public static function isPointInPolygon($point, $polygon)
     {
         if (empty($polygon) || !is_array($polygon)) {

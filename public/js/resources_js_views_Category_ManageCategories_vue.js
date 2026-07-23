@@ -492,31 +492,22 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     return {
       fields: [{
         key: 'id',
-        label: __('Sr. No.'),
+        label: 'Sr. No.',
         "class": 'text-center',
         sortable: true,
         sortDirection: 'asc'
       }, {
         key: 'name',
-        label: __('name'),
-        "class": 'text-center',
-        sortable: true
-      }, {
-        key: 'subtitle',
-        label: __('subtitle'),
+        label: this.$titleLabel('name'),
         "class": 'text-center',
         sortable: true
       }, {
         key: 'image',
-        label: __('image'),
-        "class": 'text-center'
-      }, {
-        key: 'status',
-        label: __('status'),
+        label: this.$titleLabel('image'),
         "class": 'text-center'
       }, {
         key: 'actions',
-        label: __('actions'),
+        label: this.$titleLabel('actions'),
         "class": 'text-center'
       }],
       totalRows: 1,
@@ -664,6 +655,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         offset: this.currentPage,
         limit: this.perPage,
         filter: this.filter,
+        parent_id: 0,
         status: null,
         // Explicitly request all categories (active and inactive)
         _t: Date.now()
@@ -819,7 +811,8 @@ var render = function render() {
     }
   }, [_vm.languages.length > 0 ? _c("b-tabs", {
     attrs: {
-      "content-class": "mt-3"
+      "content-class": "mt-3",
+      "nav-class": _vm.languages.length === 1 ? "d-none" : ""
     },
     model: {
       value: _vm.activeLanguageTab,
@@ -1241,6 +1234,7 @@ var render = function render() {
       "filter-included-fields": _vm.filterOn,
       "sort-by": _vm.sortBy,
       "sort-desc": _vm.sortDesc,
+      busy: _vm.isLoading,
       "show-empty": "",
       small: "",
       "empty-text": _vm.__("no_records_to_show"),
@@ -1295,15 +1289,6 @@ var render = function render() {
             }
           }
         })];
-      }
-    }, {
-      key: "cell(status)",
-      fn: function fn(row) {
-        return [row.item.status == 1 ? _c("span", {
-          staticClass: "badge bg-success"
-        }, [_vm._v(_vm._s(_vm.__("activate")))]) : _vm._e(), _vm._v(" "), row.item.status == 0 ? _c("span", {
-          staticClass: "badge bg-danger"
-        }, [_vm._v(_vm._s(_vm.__("deactivate")))]) : _vm._e()];
       }
     }, {
       key: "cell(actions)",

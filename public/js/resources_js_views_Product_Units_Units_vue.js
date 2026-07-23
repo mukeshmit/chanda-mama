@@ -350,30 +350,26 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     return {
       fields: [{
         key: 'id',
-        label: __('id'),
+        label: 'Sr. No.',
         sortable: true,
         sortDirection: 'desc'
       }, {
         key: 'name',
-        label: __('name'),
+        label: this.$titleLabel('name'),
         sortable: true,
         "class": 'text-center'
       }, {
         key: 'short_code',
-        label: __('short_code'),
+        label: this.$titleLabel('short_code'),
         sortable: true,
         "class": 'text-center'
       }, {
-        key: 'parent_id',
-        label: __('parent_id'),
-        "class": 'text-center'
-      }, {
         key: 'conversion',
-        label: __('conversion'),
+        label: this.$titleLabel('conversion'),
         "class": 'text-center'
       }, {
         key: 'actions',
-        label: __('actions')
+        label: this.$titleLabel('actions')
       }],
       totalRows: 1,
       currentPage: 1,
@@ -606,7 +602,8 @@ var render = function render() {
   }, [_vm.languages.length > 0 ? _c("b-tabs", {
     key: _vm.tabsKey,
     attrs: {
-      "content-class": "mt-3"
+      "content-class": "mt-3",
+      "nav-class": _vm.languages.length === 1 ? "d-none" : ""
     },
     model: {
       value: _vm.activeLanguageTab,
@@ -737,37 +734,6 @@ var render = function render() {
         }
       }
     })]), _vm._v(" "), language.is_default ? _c("div", {
-      staticClass: "form-group"
-    }, [_c("label", [_vm._v(_vm._s(_vm.__("parent_id")))]), _vm._v(" "), _c("select", {
-      directives: [{
-        name: "model",
-        rawName: "v-model",
-        value: _vm.parent_id,
-        expression: "parent_id"
-      }],
-      staticClass: "form-control form-select",
-      on: {
-        change: function change($event) {
-          var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-            return o.selected;
-          }).map(function (o) {
-            var val = "_value" in o ? o._value : o.value;
-            return val;
-          });
-          _vm.parent_id = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
-        }
-      }
-    }, [_c("option", {
-      attrs: {
-        value: "0"
-      }
-    }, [_vm._v(_vm._s(_vm.__("units")))]), _vm._v(" "), _vm._l(_vm.units, function (unit) {
-      return _c("option", {
-        domProps: {
-          value: unit.id
-        }
-      }, [_vm._v(_vm._s(unit.name))]);
-    })], 2)]) : _vm._e(), _vm._v(" "), language.is_default ? _c("div", {
       staticClass: "form-group"
     }, [_c("label", [_vm._v(_vm._s(_vm.__("conversion")))]), _vm._v(" "), _c("input", {
       directives: [{
@@ -971,9 +937,9 @@ var render = function render() {
       },
       proxy: true
     }, {
-      key: "cell(parent_id)",
+      key: "cell(id)",
       fn: function fn(row) {
-        return [row.item.parent_id !== null ? _c("p", [_vm._v(_vm._s(row.item.parent_id))]) : _c("p", [_vm._v("-")])];
+        return [_vm._v("\n                            " + _vm._s((_vm.currentPage - 1) * _vm.perPage + row.index + 1) + "\n                        ")];
       }
     }, {
       key: "cell(conversion)",

@@ -57,6 +57,8 @@ class ProductsApiController extends Controller
 
     public function getProducts(Request $request)
     {
+        CommonHelper::applyDefaultLocation($request);
+
         $validator = Validator::make($request->all(), [
             'latitude' => 'required',
             'longitude' => 'required',
@@ -699,6 +701,8 @@ class ProductsApiController extends Controller
 
     public function getProduct(Request $request)
     {
+        CommonHelper::applyDefaultLocation($request);
+
         $validator = Validator::make($request->all(), [
             'id' => 'required_without_all:slug,barcode',
             'slug' => 'required_without_all:id,barcode',

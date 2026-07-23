@@ -564,30 +564,30 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     return {
       fields: [{
         key: 'id',
-        label: __('Sr. No.'),
+        label: 'Sr. No.',
         "class": 'text-center',
         sortable: true,
         sortDirection: 'asc'
       }, {
         key: 'name',
-        label: __('name'),
+        label: this.$titleLabel('name'),
         "class": 'text-center',
         sortable: true
       }, {
         key: 'parent_category',
-        label: __('parent_subcategory'),
+        label: this.$titleLabel('parent_category'),
+        "class": 'text-center'
+      }, {
+        key: 'parent_subcategory',
+        label: this.$titleLabel('parent_subcategory'),
         "class": 'text-center'
       }, {
         key: 'image',
-        label: __('image'),
-        "class": 'text-center'
-      }, {
-        key: 'status',
-        label: __('status'),
+        label: this.$titleLabel('image'),
         "class": 'text-center'
       }, {
         key: 'actions',
-        label: __('actions'),
+        label: this.$titleLabel('actions'),
         "class": 'text-center'
       }],
       totalRows: 1,
@@ -636,14 +636,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     pageEnd: function pageEnd() {
       return Math.min(this.currentPage * this.perPage, this.totalRows);
     },
-    filteredCategories: function filteredCategories() {
-      var list = Array.isArray(this.categories) ? this.categories : [];
-      var query = this.filter ? this.filter.toLowerCase() : '';
-      return list.filter(function (category) {
-        var name = (category.name || '').toString().toLowerCase();
-        return name.includes(query);
-      });
-    },
     translatedCategories: function translatedCategories() {
       var _this = this;
       var list = Array.isArray(this.categories) ? this.categories : [];
@@ -662,6 +654,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         return translatedCategory;
       });
+    },
+    paginatedTranslatedCategories: function paginatedTranslatedCategories() {
+      return this.translatedCategories;
     }
   },
   mounted: function mounted() {},
@@ -676,10 +671,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       this.getCategories();
     },
     filter: function filter(newFilter, oldFilter) {
-      if (this.currentPage === 1) {
-        this.getCategories();
-      } else {
+      if (newFilter !== oldFilter) {
         this.currentPage = 1;
+        this.getCategories();
       }
     }
   },
@@ -740,8 +734,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       var _this5 = this;
       return axios.get(this.$apiUrl + '/categories', {
         params: {
-          status: 1,
-          limit: 1000
+          status: 1
         }
       }).then(function (response) {
         var data = response.data || {};
@@ -761,8 +754,18 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       });
     },
     getParentCategoryName: function getParentCategoryName(parentId) {
+      var subcategory = this.subcategories.find(function (cat) {
+        return Number(cat.id) === Number(parentId);
+      });
+      if (!subcategory) return '-';
+      var parent = this.parentCategories.find(function (cat) {
+        return Number(cat.id) === Number(subcategory.parent_id);
+      });
+      return parent ? parent.name : '-';
+    },
+    getParentSubCategoryName: function getParentSubCategoryName(parentId) {
       var parent = this.subcategories.find(function (cat) {
-        return cat.id === parentId;
+        return Number(cat.id) === Number(parentId);
       });
       return parent ? parent.name : '-';
     },
@@ -772,10 +775,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       this.latestRequestId++;
       var currentRequestId = this.latestRequestId;
       var params = {
-        offset: this.currentPage,
-        limit: this.perPage,
         filter: this.filter,
+        category_level: 'sub_subcategory',
         status: null,
+        limit: this.perPage,
+        offset: this.currentPage,
         _t: Date.now()
       };
       axios.get(this.$apiUrl + '/categories', {
@@ -786,15 +790,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         _this6.isLoading = false;
         var data = response.data || {};
-        // Filter to only show sub-subcategories (categories whose parent is a subcategory)
-        var allCategories = Array.isArray(data.data) ? data.data : [];
-        var subcategoryIds = _this6.subcategories.map(function (cat) {
-          return Number(cat.id);
-        });
-        _this6.categories = allCategories.filter(function (cat) {
-          return subcategoryIds.includes(Number(cat.parent_id));
-        });
-        _this6.totalRows = _this6.categories.length;
+        _this6.categories = Array.isArray(data.data) ? data.data : [];
+        _this6.totalRows = Number(data.total || 0);
       })["catch"](function () {
         if (currentRequestId !== _this6.latestRequestId) {
           return;
@@ -1333,7 +1330,7 @@ var render = function render() {
     staticClass: "d-flex justify-content-between align-items-center"
   }, [_c("h3", {
     staticClass: "modern-page-title mb-0"
-  }, [_vm._v("Sub SubCategory")]), _vm._v(" "), _c("nav", {
+  }, [_vm._v("Sub Sub Category")]), _vm._v(" "), _c("nav", {
     attrs: {
       "aria-label": "breadcrumb"
     }
@@ -1351,7 +1348,7 @@ var render = function render() {
     attrs: {
       "aria-current": "page"
     }
-  }, [_vm._v("Sub SubCategory")])])])])]), _vm._v(" "), _c("section", {
+  }, [_vm._v("Sub Sub Category")])])])])]), _vm._v(" "), _c("section", {
     staticClass: "section"
   }, [_c("div", {
     staticClass: "figma-main-section-card"
@@ -1361,7 +1358,7 @@ var render = function render() {
     staticClass: "alert alert-warning m-3"
   }, [_c("i", {
     staticClass: "fa fa-exclamation-triangle"
-  }), _vm._v("\n                        " + _vm._s(_vm.__("no_parent_categories_found")) + "\n                        "), _c("router-link", {
+  }), _vm._v(" "), _c("router-link", {
     staticClass: "btn btn-primary btn-sm ml-2",
     attrs: {
       to: "/manage_categories/create"
@@ -1439,12 +1436,11 @@ var render = function render() {
   }, [_c("b-table", {
     staticClass: "mb-0",
     attrs: {
-      items: _vm.translatedCategories,
+      items: _vm.paginatedTranslatedCategories,
       fields: _vm.fields,
-      filter: _vm.filter,
-      "filter-included-fields": _vm.filterOn,
       "sort-by": _vm.sortBy,
       "sort-desc": _vm.sortDesc,
+      busy: _vm.isLoading,
       "show-empty": "",
       small: "",
       "empty-text": _vm.__("no_records_to_show"),
@@ -1506,13 +1502,9 @@ var render = function render() {
         return [_vm._v("\n                                " + _vm._s(_vm.getParentCategoryName(row.item.parent_id)) + "\n                            ")];
       }
     }, {
-      key: "cell(status)",
+      key: "cell(parent_subcategory)",
       fn: function fn(row) {
-        return [row.item.status == 1 ? _c("span", {
-          staticClass: "badge bg-success"
-        }, [_vm._v(_vm._s(_vm.__("activate")))]) : _vm._e(), _vm._v(" "), row.item.status == 0 ? _c("span", {
-          staticClass: "badge bg-danger"
-        }, [_vm._v(_vm._s(_vm.__("deactivate")))]) : _vm._e()];
+        return [_vm._v("\n                                " + _vm._s(_vm.getParentSubCategoryName(row.item.parent_id)) + "\n                            ")];
       }
     }, {
       key: "cell(actions)",

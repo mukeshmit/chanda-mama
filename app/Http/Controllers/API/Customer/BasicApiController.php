@@ -249,6 +249,7 @@ class BasicApiController extends Controller
     // Favorites
     public function getFavorites(Request $request)
     {
+        CommonHelper::applyDefaultLocation($request);
 
         $validator = Validator::make($request->all(), [
             'latitude' => 'required',
@@ -611,6 +612,8 @@ class BasicApiController extends Controller
 
     public function getCity(Request $request)
     {
+        CommonHelper::applyDefaultLocation($request);
+
         $validator = Validator::make($request->all(), [
             'latitude' => 'required',
             'longitude' => 'required',
@@ -682,6 +685,8 @@ class BasicApiController extends Controller
 
     public function getSellers(Request $request)
     {
+        CommonHelper::applyDefaultLocation($request);
+
         $validator = Validator::make($request->all(), [
             'latitude' => 'required',
             'longitude' => 'required',
@@ -769,15 +774,12 @@ class BasicApiController extends Controller
 
     public function getBrands(Request $request)
     {
+        CommonHelper::applyDefaultLocation($request);
+
         $offset = $request->get('offset', 0);
         $limit = $request->get('limit', 10);
         $latitude = $request->get('latitude');
         $longitude = $request->get('longitude');
-
-        // Validate if latitude & longitude are provided
-        if (!$latitude || !$longitude) {
-            return CommonHelper::responseError('Latitude and longitude are required.');
-        }
 
         // Get seller IDs based on location
         $seller_ids = CommonHelper::getSellerIds($latitude, $longitude);
@@ -817,6 +819,8 @@ class BasicApiController extends Controller
     }
     public function getCountries(Request $request)
     {
+        CommonHelper::applyDefaultLocation($request);
+
         $offset = $request->get('offset', 0);
         $limit = $request->get('limit', 10);
         $latitude = $request->get('latitude');

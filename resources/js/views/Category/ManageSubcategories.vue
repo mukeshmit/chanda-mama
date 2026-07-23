@@ -20,7 +20,6 @@
                         <!-- Check if parent categories exist -->
                         <div v-if="!hasParentCategories" class="alert alert-warning m-3">
                             <i class="fa fa-exclamation-triangle"></i>
-                            {{ __('no_parent_categories_found') }}
                             <router-link to="/manage_categories/create" class="btn btn-primary btn-sm ml-2">
                                 {{ __('create_category_first') }}
                             </router-link>
@@ -50,8 +49,8 @@
                         </div>
 
                         <div class="table-responsive mb-0">
-                            <b-table :items="paginatedTranslatedCategories" :fields="fields" :filter="filter"
-                                :filter-included-fields="filterOn" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
+                            <b-table :items="paginatedTranslatedCategories" :fields="fields"
+                                :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
                                 :busy="isLoading" show-empty small :empty-text="__('no_records_to_show')"
                                 :empty-filtered-text="__('no_records_to_show')" class="mb-0">
 
@@ -176,14 +175,6 @@ export default {
         pageEnd() {
             return Math.min(this.currentPage * this.perPage, this.totalRows);
         },
-        filteredCategories: function () {
-            const list = Array.isArray(this.categories) ? this.categories : [];
-            const query = this.filter ? this.filter.toLowerCase() : '';
-            return list.filter(category => {
-                const name = (category.name || '').toString().toLowerCase();
-                return name.includes(query);
-            });
-        },
         translatedCategories: function () {
             const list = Array.isArray(this.categories) ? this.categories : [];
             if (!this.currentLanguageId || list.length === 0) {
@@ -206,8 +197,7 @@ export default {
             });
         },
         paginatedTranslatedCategories: function () {
-            const start = (this.currentPage - 1) * this.perPage;
-            return this.translatedCategories.slice(start, start + this.perPage);
+            return this.translatedCategories;
         },
     },
     mounted() {
@@ -223,10 +213,9 @@ export default {
             this.getCategories();
         },
         filter(newFilter, oldFilter) {
-            if (this.currentPage === 1) {
-                this.getCategories();
-            } else {
+            if (newFilter !== oldFilter) {
                 this.currentPage = 1;
+                this.getCategories();
             }
         }
     },
@@ -300,7 +289,10 @@ export default {
 
             const params = {
                 filter: this.filter,
+                category_level: 'subcategory',
                 status: null,
+                limit: this.perPage,
+                offset: this.currentPage,
                 _t: Date.now()
             };
             axios.get(this.$apiUrl + '/categories', { params })
@@ -310,16 +302,8 @@ export default {
                     }
                     this.isLoading = false;
                     const data = response.data || {};
-                    const allCategories = Array.isArray(data.data) ? data.data : [];
-                    const categoryMap = allCategories.reduce((map, category) => {
-                        map[category.id] = category;
-                        return map;
-                    }, {});
-                    this.categories = allCategories.filter(cat => {
-                        const parent = categoryMap[cat.parent_id];
-                        return Number(cat.parent_id) > 0 && parent && Number(parent.parent_id) === 0;
-                    });
-                    this.totalRows = this.categories.length;
+                    this.categories = Array.isArray(data.data) ? data.data : [];
+                    this.totalRows = Number(data.total || 0);
                 })
                 .catch(() => {
                     if (currentRequestId !== this.latestRequestId) {

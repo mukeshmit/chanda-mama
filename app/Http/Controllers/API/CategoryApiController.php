@@ -140,6 +140,7 @@ class CategoryApiController extends Controller
                 $filter = $request->input('filter', '');
                 $categoryId = $request->input('id');
                 $statusFilter = $request->input('status');
+                $categoryLevel = $request->input('category_level');
 
                 $categoriesQuery = Category::orderBy('id', 'DESC');
 
@@ -156,16 +157,31 @@ class CategoryApiController extends Controller
                     $categoriesQuery = $categoriesQuery->where('parent_id', '>', (int) $request->input('parent_id_gt'));
                 }
 
+                if ($categoryLevel === 'subcategory') {
+                    $categoriesQuery = $categoriesQuery->whereExists(function ($query) {
+                        $query->select(DB::raw(1))
+                            ->from('categories as parent_categories')
+                            ->whereColumn('parent_categories.id', 'categories.parent_id')
+                            ->where('parent_categories.parent_id', 0);
+                    });
+                }
+
+                if ($categoryLevel === 'sub_subcategory') {
+                    $categoriesQuery = $categoriesQuery->whereExists(function ($query) {
+                        $query->select(DB::raw(1))
+                            ->from('categories as parent_subcategories')
+                            ->join('categories as parent_categories', 'parent_categories.id', '=', 'parent_subcategories.parent_id')
+                            ->whereColumn('parent_subcategories.id', 'categories.parent_id')
+                            ->where('parent_categories.parent_id', 0);
+                    });
+                }
+
                 // Filter by id if provided (for edit modal)
                 if ($categoryId) {
                     $categoriesQuery = $categoriesQuery->where('id', $categoryId);
                 }
 
                 if ($filter) {
-                    $categoriesQuery = $categoriesQuery->where(function ($query) use ($filter) {
-                        $query->where('name', 'like', "%{$filter}%")
-                            ->orWhere('subtitle', 'like', "%{$filter}%");
-                    });
                     $categoriesQuery = $categoriesQuery->where(function ($query) use ($filter) {
                         $query->where('name', 'like', "%{$filter}%")
                             ->orWhere('subtitle', 'like', "%{$filter}%");

@@ -498,7 +498,7 @@ function configRoutes() {
                     meta: {
                         permission: 'category_list',
                         role: adminRoles,
-                        title: 'SubCategory'
+                        title: 'Sub Category'
 
                     },
                 },
@@ -509,7 +509,7 @@ function configRoutes() {
                     meta: {
                         permission: 'category_list',
                         role: adminRoles,
-                        title: 'SubCategory'
+                        title: 'Sub Category'
 
                     },
                 },
@@ -520,7 +520,7 @@ function configRoutes() {
                     meta: {
                         permission: 'category_list',
                         role: adminRoles,
-                        title: 'Sub SubCategory'
+                        title: 'Sub Sub Category'
 
                     },
                 },
@@ -531,7 +531,7 @@ function configRoutes() {
                     meta: {
                         permission: 'category_list',
                         role: adminRoles,
-                        title: 'Sub SubCategory'
+                        title: 'Sub Sub Category'
 
                     },
                 },
@@ -542,7 +542,7 @@ function configRoutes() {
                     meta: {
                         permission: 'category_list',
                         role: adminRoles,
-                        title: 'Sub Sub SubCategory'
+                        title: 'Sub Sub Sub Category'
 
                     },
                 },
@@ -553,7 +553,7 @@ function configRoutes() {
                     meta: {
                         permission: 'category_list',
                         role: adminRoles,
-                        title: 'Sub Sub SubCategory'
+                        title: 'Sub Sub Sub Category'
 
                     },
                 },

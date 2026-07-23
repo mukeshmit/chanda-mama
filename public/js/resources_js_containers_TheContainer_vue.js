@@ -37,6 +37,7 @@ __webpack_require__.r(__webpack_exports__);
     '$route': 'checkPermissions'
   },
   mounted: function mounted() {
+    window.addEventListener('app-route-loading', this.setRouteLoading);
     if (window.localStorage.getItem('lang')) {
       this.lang = window.localStorage.getItem('lang');
       console.log(this.lang);
@@ -182,6 +183,7 @@ __webpack_require__.r(__webpack_exports__);
       lang: 'en',
       search: '',
       isLoading: false,
+      routeLoading: false,
       suspecious: null,
       sidebarItems: [{
         name: __('dashboard'),
@@ -213,17 +215,17 @@ __webpack_require__.r(__webpack_exports__);
           url: '/manage_categories',
           permission: 'category_list'
         }, {
-          name: 'SubCategory',
+          name: 'Sub Category',
           icon: 'grid-fill',
           url: '/manage_subcategories',
           permission: 'category_list'
         }, {
-          name: 'Sub SubCategory',
+          name: 'Sub Sub Category',
           icon: 'grid-fill',
           url: '/manage_sub_subcategories',
           permission: 'category_list'
         }, {
-          name: 'Sub Sub SubCategory',
+          name: 'Sub Sub Sub Category',
           icon: 'grid-fill',
           url: '/manage_sub_sub_subcategories',
           permission: 'category_list'
@@ -716,7 +718,13 @@ __webpack_require__.r(__webpack_exports__);
       return this.databasedownloadBtn;
     }
   },
+  beforeDestroy: function beforeDestroy() {
+    window.removeEventListener('app-route-loading', this.setRouteLoading);
+  },
   methods: {
+    setRouteLoading: function setRouteLoading(event) {
+      this.routeLoading = !!event.detail;
+    },
     filterItem: function filterItem() {
       var filter = this.search;
       $(".sidebar-menu li:not(.sidebar-search)").each(function (index, element) {
@@ -1691,8 +1699,12 @@ var render = function render() {
       id: "main"
     }
   }, [_c("vertical-header"), _vm._v(" "), _c("div", {
-    staticClass: "main-content"
-  }, [_c("router-view")], 1), _vm._v(" "), _c("the-footer")], 1)]);
+    staticClass: "main-content route-loader-wrapper"
+  }, [_vm.routeLoading ? _c("div", {
+    staticClass: "route-loader-overlay"
+  }, [_c("b-spinner", {
+    staticClass: "align-middle"
+  }), _vm._v(" "), _c("strong", [_vm._v(_vm._s(_vm.__("loading")) + "...")])], 1) : _vm._e(), _vm._v(" "), _c("router-view")], 1), _vm._v(" "), _c("the-footer")], 1)]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -2356,7 +2368,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.fade-enter-active[data-v-59a2dd7f],\n.fade-leave-active[data-v-59a2dd7f] {\n    transition: opacity 0.3s;\n}\n.fade-enter[data-v-59a2dd7f],\n.fade-leave-to[data-v-59a2dd7f] {\n    opacity: 0;\n}\n.logo[data-v-59a2dd7f] {\n    width: 230px;\n}\n.container-logo[data-v-59a2dd7f] {\n    width: 230px;\n    max-width: 100%;\n    height: auto;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.fade-enter-active[data-v-59a2dd7f],\n.fade-leave-active[data-v-59a2dd7f] {\n    transition: opacity 0.3s;\n}\n.fade-enter[data-v-59a2dd7f],\n.fade-leave-to[data-v-59a2dd7f] {\n    opacity: 0;\n}\n.logo[data-v-59a2dd7f] {\n    width: 230px;\n}\n.container-logo[data-v-59a2dd7f] {\n    width: 230px;\n    max-width: 100%;\n    height: auto;\n}\n.route-loader-wrapper[data-v-59a2dd7f] {\n    position: relative;\n}\n.route-loader-overlay[data-v-59a2dd7f] {\n    align-items: center;\n    background: rgba(255, 255, 255, 0.78);\n    bottom: 0;\n    color: #0f2544;\n    display: flex;\n    gap: 10px;\n    justify-content: center;\n    left: 0;\n    min-height: 260px;\n    position: absolute;\n    right: 0;\n    top: 0;\n    z-index: 20;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

@@ -28,6 +28,8 @@ class ShopApiController extends Controller
 
     public function getShopData(Request $request)
     {
+        CommonHelper::applyDefaultLocation($request);
+
         $validator = Validator::make($request->all(), [
             'latitude' => 'required',
             'longitude' => 'required',

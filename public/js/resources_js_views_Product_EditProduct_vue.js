@@ -62,6 +62,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       product_category_id: '',
       product_subcategory_id: '',
       product_sub_subcategory_id: '',
+      product_sub_sub_subcategory_id: '',
       product_type: '',
       made_in: '',
       tag: '',
@@ -93,7 +94,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       order_status: null,
       inputs: [{
         'name': '',
-        'packet_status': '',
+        'packet_status': 0,
+        'packet_stock': 0,
         'packet_stock_unit_id': '',
         'discount_percentage': 0,
         'discounted_price': 0,
@@ -297,31 +299,37 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         return Number(category.parent_id) === Number(_this6.product_subcategory_id);
       });
     },
+    subSubSubCategoryOptions: function subSubSubCategoryOptions() {
+      var _this7 = this;
+      return this.productCategoryList.filter(function (category) {
+        return Number(category.parent_id) === Number(_this7.product_sub_subcategory_id);
+      });
+    },
     selectedProductCategoryId: function selectedProductCategoryId() {
-      return this.product_sub_subcategory_id || this.product_subcategory_id || this.product_category_id || '';
+      return this.product_sub_sub_subcategory_id || this.product_sub_subcategory_id || this.product_subcategory_id || this.product_category_id || '';
     }
   },
   created: function created() {
-    var _this7 = this;
+    var _this8 = this;
     this.id = this.$route.params.id || null;
     this.clone = this.$route.params.clone || false;
     this.fetchActiveLanguages().then(function () {
-      _this7.getSellers();
-      _this7.getTaxes();
-      _this7.getUnits();
-      _this7.getBrands();
-      _this7.getCountries();
-      _this7.getOrderStatus();
-      _this7.getTextGenKey();
-      if (_this7.isSellerRole) {
-        _this7.seller_id = _this7.login_user.seller.id;
-        _this7.getSeller();
+      _this8.getSellers();
+      _this8.getTaxes();
+      _this8.getUnits();
+      _this8.getBrands();
+      _this8.getCountries();
+      _this8.getOrderStatus();
+      _this8.getTextGenKey();
+      if (_this8.isSellerRole) {
+        _this8.seller_id = _this8.login_user.seller.id;
+        _this8.getSeller();
       }
-      _this7.getCategories();
-      if (_this7.id) {
-        _this7.getProduct();
+      _this8.getCategories();
+      if (_this8.id) {
+        _this8.getProduct();
       } else {
-        _this7.restoreCache();
+        _this8.restoreCache();
       }
     });
   },
@@ -331,14 +339,14 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   },
   methods: {
     validateDefaultLanguageForTranslation: function validateDefaultLanguageForTranslation() {
-      var _this8 = this;
+      var _this9 = this;
       var form = this.$refs['my-form'];
 
       // Trigger native browser validation UI
       if (form && !form.reportValidity()) {
         // Switch to default language tab so error field is visible
         this.$nextTick(function () {
-          _this8.switchToDefaultLanguageTab();
+          _this9.switchToDefaultLanguageTab();
         });
         return false;
       }
@@ -347,37 +355,37 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       return this.validateDefaultLanguage();
     },
     fetchActiveLanguages: function fetchActiveLanguages() {
-      var _this9 = this;
+      var _this0 = this;
       this.isLoadingLanguages = true;
       return axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/active_languages').then(function (response) {
         if (response.data.data) {
-          _this9.languages = response.data.data;
-          _this9.activeLanguages = response.data.data;
-          var defaultLang = _this9.languages.find(function (lang) {
+          _this0.languages = response.data.data;
+          _this0.activeLanguages = response.data.data;
+          var defaultLang = _this0.languages.find(function (lang) {
             return lang.is_default === 1;
           });
           if (defaultLang) {
-            _this9.defaultLanguageId = defaultLang.id;
+            _this0.defaultLanguageId = defaultLang.id;
           }
 
           // Get current language ID from app_locale
           var appLocale = window.appLocale || 'en';
-          var currentLanguage = _this9.activeLanguages.find(function (lang) {
+          var currentLanguage = _this0.activeLanguages.find(function (lang) {
             return lang.code === appLocale;
           });
           if (currentLanguage) {
-            _this9.currentLanguageId = currentLanguage.id;
+            _this0.currentLanguageId = currentLanguage.id;
           } else if (defaultLang) {
-            _this9.currentLanguageId = defaultLang.id;
+            _this0.currentLanguageId = defaultLang.id;
           }
-          _this9.initializeTranslations();
-          _this9.isLoadingLanguages = false;
+          _this0.initializeTranslations();
+          _this0.isLoadingLanguages = false;
         } else {
-          _this9.isLoadingLanguages = false;
+          _this0.isLoadingLanguages = false;
         }
       })["catch"](function (error) {
         console.error('Error loading languages:', error);
-        _this9.isLoadingLanguages = false;
+        _this0.isLoadingLanguages = false;
       });
     },
     initializeTranslations: function initializeTranslations() {
@@ -419,10 +427,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     },
     // Helper method to safely trigger file input click (handles refs in v-for)
     triggerRefClick: function triggerRefClick(refName) {
-      var _this0 = this;
+      var _this1 = this;
       this.$nextTick(function () {
         try {
-          var ref = _this0.$refs[refName];
+          var ref = _this1.$refs[refName];
           if (!ref) {
             return;
           }
@@ -470,22 +478,22 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       return true;
     },
     switchToDefaultLanguageTab: function switchToDefaultLanguageTab() {
-      var _this1 = this;
+      var _this10 = this;
       var defaultLangIndex = this.languages.findIndex(function (lang) {
-        return lang.id === _this1.defaultLanguageId;
+        return lang.id === _this10.defaultLanguageId;
       });
       if (defaultLangIndex !== -1) {
         this.activeLanguageTab = defaultLangIndex;
       }
     },
     loadTranslations: function loadTranslations() {
-      var _this10 = this;
+      var _this11 = this;
       if (!this.id) return;
 
       // Wait for languages to be loaded first
       if (this.languages.length === 0) {
         this.fetchActiveLanguages().then(function () {
-          _this10.loadTranslationsData();
+          _this11.loadTranslationsData();
         });
         return;
       }
@@ -493,7 +501,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     },
     // Load translations from API response (translations array with all language records)
     loadTranslationsData: function loadTranslationsData() {
-      var _this11 = this;
+      var _this12 = this;
       if (!this.record || !this.record.translations || !Array.isArray(this.record.translations)) {
         return;
       }
@@ -503,48 +511,48 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           return t.language_id === language.id;
         });
         if (translation) {
-          _this11.$set(_this11.translations[language.id], 'name', translation.name || '');
-          _this11.$set(_this11.translations[language.id], 'description', translation.description || '');
-          _this11.$set(_this11.translations[language.id], 'meta_title', translation.meta_title || '');
-          _this11.$set(_this11.translations[language.id], 'meta_keywords', translation.meta_keywords || '');
-          _this11.$set(_this11.translations[language.id], 'schema_markup', translation.schema_markup || '');
-          _this11.$set(_this11.translations[language.id], 'meta_description', translation.meta_description || '');
+          _this12.$set(_this12.translations[language.id], 'name', translation.name || '');
+          _this12.$set(_this12.translations[language.id], 'description', translation.description || '');
+          _this12.$set(_this12.translations[language.id], 'meta_title', translation.meta_title || '');
+          _this12.$set(_this12.translations[language.id], 'meta_keywords', translation.meta_keywords || '');
+          _this12.$set(_this12.translations[language.id], 'schema_markup', translation.schema_markup || '');
+          _this12.$set(_this12.translations[language.id], 'meta_description', translation.meta_description || '');
         }
       });
     },
     generateDescription: function generateDescription() {
-      var _this12 = this;
+      var _this13 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
         var prompt, _data$candidates, response, data, generatedText, _t;
         return _regenerator().w(function (_context) {
           while (1) switch (_context.p = _context.n) {
             case 0:
-              if (!(_this12.$isDemo == 1)) {
+              if (!(_this13.$isDemo == 1)) {
                 _context.n = 1;
                 break;
               }
-              _this12.showError("This function is not available in demo mode.");
+              _this13.showError("This function is not available in demo mode.");
               return _context.a(2);
             case 1:
-              if (_this12.name) {
+              if (_this13.name) {
                 _context.n = 2;
                 break;
               }
-              _this12.showMessage("error", "Please enter the product name.");
+              _this13.showMessage("error", "Please enter the product name.");
               return _context.a(2);
             case 2:
-              if (_this12.textGenKey) {
+              if (_this13.textGenKey) {
                 _context.n = 3;
                 break;
               }
-              _this12.showMessage("error", "Text generation API key is not configured");
+              _this13.showMessage("error", "Text generation API key is not configured");
               return _context.a(2);
             case 3:
-              prompt = _this12.useCustomPrompt && _this12.customPrompt.trim() ? "".concat(_this12.customPrompt, " for product: ").concat(_this12.name, ". Output raw HTML only, no explanatory text, no code blocks, no images.") : "Generate a detailed product description for ".concat(_this12.name, " formatted for TinyMCE editor.\n            Structure: Start with <strong>Product Overview</strong>, then multiple <p> paragraphs describing features and benefits.\n            Include <strong>Key Features</strong> with <ul><li> bullet points.\n            Add <strong>Benefits</strong> section with more <p> content.\n            Use <strong> for emphasis, <em> for highlights.\n            Important: no code blocks, no markdown syntax, no explanatory text.");
+              prompt = _this13.useCustomPrompt && _this13.customPrompt.trim() ? "".concat(_this13.customPrompt, " for product: ").concat(_this13.name, ". Output raw HTML only, no explanatory text, no code blocks, no images.") : "Generate a detailed product description for ".concat(_this13.name, " formatted for TinyMCE editor.\n            Structure: Start with <strong>Product Overview</strong>, then multiple <p> paragraphs describing features and benefits.\n            Include <strong>Key Features</strong> with <ul><li> bullet points.\n            Add <strong>Benefits</strong> section with more <p> content.\n            Use <strong> for emphasis, <em> for highlights.\n            Important: no code blocks, no markdown syntax, no explanatory text.");
               _context.p = 4;
-              _this12.isGeneratingAI = true; // Start AI processing state
+              _this13.isGeneratingAI = true; // Start AI processing state
               _context.n = 5;
-              return fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + _this12.textGenKey, {
+              return fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + _this13.textGenKey, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
@@ -565,22 +573,22 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               data = _context.v;
               if (data !== null && data !== void 0 && (_data$candidates = data.candidates) !== null && _data$candidates !== void 0 && (_data$candidates = _data$candidates[0]) !== null && _data$candidates !== void 0 && (_data$candidates = _data$candidates.content) !== null && _data$candidates !== void 0 && (_data$candidates = _data$candidates.parts) !== null && _data$candidates !== void 0 && (_data$candidates = _data$candidates[0]) !== null && _data$candidates !== void 0 && _data$candidates.text) {
                 generatedText = data.candidates[0].content.parts[0].text;
-                _this12.description = generatedText;
-                if (_this12.defaultLanguageId && _this12.translations[_this12.defaultLanguageId]) {
-                  _this12.$set(_this12.translations[_this12.defaultLanguageId], 'description', generatedText);
+                _this13.description = generatedText;
+                if (_this13.defaultLanguageId && _this13.translations[_this13.defaultLanguageId]) {
+                  _this13.$set(_this13.translations[_this13.defaultLanguageId], 'description', generatedText);
                 }
               } else {
-                _this12.showMessage("error", "Failed to generate description.");
+                _this13.showMessage("error", "Failed to generate description.");
               }
               _context.n = 8;
               break;
             case 7:
               _context.p = 7;
               _t = _context.v;
-              _this12.showMessage("error", "An error occurred while generating the description.");
+              _this13.showMessage("error", "An error occurred while generating the description.");
             case 8:
               _context.p = 8;
-              _this12.isGeneratingAI = false; // Stop AI processing state
+              _this13.isGeneratingAI = false; // Stop AI processing state
               return _context.f(8);
             case 9:
               return _context.a(2);
@@ -598,14 +606,14 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }
     },
     fetchTags: function fetchTags(query) {
-      var _this13 = this;
+      var _this14 = this;
       if (query.length > 1) {
         axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/products/tags', {
           params: {
             search: query
           }
         }).then(function (response) {
-          _this13.tagSuggestions = response.data;
+          _this14.tagSuggestions = response.data;
         })["catch"](function (error) {
           console.error(error);
         });
@@ -615,7 +623,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       if (this.type === 'packet') {
         this.inputs.push({
           'name': '',
-          'packet_status': '',
+          'packet_status': 0,
+          'packet_stock': 0,
           'packet_stock_unit_id': '',
           'discount_percentage': 0,
           'discounted_price': 0,
@@ -630,7 +639,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }
     },
     remove: function remove(index) {
-      var _this14 = this;
+      var _this15 = this;
       var variant_id = this.inputs[index].id ? this.inputs[index].id : "";
       if (this.id && variant_id !== "") {
         this.$swal.fire({
@@ -647,10 +656,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             var postData = {
               id: variant_id
             };
-            axios__WEBPACK_IMPORTED_MODULE_0___default().post(_this14.$apiUrl + '/products/delete', postData).then(function (response) {
+            axios__WEBPACK_IMPORTED_MODULE_0___default().post(_this15.$apiUrl + '/products/delete', postData).then(function (response) {
               var data = response.data;
-              _this14.inputs.splice(index, 1);
-              _this14.showSuccess(data.message);
+              _this15.inputs.splice(index, 1);
+              _this15.showSuccess(data.message);
             });
           }
         });
@@ -801,7 +810,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       return this.sellers && this.sellers.length > 0 ? this.sellers[0].id : '';
     },
     getSeller: function getSeller() {
-      var _this15 = this;
+      var _this16 = this;
       if (this.seller_id !== 0 && this.seller_id !== "" && !this.id) {
         this.isLoading = true;
         var param = {
@@ -810,13 +819,13 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/sellers/edit/' + this.seller_id, {
           params: param
         }).then(function (response) {
-          _this15.isLoading = false, _this15.require_products_approval = response.data.data.require_products_approval;
-          _this15.is_approved = _this15.require_products_approval == 0 ? 1 : 0;
+          _this16.isLoading = false, _this16.require_products_approval = response.data.data.require_products_approval;
+          _this16.is_approved = _this16.require_products_approval == 0 ? 1 : 0;
         });
       }
     },
     getCategories: function getCategories() {
-      var _this16 = this;
+      var _this17 = this;
       this.isLoading = true;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/categories', {
         params: {
@@ -824,95 +833,95 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           limit: 1000
         }
       }).then(function (response) {
-        _this16.isLoading = false;
+        _this17.isLoading = false;
         var data = response.data || {};
         var categories = Array.isArray(data.data) ? data.data : data.data && Array.isArray(data.data.categories) ? data.data.categories : [];
-        _this16.productCategoryList = categories;
-        if (_this16.category_id) {
-          _this16.setCategorySelectionFromSavedId(_this16.category_id);
+        _this17.productCategoryList = categories;
+        if (_this17.category_id) {
+          _this17.setCategorySelectionFromSavedId(_this17.category_id);
         }
       })["catch"](function (error) {
-        _this16.isLoading = false;
-        _this16.productCategoryList = [];
+        _this17.isLoading = false;
+        _this17.productCategoryList = [];
       });
     },
     getSellers: function getSellers() {
-      var _this17 = this;
+      var _this18 = this;
       this.isLoading = true;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/sellers').then(function (response) {
-        _this17.isLoading = false;
+        _this18.isLoading = false;
         var data = response.data;
-        _this17.sellers = Array.isArray(data.data) ? data.data : [];
-        if (!_this17.seller_id && _this17.sellers.length > 0) {
-          _this17.seller_id = _this17.sellers[0].id;
-          _this17.getSeller();
+        _this18.sellers = Array.isArray(data.data) ? data.data : [];
+        if (!_this18.seller_id && _this18.sellers.length > 0) {
+          _this18.seller_id = _this18.sellers[0].id;
+          _this18.getSeller();
         }
       });
     },
     getTaxes: function getTaxes() {
-      var _this18 = this;
+      var _this19 = this;
       this.isLoading = true;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/products/taxes').then(function (response) {
-        _this18.isLoading = false;
+        _this19.isLoading = false;
         var data = response.data;
-        _this18.taxes = data.data;
+        _this19.taxes = data.data;
       });
     },
     getUnits: function getUnits() {
-      var _this19 = this;
+      var _this20 = this;
       this.isLoading = true;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/units/get').then(function (response) {
-        _this19.isLoading = false;
+        _this20.isLoading = false;
         var data = response.data;
-        _this19.units = data.data;
+        _this20.units = data.data;
       });
     },
     getBrands: function getBrands() {
-      var _this20 = this;
+      var _this21 = this;
       this.isLoading = true;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/products/brands/get').then(function (response) {
-        _this20.isLoading = false;
+        _this21.isLoading = false;
         var data = response.data;
-        _this20.brands = data.data;
-        if (_this20.cachedData && _this20.cachedData.brand) {
-          var foundBrand = _this20.brands.find(function (b) {
-            return b.id === _this20.cachedData.brand.id;
+        _this21.brands = data.data;
+        if (_this21.cachedData && _this21.cachedData.brand) {
+          var foundBrand = _this21.brands.find(function (b) {
+            return b.id === _this21.cachedData.brand.id;
           }) || null;
           // Update brand with translated name
-          _this20.$nextTick(function () {
-            if (foundBrand && _this20.translatedBrands && _this20.translatedBrands.length > 0) {
-              var translatedBrand = _this20.translatedBrands.find(function (b) {
+          _this21.$nextTick(function () {
+            if (foundBrand && _this21.translatedBrands && _this21.translatedBrands.length > 0) {
+              var translatedBrand = _this21.translatedBrands.find(function (b) {
                 return b.id === foundBrand.id;
               });
               if (translatedBrand) {
-                _this20.brand = _objectSpread(_objectSpread({}, foundBrand), {}, {
+                _this21.brand = _objectSpread(_objectSpread({}, foundBrand), {}, {
                   name: translatedBrand.name,
                   title: translatedBrand.title
                 });
               } else {
-                _this20.brand = foundBrand;
+                _this21.brand = foundBrand;
               }
             } else {
-              _this20.brand = foundBrand;
+              _this21.brand = foundBrand;
             }
           });
         }
       });
     },
     getCountries: function getCountries() {
-      var _this21 = this;
+      var _this22 = this;
       this.isLoading = true;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/countries/active').then(function (response) {
-        _this21.isLoading = false;
+        _this22.isLoading = false;
         var data = response.data;
-        _this21.countries = data.data;
-        if (_this21.cachedData && _this21.cachedData.made_in) {
-          _this21.made_in = _this21.countries.find(function (c) {
-            return c.id === _this21.cachedData.made_in.id;
+        _this22.countries = data.data;
+        if (_this22.cachedData && _this22.cachedData.made_in) {
+          _this22.made_in = _this22.countries.find(function (c) {
+            return c.id === _this22.cachedData.made_in.id;
           }) || null;
         } else {
           // Set default to India
-          _this21.made_in = _this21.countries.find(function (c) {
+          _this22.made_in = _this22.countries.find(function (c) {
             return c.name === 'India';
           }) || null;
         }
@@ -939,26 +948,26 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       return status.status || '';
     },
     getOrderStatus: function getOrderStatus() {
-      var _this22 = this;
+      var _this23 = this;
       this.isLoading = true;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/order_statuses').then(function (response) {
-        _this22.isLoading = false;
+        _this23.isLoading = false;
         var data = response.data;
         var statusesToRemoveIds = [6, 7, 8];
-        _this22.order_status = data.data.filter(function (status) {
+        _this23.order_status = data.data.filter(function (status) {
           return !statusesToRemoveIds.includes(status.id);
         });
       });
     },
     getTextGenKey: function getTextGenKey() {
-      var _this23 = this;
+      var _this24 = this;
       // Get the text generation API key from store settings
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/store_settings').then(function (response) {
         var data = response.data.data;
         if (data.store_settings) {
           data.store_settings.forEach(function (item) {
             if (item.variable === 'text_gen_key') {
-              _this23.textGenKey = item.value;
+              _this24.textGenKey = item.value;
             }
           });
         }
@@ -1013,87 +1022,87 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       return true;
     },
     getProduct: function getProduct() {
-      var _this24 = this;
+      var _this25 = this;
       this.isLoading = true;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/products/edit/' + this.id).then(function (response) {
         var data = response.data;
         if (data.status === 1) {
-          var _this24$record$indica;
-          _this24.record = data.data;
-          _this24.name = _this24.record.name;
-          _this24.slug = _this24.record.slug;
-          _this24.barcode = _this24.record.barcode;
-          if (_this24.clone) {
-            _this24.name = '';
-            _this24.slug = '';
-            _this24.barcode = '';
+          var _this25$record$indica;
+          _this25.record = data.data;
+          _this25.name = _this25.record.name;
+          _this25.slug = _this25.record.slug;
+          _this25.barcode = _this25.record.barcode;
+          if (_this25.clone) {
+            _this25.name = '';
+            _this25.slug = '';
+            _this25.barcode = '';
           }
-          _this24.seller_id = _this24.record.seller_id;
-          _this24.getSellerCategories();
-          _this24.getSeller();
-          _this24.tax_id = _this24.record.tax_id;
-          var foundBrand = _this24.brands.find(function (item) {
-            return item.id === _this24.record.brand_id;
+          _this25.seller_id = _this25.record.seller_id;
+          _this25.getSellerCategories();
+          _this25.getSeller();
+          _this25.tax_id = _this25.record.tax_id;
+          var foundBrand = _this25.brands.find(function (item) {
+            return item.id === _this25.record.brand_id;
           });
           // Update brand with translated name after brands are loaded
-          _this24.$nextTick(function () {
-            if (foundBrand && _this24.translatedBrands && _this24.translatedBrands.length > 0) {
-              var translatedBrand = _this24.translatedBrands.find(function (b) {
+          _this25.$nextTick(function () {
+            if (foundBrand && _this25.translatedBrands && _this25.translatedBrands.length > 0) {
+              var translatedBrand = _this25.translatedBrands.find(function (b) {
                 return b.id === foundBrand.id;
               });
               if (translatedBrand) {
-                _this24.brand = _objectSpread(_objectSpread({}, foundBrand), {}, {
+                _this25.brand = _objectSpread(_objectSpread({}, foundBrand), {}, {
                   name: translatedBrand.name,
                   title: translatedBrand.title
                 });
               } else {
-                _this24.brand = foundBrand;
+                _this25.brand = foundBrand;
               }
             } else {
-              _this24.brand = foundBrand;
+              _this25.brand = foundBrand;
             }
           });
-          _this24.type = _this24.record.type;
-          _this24.category_id = _this24.record.category_id;
-          _this24.product_type = (_this24$record$indica = _this24.record.indicator) !== null && _this24$record$indica !== void 0 ? _this24$record$indica : "";
+          _this25.type = _this25.record.type;
+          _this25.category_id = _this25.record.category_id;
+          _this25.product_type = (_this25$record$indica = _this25.record.indicator) !== null && _this25$record$indica !== void 0 ? _this25$record$indica : "";
 
           // Load translations
-          _this24.loadTranslations();
-          _this24.made_in = _this24.countries.find(function (item) {
-            return item.id == _this24.record.made_in;
+          _this25.loadTranslations();
+          _this25.made_in = _this25.countries.find(function (item) {
+            return item.id == _this25.record.made_in;
           });
-          _this24.tax_included_in_price = _this24.record.tax_included_in_price;
-          _this24.return_status = _this24.record.return_status;
-          _this24.return_days = _this24.record.return_days;
-          _this24.cancelable_status = _this24.record.cancelable_status;
-          _this24.till_status = _this24.record.till_status;
-          _this24.cod_allowed_status = _this24.record.cod_allowed;
-          _this24.max_allowed_quantity = _this24.record.total_allowed_quantity;
-          _this24.description = _this24.record.description;
-          _this24.is_approved = _this24.record.is_approved;
-          _this24.status = _this24.record.status;
-          _this24.is_unlimited_stock = _this24.record.is_unlimited_stock;
-          _this24.main_image_path = _this24.$storageUrl + _this24.record.image;
-          _this24.other_images = _this24.record.images;
-          _this24.image = null;
-          _this24.meta_title = _this24.record.meta_title;
-          _this24.meta_keywords = _this24.record.meta_keywords;
-          _this24.schema_markup = _this24.record.schema_markup;
-          _this24.meta_description = _this24.record.meta_description;
+          _this25.tax_included_in_price = _this25.record.tax_included_in_price;
+          _this25.return_status = _this25.record.return_status;
+          _this25.return_days = _this25.record.return_days;
+          _this25.cancelable_status = _this25.record.cancelable_status;
+          _this25.till_status = _this25.record.till_status;
+          _this25.cod_allowed_status = _this25.record.cod_allowed;
+          _this25.max_allowed_quantity = _this25.record.total_allowed_quantity;
+          _this25.description = _this25.record.description;
+          _this25.is_approved = _this25.record.is_approved;
+          _this25.status = _this25.record.status;
+          _this25.is_unlimited_stock = _this25.record.is_unlimited_stock;
+          _this25.main_image_path = _this25.$storageUrl + _this25.record.image;
+          _this25.other_images = _this25.record.images;
+          _this25.image = null;
+          _this25.meta_title = _this25.record.meta_title;
+          _this25.meta_keywords = _this25.record.meta_keywords;
+          _this25.schema_markup = _this25.record.schema_markup;
+          _this25.meta_description = _this25.record.meta_description;
 
           // Set default language translation from main record
-          if (_this24.defaultLanguageId && _this24.translations[_this24.defaultLanguageId]) {
-            _this24.translations[_this24.defaultLanguageId].name = _this24.name;
-            _this24.translations[_this24.defaultLanguageId].description = _this24.description;
-            _this24.translations[_this24.defaultLanguageId].meta_title = _this24.meta_title;
-            _this24.translations[_this24.defaultLanguageId].meta_keywords = _this24.meta_keywords;
-            _this24.translations[_this24.defaultLanguageId].schema_markup = _this24.schema_markup;
-            _this24.translations[_this24.defaultLanguageId].meta_description = _this24.meta_description;
+          if (_this25.defaultLanguageId && _this25.translations[_this25.defaultLanguageId]) {
+            _this25.translations[_this25.defaultLanguageId].name = _this25.name;
+            _this25.translations[_this25.defaultLanguageId].description = _this25.description;
+            _this25.translations[_this25.defaultLanguageId].meta_title = _this25.meta_title;
+            _this25.translations[_this25.defaultLanguageId].meta_keywords = _this25.meta_keywords;
+            _this25.translations[_this25.defaultLanguageId].schema_markup = _this25.schema_markup;
+            _this25.translations[_this25.defaultLanguageId].meta_description = _this25.meta_description;
           }
-          var vm = _this24;
-          if (_this24.type == 'packet') {
-            _this24.inputs = [];
-            _this24.record.variants.forEach(function (item) {
+          var vm = _this25;
+          if (_this25.type == 'packet') {
+            _this25.inputs = [];
+            _this25.record.variants.forEach(function (item) {
               var variantData = {
                 'id': item.id ? item.id : "",
                 'packet_measurement': item.measurement,
@@ -1110,12 +1119,12 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               vm.inputs.push(variantData);
             });
           }
-          if (_this24.type == 'loose') {
+          if (_this25.type == 'loose') {
             var loose_stock = 0;
             var loose_stock_unit_id = 0;
             var status = 0;
-            _this24.inputs = [];
-            _this24.record.variants.forEach(function (item) {
+            _this25.inputs = [];
+            _this25.record.variants.forEach(function (item) {
               var _item$custom_title;
               var variantData = {
                 'id': item.id ? item.id : "",
@@ -1132,29 +1141,29 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               loose_stock_unit_id = item.stock_unit_id;
               status = item.status;
             });
-            _this24.loose_stock = loose_stock;
-            _this24.loose_stock_unit_id = loose_stock_unit_id;
-            _this24.loose_purchase_price = _this24.record.variants[0] ? _this24.record.variants[0].purchase_price : 0;
-            _this24.loose_discount_percentage = _this24.record.variants[0] ? _this24.record.variants[0].discount_percentage || _this24.getDiscountPercentFromSalePrice(_this24.record.variants[0].price, _this24.record.variants[0].discounted_price) : 0;
-            _this24.status = status;
+            _this25.loose_stock = loose_stock;
+            _this25.loose_stock_unit_id = loose_stock_unit_id;
+            _this25.loose_purchase_price = _this25.record.variants[0] ? _this25.record.variants[0].purchase_price : 0;
+            _this25.loose_discount_percentage = _this25.record.variants[0] ? _this25.record.variants[0].discount_percentage || _this25.getDiscountPercentFromSalePrice(_this25.record.variants[0].price, _this25.record.variants[0].discounted_price) : 0;
+            _this25.status = status;
           }
         } else {
-          _this24.showError(data.message);
+          _this25.showError(data.message);
           setTimeout(function () {
-            _this24.$router.back();
+            _this25.$router.back();
           }, 1000);
         }
       })["catch"](function (error) {
-        _this24.isLoading = false;
+        _this25.isLoading = false;
         if (error.message) {
-          _this24.showError(error.message);
+          _this25.showError(error.message);
         } else {
-          _this24.showError("Something went wrong!");
+          _this25.showError("Something went wrong!");
         }
       });
     },
     saveRecord: function saveRecord() {
-      var _this25 = this;
+      var _this26 = this;
       // Validate default language
       if (!this.validateDefaultLanguage()) {
         return;
@@ -1213,7 +1222,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           formData.append('discount_percentage[]', this.getPacketDiscountPercentage(this.inputs[_i]));
           formData.append('packet_stock[]', this.inputs[_i].packet_stock != undefined ? this.inputs[_i].packet_stock : 0);
           formData.append('packet_stock_unit_id[]', this.inputs[_i].packet_stock_unit_id != undefined ? this.inputs[_i].packet_stock_unit_id : 0);
-          formData.append('packet_status[]', this.inputs[_i].packet_status != undefined ? this.inputs[_i].packet_status : 0);
+          formData.append('packet_status[]', this.getPacketStatusForSave(this.inputs[_i]));
 
           // Safely handle packet variant images refs (can be undefined when card is hidden in non-default language tab)
           var packetRef = this.$refs['packet_variant_images_' + _i];
@@ -1283,7 +1292,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       // Prepare translations array
       var allTranslations = [];
       this.languages.forEach(function (language) {
-        var translation = _this25.translations[language.id];
+        var translation = _this26.translations[language.id];
         allTranslations.push({
           language_id: language.id,
           name: translation.name || '',
@@ -1308,9 +1317,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }).then(function (res) {
         var data = res.data;
         if (data.status === 1) {
-          _this25.skipCache = true;
+          _this26.skipCache = true;
           localStorage.removeItem('product_form_cache');
-          _this25.showMessage("success", data.message);
+          _this26.showMessage("success", data.message);
           setTimeout(function () {
             var _vm$loggedUser;
             vm.$swal.close();
@@ -1331,11 +1340,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
       })["catch"](function (error) {
         vm.isLoading = false;
-        _this25.showError("Something went wrong!");
+        _this26.showError("Something went wrong!");
       });
     },
     deleteImage: function deleteImage(index, id, productImage) {
-      var _this26 = this;
+      var _this27 = this;
       var key = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "";
       this.$swal.fire({
         title: "Are you Sure?",
@@ -1348,14 +1357,14 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         cancelButtonColor: '#d33'
       }).then(function (result) {
         if (result.value) {
-          _this26.deleteImageIds.push(id);
+          _this27.deleteImageIds.push(id);
           if (productImage) {
-            _this26.other_images.splice(index, 1);
+            _this27.other_images.splice(index, 1);
           } else {
-            if (_this26.type === 'packet') {
-              _this26.inputs[key].images.splice(index, 1);
+            if (_this27.type === 'packet') {
+              _this27.inputs[key].images.splice(index, 1);
             } else {
-              _this26.inputs[key].loose_images.splice(index, 1);
+              _this27.inputs[key].loose_images.splice(index, 1);
             }
           }
         }
@@ -1377,14 +1386,25 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         this.product_category_id = selected.id;
         this.product_subcategory_id = '';
         this.product_sub_subcategory_id = '';
+        this.product_sub_sub_subcategory_id = '';
       } else if (parent && Number(parent.parent_id) === 0) {
         this.product_category_id = parent.id;
         this.product_subcategory_id = selected.id;
         this.product_sub_subcategory_id = '';
+        this.product_sub_sub_subcategory_id = '';
       } else if (parent && grandParent) {
-        this.product_category_id = grandParent.id;
-        this.product_subcategory_id = parent.id;
-        this.product_sub_subcategory_id = selected.id;
+        var greatGrandParent = grandParent ? categoryMap[Number(grandParent.parent_id)] : null;
+        if (greatGrandParent) {
+          this.product_category_id = greatGrandParent.id;
+          this.product_subcategory_id = grandParent.id;
+          this.product_sub_subcategory_id = parent.id;
+          this.product_sub_sub_subcategory_id = selected.id;
+        } else {
+          this.product_category_id = grandParent.id;
+          this.product_subcategory_id = parent.id;
+          this.product_sub_subcategory_id = selected.id;
+          this.product_sub_sub_subcategory_id = '';
+        }
       }
     },
     hasValue: function hasValue(value) {
@@ -1418,6 +1438,14 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     formatMoney: function formatMoney(value) {
       var amount = this.toNumber(value);
       return amount.toFixed(2);
+    },
+    getPacketStatusForSave: function getPacketStatusForSave(input) {
+      var stock = this.toNumber(input.packet_stock);
+      var status = input.packet_status;
+      if (Number(this.is_unlimited_stock) === 0 && stock <= 0) {
+        return 0;
+      }
+      return status !== undefined && status !== '' ? status : 1;
     },
     getMarginPercent: function getMarginPercent(sellingPrice, purchasePrice) {
       var sale = this.toNumber(sellingPrice);
@@ -1527,6 +1555,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           product_category_id: this.product_category_id,
           product_subcategory_id: this.product_subcategory_id,
           product_sub_subcategory_id: this.product_sub_subcategory_id,
+          product_sub_sub_subcategory_id: this.product_sub_sub_subcategory_id,
           product_type: this.product_type,
           made_in: this.made_in ? {
             id: this.made_in.id
@@ -1552,7 +1581,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       } catch (e) {}
     },
     restoreCache: function restoreCache() {
-      var _this27 = this;
+      var _this28 = this;
       try {
         var cached = localStorage.getItem('product_form_cache');
         if (!cached) return;
@@ -1564,7 +1593,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         this.cachedData = data;
         Object.keys(data).forEach(function (key) {
           if (key === 'timestamp' || key === 'brand' || key === 'made_in' || key === 'translations') return;
-          if (_this27.hasOwnProperty(key)) _this27[key] = data[key] !== undefined ? data[key] : _this27[key];
+          if (_this28.hasOwnProperty(key)) _this28[key] = data[key] !== undefined ? data[key] : _this28[key];
         });
 
         // Restore per-language translation data.
@@ -1574,7 +1603,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         if (data.translations && this.languages && this.languages.length > 0) {
           this.languages.forEach(function (language) {
             if (data.translations[language.id]) {
-              _this27.$set(_this27.translations, language.id, _objectSpread(_objectSpread({}, _this27.translations[language.id]), data.translations[language.id]));
+              _this28.$set(_this28.translations, language.id, _objectSpread(_objectSpread({}, _this28.translations[language.id]), data.translations[language.id]));
             }
           });
         }
@@ -1584,20 +1613,20 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           }) || null;
           // Update brand with translated name
           this.$nextTick(function () {
-            if (foundBrand && _this27.translatedBrands && _this27.translatedBrands.length > 0) {
-              var translatedBrand = _this27.translatedBrands.find(function (b) {
+            if (foundBrand && _this28.translatedBrands && _this28.translatedBrands.length > 0) {
+              var translatedBrand = _this28.translatedBrands.find(function (b) {
                 return b.id === foundBrand.id;
               });
               if (translatedBrand) {
-                _this27.brand = _objectSpread(_objectSpread({}, foundBrand), {}, {
+                _this28.brand = _objectSpread(_objectSpread({}, foundBrand), {}, {
                   name: translatedBrand.name,
                   title: translatedBrand.title
                 });
               } else {
-                _this27.brand = foundBrand;
+                _this28.brand = foundBrand;
               }
             } else {
-              _this27.brand = foundBrand;
+              _this28.brand = foundBrand;
             }
           });
         }
@@ -1608,8 +1637,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         if (this.seller_id) {
           this.$nextTick(function () {
-            _this27.getSellerCategories();
-            _this27.getSeller();
+            _this28.getSellerCategories();
+            _this28.getSeller();
           });
         }
       } catch (e) {
@@ -1636,6 +1665,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         product_category_id: '',
         product_subcategory_id: '',
         product_sub_subcategory_id: '',
+        product_sub_sub_subcategory_id: '',
         product_type: '',
         made_in: null,
         return_status: 0,
@@ -1652,7 +1682,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         loose_stock_unit_id: '',
         inputs: [{
           'name': '',
-          'packet_status': '',
+          'packet_status': 0,
+          'packet_stock': 0,
           'packet_stock_unit_id': ''
         }],
         image: null,
@@ -1670,21 +1701,21 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       localStorage.removeItem('product_form_cache');
     },
     debouncedSave: function debouncedSave() {
-      var _this28 = this;
+      var _this29 = this;
       if (this.cacheTimer) clearTimeout(this.cacheTimer);
       this.cacheTimer = setTimeout(function () {
-        return _this28.saveCache();
+        return _this29.saveCache();
       }, 500);
     }
   },
   watch: {
     // Watch currentLanguageId to update selected brand name when language changes
     currentLanguageId: function currentLanguageId(newVal, oldVal) {
-      var _this29 = this;
+      var _this30 = this;
       if (newVal && this.brand && this.translatedBrands && this.translatedBrands.length > 0) {
         // Find the translated brand from translatedBrands
         var translatedBrand = this.translatedBrands.find(function (b) {
-          return b.id === _this29.brand.id;
+          return b.id === _this30.brand.id;
         });
         if (translatedBrand) {
           // Update the brand object with translated name
@@ -1698,11 +1729,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     // Watch translatedBrands to update selected brand when brands are loaded or language changes
     translatedBrands: {
       handler: function handler(newVal) {
-        var _this30 = this;
+        var _this31 = this;
         if (newVal && newVal.length > 0 && this.brand && this.brand.id) {
           // Find the translated brand from translatedBrands
           var translatedBrand = newVal.find(function (b) {
-            return b.id === _this30.brand.id;
+            return b.id === _this31.brand.id;
           });
           if (translatedBrand) {
             // Update the brand object with translated name
@@ -1765,27 +1796,39 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       if (!this.id && !this.clone) this.debouncedSave();
     },
     product_category_id: function product_category_id() {
-      var _this31 = this;
+      var _this32 = this;
       var hasSubcategory = this.subCategoryOptions.some(function (category) {
-        return Number(category.id) === Number(_this31.product_subcategory_id);
+        return Number(category.id) === Number(_this32.product_subcategory_id);
       });
       if (!hasSubcategory) {
         this.product_subcategory_id = '';
         this.product_sub_subcategory_id = '';
+        this.product_sub_sub_subcategory_id = '';
       }
       if (!this.id && !this.clone) this.debouncedSave();
     },
     product_subcategory_id: function product_subcategory_id() {
-      var _this32 = this;
+      var _this33 = this;
       var hasSubSubcategory = this.subSubCategoryOptions.some(function (category) {
-        return Number(category.id) === Number(_this32.product_sub_subcategory_id);
+        return Number(category.id) === Number(_this33.product_sub_subcategory_id);
       });
       if (!hasSubSubcategory) {
         this.product_sub_subcategory_id = '';
+        this.product_sub_sub_subcategory_id = '';
       }
       if (!this.id && !this.clone) this.debouncedSave();
     },
     product_sub_subcategory_id: function product_sub_subcategory_id() {
+      var _this34 = this;
+      var hasSubSubSubcategory = this.subSubSubCategoryOptions.some(function (category) {
+        return Number(category.id) === Number(_this34.product_sub_sub_subcategory_id);
+      });
+      if (!hasSubSubSubcategory) {
+        this.product_sub_sub_subcategory_id = '';
+      }
+      if (!this.id && !this.clone) this.debouncedSave();
+    },
+    product_sub_sub_subcategory_id: function product_sub_sub_subcategory_id() {
       if (!this.id && !this.clone) this.debouncedSave();
     },
     product_type: function product_type() {
@@ -2574,7 +2617,7 @@ var render = function render() {
       staticClass: "col-md-4"
     }, [_c("div", {
       staticClass: "form-group mb-3"
-    }, [_c("label", [_vm._v("MPR ( " + _vm._s(_vm.$currency) + " ) "), _c("i", {
+    }, [_c("label", [_vm._v("MRP ( " + _vm._s(_vm.$currency) + " ) "), _c("i", {
       staticClass: "text-danger"
     }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
       directives: [{
@@ -3566,6 +3609,43 @@ var render = function render() {
     staticClass: "col-md-4"
   }, [_c("div", {
     staticClass: "form-group mb-3"
+  }, [_c("label", [_vm._v("Sub Sub SubCategory")]), _vm._v(" "), _c("select", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.product_sub_sub_subcategory_id,
+      expression: "product_sub_sub_subcategory_id"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      disabled: !_vm.product_sub_subcategory_id
+    },
+    on: {
+      change: function change($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
+          return o.selected;
+        }).map(function (o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val;
+        });
+        _vm.product_sub_sub_subcategory_id = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
+      }
+    }
+  }, [_c("option", {
+    attrs: {
+      value: ""
+    }
+  }, [_vm._v("Select Sub Sub SubCategory")]), _vm._v(" "), _vm._l(_vm.subSubSubCategoryOptions, function (category) {
+    return _c("option", {
+      key: category.id,
+      domProps: {
+        value: category.id
+      }
+    }, [_vm._v(_vm._s(category.name))]);
+  })], 2)])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group mb-3"
   }, [_c("label", [_vm._v(_vm._s(_vm.__("product_type")) + " ")]), _vm._v(" "), _c("select", {
     directives: [{
       name: "model",
@@ -3597,9 +3677,7 @@ var render = function render() {
     attrs: {
       value: "2"
     }
-  }, [_vm._v(_vm._s(_vm.__("non_veg")))])])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-4"
-  }, [_vm.isSellerRole ? [_c("input", {
+  }, [_vm._v(_vm._s(_vm.__("non_veg")))])])])]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -3618,64 +3696,7 @@ var render = function render() {
         _vm.is_approved = $event.target.value;
       }
     }
-  })] : [_c("div", {
-    staticClass: "form-group mb-3"
-  }, [_c("label", [_vm._v(_vm._s(_vm.__("product_status")))]), _c("br"), _vm._v(" "), _c("div", {
-    staticClass: "btn-group",
-    attrs: {
-      id: "status"
-    }
-  }, [_c("label", {
-    staticClass: "btn btn-primary",
-    attrs: {
-      "data-toggle-class": "btn-primary",
-      "data-toggle-passive-class": "btn-default"
-    }
-  }, [_c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.is_approved,
-      expression: "is_approved"
-    }],
-    attrs: {
-      type: "radio",
-      value: "1"
-    },
-    domProps: {
-      checked: _vm._q(_vm.is_approved, "1")
-    },
-    on: {
-      change: function change($event) {
-        _vm.is_approved = "1";
-      }
-    }
-  }), _vm._v(" " + _vm._s(_vm.__("approved")) + "\n                                                ")]), _vm._v(" "), _c("label", {
-    staticClass: "btn btn-danger",
-    attrs: {
-      "data-toggle-class": "btn-danger",
-      "data-toggle-passive-class": "btn-default"
-    }
-  }, [_c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.is_approved,
-      expression: "is_approved"
-    }],
-    attrs: {
-      type: "radio",
-      value: "0"
-    },
-    domProps: {
-      checked: _vm._q(_vm.is_approved, "0")
-    },
-    on: {
-      change: function change($event) {
-        _vm.is_approved = "0";
-      }
-    }
-  }), _vm._v("\n                                                    " + _vm._s(_vm.__("not_approved")) + "\n                                                ")])])])]], 2), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group mb-3"
@@ -3721,36 +3742,6 @@ var render = function render() {
       expression: "made_in"
     }
   })], 1)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-6"
-  }, [_c("div", {
-    staticClass: "form-group mb-3"
-  }, [_c("label", {
-    attrs: {
-      "for": "max_allowed_quantity"
-    }
-  }, [_vm._v(_vm._s(_vm.__("total_allowed_quantity")) + " (" + _vm._s(_vm.__("keep_blank_if_no_such_limit")) + ") ")]), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.max_allowed_quantity,
-      expression: "max_allowed_quantity"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      type: "number",
-      id: "max_allowed_quantity",
-      min: "0"
-    },
-    domProps: {
-      value: _vm.max_allowed_quantity
-    },
-    on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.max_allowed_quantity = $event.target.value;
-      }
-    }
-  })])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-4"
   }, [_c("div", {
     staticClass: "form-group mb-3 d-flex flex-wrap align-items-start gap-2"

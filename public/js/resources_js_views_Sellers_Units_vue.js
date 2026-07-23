@@ -16,26 +16,22 @@ __webpack_require__.r(__webpack_exports__);
     return {
       fields: [{
         key: 'id',
-        label: __('id'),
+        label: 'Sr. No.',
         sortable: true,
         sortDirection: 'desc'
       }, {
         key: 'name',
-        label: __('name'),
+        label: this.$titleLabel('name'),
         sortable: true,
         "class": 'text-center'
       }, {
         key: 'short_code',
-        label: __('short_code'),
+        label: this.$titleLabel('short_code'),
         sortable: true,
         "class": 'text-center'
       }, {
-        key: 'parent_id',
-        label: __('parent_id'),
-        "class": 'text-center'
-      }, {
         key: 'conversion',
-        label: __('conversion'),
+        label: this.$titleLabel('conversion'),
         "class": 'text-center'
       }],
       totalRows: 1,
@@ -246,11 +242,6 @@ var render = function render() {
         }), _vm._v(" "), _c("strong", [_vm._v(_vm._s(_vm.__("loading")) + "...")])], 1)];
       },
       proxy: true
-    }, {
-      key: "cell(parent_id)",
-      fn: function fn(row) {
-        return [row.item.parent_id !== null ? _c("p", [_vm._v(_vm._s(row.item.parent_id))]) : _c("p", [_vm._v("-")])];
-      }
     }, {
       key: "cell(conversion)",
       fn: function fn(row) {
