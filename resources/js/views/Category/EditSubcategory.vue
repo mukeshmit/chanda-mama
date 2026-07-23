@@ -26,10 +26,10 @@
                         </div>
 
                         <div class="form-group" :class="{ required: language.is_default }">
-                            <label>{{ __('subcategory_name') }}</label>
+                            <label>{{ __('Sub Category Name') }}</label>
                             <i class="text-danger" v-if="language.is_default">*</i>
                             <input type="text" class="form-control"
-                                v-model="translations[language.id].name" :placeholder="__('enter_subcategory_name')">
+                                v-model="translations[language.id].name" :placeholder="__('enter sub category name')">
                         </div>
 
                         <div class="form-group" v-if="language.is_default">
