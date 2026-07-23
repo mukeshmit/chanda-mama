@@ -205,9 +205,10 @@ class ProductApisController extends Controller
                 ->with('translations')
                 ->get()
                 ->keyBy('id');
+            $categoryMap = Category::select('id', 'name', 'parent_id')->get()->keyBy('id');
 
             // Attach translations to each product in the results
-            $products = $products->map(function ($product) use ($productsWithTranslations) {
+            $products = $products->map(function ($product) use ($productsWithTranslations, $categoryMap) {
                 $productModel = $productsWithTranslations->get($product->product_id);
 
                 if ($productModel && $productModel->relationLoaded('translations')) {
@@ -215,6 +216,23 @@ class ProductApisController extends Controller
                 } else {
                     $product->translations = [];
                 }
+
+                $categoryTrail = [];
+                $category = $categoryMap->get($productModel->category_id ?? null);
+
+                while ($category) {
+                    array_unshift($categoryTrail, $category);
+
+                    if (empty($category->parent_id) || (int) $category->parent_id === 0) {
+                        break;
+                    }
+
+                    $category = $categoryMap->get($category->parent_id);
+                }
+
+                $product->category_name = $categoryTrail[0]->name ?? '-';
+                $product->subcategory_name = $categoryTrail[1]->name ?? '-';
+                $product->sub_subcategory_name = $categoryTrail[2]->name ?? '-';
 
                 return $product;
             });

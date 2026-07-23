@@ -155,6 +155,18 @@
                                     {{ row.item.barcode || '-' }}
                                 </template>
 
+                                <template #cell(category_name)="row">
+                                    {{ row.item.category_name || '-' }}
+                                </template>
+
+                                <template #cell(subcategory_name)="row">
+                                    {{ row.item.subcategory_name || '-' }}
+                                </template>
+
+                                <template #cell(sub_subcategory_name)="row">
+                                    {{ row.item.sub_subcategory_name || '-' }}
+                                </template>
+
                                 <template #cell(seller_name)="row">
                                     {{ row.item.seller_name }}
                                 </template>
@@ -284,6 +296,9 @@ export default {
                 { key: 'select', label: '', visible: true, class: 'text-center' },
                 { key: 'product_variant_id', label: 'Sr. No.', visible: true, class: 'text-center' },
                 { key: 'barcode', label: 'Barcode', visible: true, sortable: true, sortDirection: 'desc', class: 'text-center' },
+                { key: 'category_name', label: 'Category', visible: true, sortable: true, class: 'text-center' },
+                { key: 'subcategory_name', label: 'Subcategory', visible: true, sortable: true, class: 'text-center' },
+                { key: 'sub_subcategory_name', label: 'SubSubcategory', visible: true, sortable: true, class: 'text-center' },
                 { key: 'tax_id', label: this.$titleLabel('tax_id'), visible: false, sortable: true, class: 'text-center' },
                 { key: 'name', label: this.$titleLabel('name'), visible: true, sortable: true, class: 'text-center' },
                 { key: 'image', label: this.$titleLabel('image'), visible: true, class: 'text-center' },
