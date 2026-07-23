@@ -17,22 +17,7 @@
             <section class="section">
                 <div class="figma-main-section-card">
                     <div class="card-body p-0">
-                        <!-- Check if parent categories exist -->
-                        <div v-if="!hasParentCategories" class="alert alert-warning m-3">
-                            <i class="fa fa-exclamation-triangle"></i>
-                            <router-link to="/manage_categories/create" class="btn btn-primary btn-sm ml-2">
-                                {{ __('create_category_first') }}
-                            </router-link>
-                        </div>
-
-                        <!-- Check if subcategories exist -->
-                        <div v-else-if="!hasSubcategories" class="alert alert-warning m-3">
-                            <i class="fa fa-exclamation-triangle"></i>
-                            {{ __('no_subcategories_found') }}
-                            <router-link to="/manage_subcategories/create" class="btn btn-primary btn-sm ml-2">
-                                {{ __('create_subcategory_first') }}
-                            </router-link>
-                        </div>
+                       
 
                         <div
                             class="d-flex justify-content-between align-items-center flex-wrap gap-2 figma-action-bar-row">
