@@ -15,36 +15,8 @@
         </div>
 
         <form v-else ref="my-form" @submit.prevent="saveRecord" novalidate>
-            <!-- Language Tabs with lazy rendering -->
-            <b-tabs v-model="activeLanguageTab" content-class="mt-3"
-                :nav-class="languages.length === 1 ? 'd-none' : ''" v-if="languages.length > 0">
-                <b-tab v-for="language in languages" :key="language.id" :title="language.name" lazy>
-                    <template #title>
-                        <span :class="{ 'text-primary font-weight-bold': language.is_default }">
-                            {{ language.name }}
-                        </span>
-                    </template>
-
-                    <!-- Translate buttons -->
-                    <div class="mb-3" v-if="language.is_default && languages.length > 1">
-                        <b-button size="sm" variant="outline-primary" class="mr-2" @click="translateEmpty(language)"
-                            v-b-tooltip.hover
-                            :title="__('only_empty_fields_will_be_translated_existing_content_will_not_be_changed')"
-                            :disabled="loadingEmpty">
-                            <span v-if="!loadingEmpty">{{ __('translate_empty_fields') }}</span>
-                            <b-spinner v-else small></b-spinner>
-                        </b-button>
-
-                        <b-button size="sm" variant="outline-danger" @click="translateOverwrite(language)"
-                            v-b-tooltip.hover
-                            :title="__('all_fields_will_be_translated_and_existing_content_will_be_overwritten')"
-                            :disabled="loadingOverwrite">
-                            <span v-if="!loadingOverwrite">{{ __('translate_and_overwrite') }}</span>
-                            <b-spinner v-else small></b-spinner>
-                        </b-button>
-                    </div>
-                    <!-- Translate buttons END -->
-
+            <div v-if="defaultLanguage">
+                <template v-for="language in [defaultLanguage]">
                     <div class="row">
                         <div class="form-group" :class="{ required: language.is_default }">
                             <label>{{ parent_id > 0 ? __('subcategory_name') : __('category_name') }}</label>
@@ -131,8 +103,8 @@
                             </div>
                         </div>
                     </div>
-                </b-tab>
-            </b-tabs>
+                </template>
+            </div>
 
             <!-- Loading state -->
             <div v-else class="text-center p-5">
@@ -197,6 +169,9 @@ export default {
         modal_title: function () {
             let title = this.id ? __('edit_category') : __('add_category');
             return title;
+        },
+        defaultLanguage() {
+            return this.languages.find(language => Number(language.id) === Number(this.defaultLanguageId)) || null;
         },
     },
 

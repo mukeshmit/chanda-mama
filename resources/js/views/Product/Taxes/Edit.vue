@@ -10,29 +10,8 @@
 
         <form ref="my-form" @submit.prevent="saveRecord" novalidate>
             <!-- Language Tabs with lazy (same as Category Edit – only active tab in DOM to avoid "not focusable") -->
-            <b-tabs v-if="languages.length" v-model="activeTab" content-class="mt-3">
-                <b-tab v-for="(lang, index) in languages" :key="lang.id" :title="lang.name"
-                    :active="lang.is_default == 1">
-
-                    <!-- Translate buttons -->
-                    <div class="mb-3" v-if="lang.is_default && languages.length > 1">
-                        <b-button size="sm" variant="outline-primary" class="mr-2" @click="translateEmpty(lang)"
-                            v-b-tooltip.hover
-                            :title="__('only_empty_fields_will_be_translated_existing_content_will_not_be_changed')"
-                            :disabled="loadingEmpty">
-                            <span v-if="!loadingEmpty">{{ __('translate_empty_fields') }}</span>
-                            <b-spinner v-else small></b-spinner>
-                        </b-button>
-
-                        <b-button size="sm" variant="outline-danger" @click="translateOverwrite(lang)" v-b-tooltip.hover
-                            :title="__('all_fields_will_be_translated_and_existing_content_will_be_overwritten')"
-                            :disabled="loadingOverwrite">
-                            <span v-if="!loadingOverwrite">{{ __('translate_and_overwrite') }}</span>
-                            <b-spinner v-else small></b-spinner>
-                        </b-button>
-
-                    </div>
-                    <!-- Translate buttons END -->
+            <div v-if="defaultLanguage">
+                <template v-for="lang in [defaultLanguage]">
 
                     <div class="row">
                         <div class="form-group">
@@ -60,8 +39,8 @@
                             </div>
                         </div>
                     </div>
-                </b-tab>
-            </b-tabs>
+                </template>
+            </div>
             <button ref="dummy_submit" style="display:none;"></button>
         </form>
     </b-modal>
@@ -118,6 +97,9 @@ export default {
         modal_title: function () {
             let title = this.id ? __('edit_tax') : __('add_tax');
             return title;
+        },
+        defaultLanguage() {
+            return this.languages.find(language => Number(language.id) === Number(this.defaultLanguageId)) || null;
         },
     },
     created: function () {

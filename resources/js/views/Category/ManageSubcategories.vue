@@ -3,12 +3,12 @@
         <div class="page-heading">
             <div class="page-title mb-2">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3 class="modern-page-title mb-0">SubCategory</h3>
+                    <h3 class="modern-page-title mb-0">Sub Category</h3>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item"><router-link to="/dashboard" class="text-muted">{{
                                     __('dashboard') }}</router-link></li>
-                            <li class="breadcrumb-item active text-primary" aria-current="page">SubCategory</li>
+                            <li class="breadcrumb-item active text-primary" aria-current="page">Sub Category</li>
                         </ol>
                     </nav>
                 </div>
