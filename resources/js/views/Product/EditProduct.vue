@@ -1248,7 +1248,7 @@ export default {
             categories: null,
             order_status: null,
 
-            inputs: [{ 'name': '', 'packet_status': 0, 'packet_stock': 0, 'packet_stock_unit_id': '', 'discount_percentage': 0, 'discounted_price': 0, 'discount_mode': 'percent', 'loose_discounted_price': 0, 'loose_discount_mode': 'percent' }],
+            inputs: [{ 'name': '', 'packet_status': 1, 'packet_stock': 0, 'packet_stock_unit_id': '', 'discount_percentage': 0, 'discounted_price': 0, 'discount_mode': 'percent', 'loose_discounted_price': 0, 'loose_discount_mode': 'percent' }],
 
             image: null,
             main_image_path: "",
@@ -1790,7 +1790,7 @@ export default {
         },
         addRow() {
             if (this.type === 'packet') {
-                this.inputs.push({ 'name': '', 'packet_status': 0, 'packet_stock': 0, 'packet_stock_unit_id': '', 'discount_percentage': 0, 'discounted_price': 0, 'discount_mode': 'percent' })
+                this.inputs.push({ 'name': '', 'packet_status': 1, 'packet_stock': 0, 'packet_stock_unit_id': '', 'discount_percentage': 0, 'discounted_price': 0, 'discount_mode': 'percent' })
             } else {
                 this.inputs.push({ 'name': '', 'loose_discounted_price': 0, 'loose_discount_mode': 'percent' })
             }
@@ -2870,7 +2870,7 @@ export default {
                 categoryOptions: '<option value="">' + __('select_category') + '</option>',
                 till_status: '', cod_allowed_status: 1, max_allowed_quantity: 0,
                 is_approved: 1, tax_included_in_price: 0, status: 1, loose_stock: 0,
-                loose_stock_unit_id: '', inputs: [{ 'name': '', 'packet_status': 0, 'packet_stock': 0, 'packet_stock_unit_id': '' }],
+                loose_stock_unit_id: '', inputs: [{ 'name': '', 'packet_status': 1, 'packet_stock': 0, 'packet_stock_unit_id': '' }],
                 image: null, main_image_path: '', main_image_name: '', other_images: null,
                 images: [], variantImages: {}, deleteImageIds: [], useCustomPrompt: false, customPrompt: '',
                 activeLanguageTab: 0
