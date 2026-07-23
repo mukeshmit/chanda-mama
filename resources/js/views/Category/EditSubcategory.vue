@@ -360,7 +360,7 @@ export default {
                         .filter(cat => Number(cat.parent_id) === 0);
                     
                     // Generate options HTML
-                    let optionsHtml = "<option value='0'>" + __('select_parent_category') + "</option>";
+                    let optionsHtml = "<option value='0'>" + __('select parent category') + "</option>";
                     categories.forEach(cat => {
                         optionsHtml += `<option value='${cat.id}' ${this.parent_id == cat.id ? 'selected' : ''}>${cat.name}</option>`;
                     });
@@ -458,7 +458,7 @@ export default {
 
             if (this.parent_id == 0) {
                 this.switchToDefaultLanguageTab();
-                this.showError(__('please_select_parent_category'));
+                this.showError(__('please select parent category'));
                 return false;
             }
 

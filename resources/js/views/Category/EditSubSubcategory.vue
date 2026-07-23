@@ -22,7 +22,7 @@
                         <div class="form-group" v-if="language.is_default">
                             <label>{{ __("category") }}<i class="text-danger">*</i></label>
                             <select v-model="parent_category_id" class="form-control form-select">
-                                <option value="0">{{ __('select_parent_category') }}</option>
+                                <option value="0">{{ __('select parent category') }}</option>
                                 <option v-for="category in parent_categories" :key="category.id" :value="category.id">
                                     {{ category.name }}
                                 </option>
@@ -42,10 +42,10 @@
                         </div>
 
                         <div class="form-group" :class="{ required: language.is_default }">
-                            <label>{{ __('sub_subcategory_name') }}</label>
+                            <label>{{ __('Sub Sub category name') }}</label>
                             <i class="text-danger" v-if="language.is_default">*</i>
                             <input type="text" class="form-control"
-                                v-model="translations[language.id].name" :placeholder="__('enter_sub_subcategory_name')">
+                                v-model="translations[language.id].name" :placeholder="__('enter sub subcategory name')">
                         </div>
 
                         <div class="form-group" v-if="language.is_default">
@@ -192,7 +192,7 @@ export default {
 
     computed: {
         modal_title: function () {
-            let title = this.id ? __('edit_sub_subcategory') : __('add_sub_subcategory');
+            let title = this.id ? __('edit_sub_subcategory') : __('Add Sub Sub category');
             return title;
         },
         defaultLanguage() {
@@ -503,7 +503,7 @@ export default {
 
             if (Number(this.parent_category_id) === 0) {
                 this.switchToDefaultLanguageTab();
-                this.showError(__('please_select_parent_category'));
+                this.showError(__('please select parent category'));
                 return false;
             }
 
