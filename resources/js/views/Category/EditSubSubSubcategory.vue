@@ -30,10 +30,10 @@
                         </div>
 
                         <div class="form-group" v-if="language.is_default">
-                            <label>SubCategory<i class="text-danger">*</i></label>
+                            <label>Sub Category<i class="text-danger">*</i></label>
                             <select v-model="parent_subcategory_id" class="form-control form-select"
                                 :disabled="Number(parent_category_id) === 0">
-                                <option value="0">Select SubCategory</option>
+                                <option value="0">Select Sub Category</option>
                                 <option v-for="subcategory in filteredParentSubcategories" :key="subcategory.id"
                                     :value="subcategory.id">
                                     {{ subcategory.name }}
@@ -42,10 +42,10 @@
                         </div>
 
                         <div class="form-group" v-if="language.is_default">
-                            <label>Sub SubCategory<i class="text-danger">*</i></label>
+                            <label>Sub Sub Category<i class="text-danger">*</i></label>
                             <select v-model="parent_id" class="form-control form-select"
                                 :disabled="Number(parent_subcategory_id) === 0">
-                                <option value="0">Select Sub SubCategory</option>
+                                <option value="0">Select Sub Sub Category</option>
                                 <option v-for="subSubcategory in filteredParentSubSubcategories" :key="subSubcategory.id"
                                     :value="subSubcategory.id">
                                     {{ subSubcategory.name }}
@@ -54,10 +54,10 @@
                         </div>
 
                         <div class="form-group" :class="{ required: language.is_default }">
-                            <label>Sub Sub SubCategory Name</label>
+                            <label>Sub Sub Sub Category Name</label>
                             <i class="text-danger" v-if="language.is_default">*</i>
                             <input type="text" class="form-control"
-                                v-model="translations[language.id].name" placeholder="Enter Sub Sub SubCategory Name">
+                                v-model="translations[language.id].name" placeholder="Enter Sub Sub Sub Category Name">
                         </div>
 
                         <div class="form-group" v-if="language.is_default">
@@ -206,7 +206,7 @@ export default {
 
     computed: {
         modal_title: function () {
-            let title = this.id ? 'Edit Sub Sub SubCategory' : 'Add Sub Sub SubCategory';
+            let title = this.id ? 'Edit Sub Sub Sub Category' : 'Add Sub Sub Sub Category';
             return title;
         },
         defaultLanguage() {
@@ -546,13 +546,13 @@ export default {
 
             if (Number(this.parent_subcategory_id) === 0) {
                 this.switchToDefaultLanguageTab();
-                this.showError('Please select SubCategory');
+                this.showError('Please select Sub Category');
                 return false;
             }
 
             if (Number(this.parent_id) === 0) {
                 this.switchToDefaultLanguageTab();
-                this.showError('Please select Sub SubCategory');
+                this.showError('Please select Sub Sub Category');
                 return false;
             }
 
@@ -679,7 +679,7 @@ export default {
             // Execute sequential save
             saveSequentially()
                 .then(() => {
-                    const message = 'Sub Sub SubCategory saved successfully';
+                    const message = 'Sub Sub Sub Category saved successfully';
                     // Emit to parent only (parent shows toast once)
                     vm.$emit('saved', message);
                     // Notify other pages to refresh list only (no toast)

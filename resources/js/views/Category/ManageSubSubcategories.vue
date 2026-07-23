@@ -142,7 +142,7 @@ export default {
                 { key: 'id', label: 'Sr. No.', class: 'text-center', sortable: true, sortDirection: 'asc' },
                 { key: 'name', label: this.$titleLabel('name'), class: 'text-center', sortable: true },
                 { key: 'parent_category', label: this.$titleLabel('parent_category'), class: 'text-center' },
-                { key: 'parent_subcategory', label: this.$titleLabel('parent_subcategory'), class: 'text-center' },
+                { key: 'parent_subcategory', label: 'Sub Category', class: 'text-center' },
                 { key: 'image', label: this.$titleLabel('image'), class: 'text-center' },
                 { key: 'actions', label: this.$titleLabel('actions'), class: 'text-center' }
             ],

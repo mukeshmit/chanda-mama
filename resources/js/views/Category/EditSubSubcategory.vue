@@ -57,10 +57,10 @@
                         </div>
 
                         <div class="form-group" v-if="language.is_default">
-                            <label>{{ __("parent_subcategory") }}<i class="text-danger">*</i></label>
+                            <label>Sub Category<i class="text-danger">*</i></label>
                             <select v-model="parent_id" class="form-control form-select"
                                 :disabled="Number(parent_category_id) === 0">
-                                <option value="0">{{ __('select_parent_subcategory') }}</option>
+                                <option value="0">Select Sub Category</option>
                                 <option v-for="subcategory in filteredParentSubcategories" :key="subcategory.id"
                                     :value="subcategory.id">
                                     {{ subcategory.name }}
@@ -533,7 +533,7 @@ export default {
 
             if (Number(this.parent_id) === 0) {
                 this.switchToDefaultLanguageTab();
-                this.showError(__('please_select_parent_subcategory'));
+                this.showError('Please select Sub Category');
                 return false;
             }
 
