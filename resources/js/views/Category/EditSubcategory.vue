@@ -174,7 +174,7 @@ export default {
 
     computed: {
         modal_title: function () {
-            let title = this.id ? __('edit_subcategory') : __('add_subcategory');
+            let title = this.id ? __('edit_subcategory') : __('Add Sub Category');
             return title;
         },
         defaultLanguage() {

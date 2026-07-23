@@ -43,7 +43,7 @@
                                 <button class="btn btn-figma-columns d-flex align-items-center gap-2"
                                     @click="create_new = true" v-if="$can('category_create') && hasParentCategories">
                                     <i class="fa fa-plus"></i>
-                                    <span>{{ __('add_subcategory') }}</span>
+                                    <span>{{ __('Add Subcategory') }}</span>
                                 </button>
                             </div>
                         </div>
