@@ -113,17 +113,11 @@ class ProductHelper
                                 t.percentage,
                                 pv.price,
                                 CASE 
-                                    WHEN pv.discounted_price != 0 THEN pv.discounted_price + (pv.discounted_price * t.percentage) / 100
-                                    ELSE pv.price + (pv.price * t.percentage) / 100 
+                                    WHEN pv.discounted_price != 0 THEN pv.discounted_price
+                                    ELSE pv.price
                                 END AS taxable_amount,
-                                CASE 
-                                    WHEN pv.discounted_price != 0 THEN pv.discounted_price + (pv.discounted_price * t.percentage) / 100
-                                    ELSE pv.discounted_price 
-                                END AS taxable_discounted_price,
-                                CASE 
-                                    WHEN pv.price != 0 THEN pv.price + (pv.price * t.percentage) / 100
-                                    ELSE pv.price 
-                                END AS taxable_price
+                                pv.discounted_price AS taxable_discounted_price,
+                                pv.price AS taxable_price
                             FROM product_variants pv 
                             LEFT JOIN products p ON pv.product_id = p.id 
                             LEFT JOIN taxes t ON t.id = p.tax_id 
@@ -138,9 +132,9 @@ class ProductHelper
             } else if (empty($result->percentage && $result->price != 0)) {
                 $result->taxable_amount = $result->price;
             } else if (!(empty($result->percentage)) && $result->discounted_price != 0) {
-                $result->taxable_amount = $result->discounted_price + $result->discounted_price * ($result->percentage / 100);
+                $result->taxable_amount = $result->discounted_price;
             } else if (!(empty($result->percentage)) && $result->price != 0) {
-                $result->taxable_amount = $result->price + $result->price * ($result->percentage / 100);
+                $result->taxable_amount = $result->price;
             }
 
             return $result;

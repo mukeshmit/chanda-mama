@@ -103,7 +103,7 @@
                                     <div class="col-md-4">
                                         <div class="figma-filter-group">
                                             <label class="figma-filter-label">{{ __('category') }}</label>
-                                            <select v-model="category" @change="getRecords()"
+                                            <select v-model="category" @change="applyFilters"
                                                 class="form-select modern-select">
                                                 <option value="">{{ __('all_categories') }}</option>
                                                 <option v-for="category in translatedCategories" :value="category.id">{{
@@ -114,13 +114,47 @@
                                     <div class="col-md-4">
                                         <div class="figma-filter-group">
                                             <label class="figma-filter-label">{{ __('status') }}</label>
-                                            <select v-model="is_approved" @change="getRecords()"
+                                            <select v-model="is_approved" @change="applyFilters"
                                                 class="form-select modern-select">
                                                 <option value="">{{ __('all_statuses') }}</option>
                                                 <option value="1">{{ __('approved') }}</option>
                                                 <option value="0">{{ __('not_approved') }}</option>
                                             </select>
                                         </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="figma-filter-group">
+                                            <label class="figma-filter-label">Min Price</label>
+                                            <input type="number" min="0" step="any" v-model="min_price"
+                                                @input="applyFilters" class="form-control modern-select"
+                                                placeholder="Min Price">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="figma-filter-group">
+                                            <label class="figma-filter-label">Max Price</label>
+                                            <input type="number" min="0" step="any" v-model="max_price"
+                                                @input="applyFilters" class="form-control modern-select"
+                                                placeholder="Max Price">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="figma-filter-group">
+                                            <label class="figma-filter-label">Entry Date From</label>
+                                            <input type="date" v-model="entry_date_from" @change="applyFilters"
+                                                class="form-control modern-select">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="figma-filter-group">
+                                            <label class="figma-filter-label">Entry Date To</label>
+                                            <input type="date" v-model="entry_date_to" @change="applyFilters"
+                                                class="form-control modern-select">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 d-flex align-items-end">
+                                        <button type="button" class="btn btn-figma-filter"
+                                            @click="clearFilters">Clear Filters</button>
                                     </div>
                                 </div>
                             </div>
@@ -165,6 +199,11 @@
 
                                 <template #cell(sub_subcategory_name)="row">
                                     {{ row.item.sub_subcategory_name || '-' }}
+                                </template>
+
+                                <template #cell(pv_status)="row">
+                                    <span class='badge bg-success' v-if="row.item.pv_status == 1">{{ __('available') }}</span>
+                                    <span class='badge bg-danger' v-else>{{ __('sold_out') }}</span>
                                 </template>
 
                                 <template #cell(seller_name)="row">
@@ -304,6 +343,7 @@ export default {
                 { key: 'image', label: this.$titleLabel('image'), visible: true, class: 'text-center' },
                 { key: 'price', label: this.$titleLabel('price') + '(' + this.$currency + ')', visible: true, class: 'text-center', sortable: true },
                 { key: 'discounted_price', label: this.$titleLabel('discounted_price') + '(' + this.$currency + ')', visible: true, class: 'text-center', sortable: true },
+                { key: 'pv_status', label: 'Status', visible: true, class: 'text-center', sortable: true },
                 { key: 'return_status', label: this.$titleLabel('return'), visible: false, class: 'text-center', sortable: true },
                 { key: 'cancelable_status', label: this.$titleLabel('cancellation'), visible: false, class: 'text-center', sortable: true },
                 { key: 'actions', label: this.$titleLabel('actions'), visible: true }
@@ -324,6 +364,10 @@ export default {
             category: "",
             seller: (Auth.user.seller !== null) ? Auth.user.seller.id : "",
             is_approved: "",
+            min_price: "",
+            max_price: "",
+            entry_date_from: "",
+            entry_date_to: "",
 
             selectedItems: [],
             select: '',
@@ -537,6 +581,10 @@ export default {
                 "category": this.category,
                 "seller": this.seller,
                 "is_approved": this.is_approved,
+                "min_price": this.min_price,
+                "max_price": this.max_price,
+                "entry_date_from": this.entry_date_from,
+                "entry_date_to": this.entry_date_to,
                 page: this.currentPage,
                 per_page: this.perPage,
                 filter: this.filter
@@ -611,6 +659,20 @@ export default {
             // Reset selection when filters change
             this.selectedItems = [];
             this.all_select = false;
+        },
+        applyFilters() {
+            this.currentPage = 1;
+            this.resetSelection();
+            this.getRecords();
+        },
+        clearFilters() {
+            this.category = "";
+            this.is_approved = "";
+            this.min_price = "";
+            this.max_price = "";
+            this.entry_date_from = "";
+            this.entry_date_to = "";
+            this.applyFilters();
         },
         multipleDelete() {
             let uniqueSelectedItems = [...new Set(this.selectedItems)];

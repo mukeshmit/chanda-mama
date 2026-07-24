@@ -2507,12 +2507,11 @@ class CommonHelper
             }
         }
 
-        // Add tax_amount to price and discounted_price for each order item
+        // Prices are tax-inclusive, so do not add tax_amount again for display.
         foreach ($order_items as $item) {
-            $tax_amount = (float) ($item->tax_amount ?? 0);
-            $item->price = (float) self::doubleNumber($item->price + $tax_amount);
+            $item->price = (float) self::doubleNumber($item->price);
             $item->discounted_price = (float) self::doubleNumber(
-                ($item->discounted_price != 0 ? $item->discounted_price + $tax_amount : 0)
+                ($item->discounted_price != 0 ? $item->discounted_price : 0)
             );
         }
 

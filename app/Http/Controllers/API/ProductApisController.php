@@ -170,6 +170,23 @@ class ProductApisController extends Controller
                 $products->where($condition[0], $condition[1], $condition[2]);
             }
         }
+
+        if ($request->filled('min_price')) {
+            $products->whereRaw('IF(pv.discounted_price > 0, pv.discounted_price, pv.price) >= ?', [(float) $request->min_price]);
+        }
+
+        if ($request->filled('max_price')) {
+            $products->whereRaw('IF(pv.discounted_price > 0, pv.discounted_price, pv.price) <= ?', [(float) $request->max_price]);
+        }
+
+        if ($request->filled('entry_date_from')) {
+            $products->whereDate('p.created_at', '>=', $request->entry_date_from);
+        }
+
+        if ($request->filled('entry_date_to')) {
+            $products->whereDate('p.created_at', '<=', $request->entry_date_to);
+        }
+
         $products = $products->orderBy('pv.id', 'desc');
 
         // Apply filter to all columns in all joined tables
@@ -782,6 +799,9 @@ class ProductApisController extends Controller
         if ($request->type == "packet") {
             foreach ($request->packet_measurement as $index => $item) {
                 $data = array();
+                $data['color_variant'] = $request->packet_color_variant[$index] ?? null;
+                $data['expiry_date_from'] = $request->packet_expiry_date_from[$index] ?? null;
+                $data['expiry_date_to'] = $request->packet_expiry_date_to[$index] ?? null;
                 $data['measurement'] = $request->packet_measurement[$index];
                 $data['price'] = $request->packet_price[$index];
                 $data['discounted_price'] = $request->discounted_price[$index];
@@ -794,6 +814,9 @@ class ProductApisController extends Controller
         } else {
             foreach ($request->loose_measurement as $index => $item) {
                 $data = array();
+                $data['color_variant'] = $request->loose_color_variant[$index] ?? null;
+                $data['expiry_date_from'] = $request->loose_expiry_date_from[$index] ?? null;
+                $data['expiry_date_to'] = $request->loose_expiry_date_to[$index] ?? null;
                 $data['measurement'] = $request->loose_measurement[$index];
                 $data['price'] = $request->loose_price[$index];
                 $data['discounted_price'] = $request->loose_discounted_price[$index];
@@ -901,10 +924,14 @@ class ProductApisController extends Controller
                     $data = array();
                     $data['product_id'] = $product->id;
                     $data['type'] = $request->type;
+                    $data['color_variant'] = $request->packet_color_variant[$index] ?? null;
+                    $data['expiry_date_from'] = $request->packet_expiry_date_from[$index] ?? null;
+                    $data['expiry_date_to'] = $request->packet_expiry_date_to[$index] ?? null;
                     $data['measurement'] = $request->packet_measurement[$index];
                     $data['price'] = $request->packet_price[$index];
                     $data['purchase_price'] = isset($request->packet_purchase_price[$index]) ? $request->packet_purchase_price[$index] : 0;
                     $data['discounted_price'] = isset($request->discounted_price[$index]) ? $request->discounted_price[$index] : 0;
+                    $data['discount_percentage'] = isset($request->discount_percentage[$index]) ? $request->discount_percentage[$index] : 0;
                     $data['status'] = $request->packet_status[$index] ?? 1;
                     $data['stock'] = ($request->is_unlimited_stock == 0) ? $request->packet_stock[$index] : 0;
                     $data['stock_unit_id'] = isset($request->packet_stock_unit_id[$index]) ? $request->packet_stock_unit_id[$index] : 0;
@@ -927,7 +954,14 @@ class ProductApisController extends Controller
                     $data = array();
                     $data['product_id'] = $product->id;
                     $data['type'] = $request->type;
-                    $data['stock'] = ($request->is_unlimited_stock == 0) ? $request->loose_stock[$index] : 0;
+                    $data['color_variant'] = $request->loose_color_variant[$index] ?? null;
+                    $data['expiry_date_from'] = $request->loose_expiry_date_from[$index] ?? null;
+                    $data['expiry_date_to'] = $request->loose_expiry_date_to[$index] ?? null;
+                    $looseStock = $request->loose_stock ?? 0;
+                    if (is_array($looseStock)) {
+                        $looseStock = $looseStock[$index] ?? 0;
+                    }
+                    $data['stock'] = ($request->is_unlimited_stock == 0) ? $looseStock : 0;
                     $data['stock_unit_id'] = $request->loose_stock_unit_id;
                     $data['status'] = $request->status;
                     $data['measurement'] = $request->loose_measurement[$index];
@@ -938,6 +972,7 @@ class ProductApisController extends Controller
                     }
                     $data['purchase_price'] = $purchasePrice;
                     $data['discounted_price'] = isset($request->loose_discounted_price[$index]) ? $request->loose_discounted_price[$index] : 0;
+                    $data['discount_percentage'] = isset($request->loose_discount_percentage[$index]) ? $request->loose_discount_percentage[$index] : 0;
 
                     ProductVariant::insert($data);
                     $variant_id = DB::getPdo()->lastInsertId();
@@ -1186,6 +1221,9 @@ class ProductApisController extends Controller
         if ($request->type == "packet") {
             foreach ($request->packet_measurement as $index => $item) {
                 $data = array();
+                $data['color_variant'] = $request->packet_color_variant[$index] ?? null;
+                $data['expiry_date_from'] = $request->packet_expiry_date_from[$index] ?? null;
+                $data['expiry_date_to'] = $request->packet_expiry_date_to[$index] ?? null;
                 $data['measurement'] = $request->packet_measurement[$index];
                 $data['price'] = $request->packet_price[$index];
                 $data['discounted_price'] = $request->discounted_price[$index];
@@ -1200,6 +1238,9 @@ class ProductApisController extends Controller
                     return CommonHelper::responseError("Variant " . ($index + 1) . " measurement cannot exceed total stock");
                 }
                 $data = array();
+                $data['color_variant'] = $request->loose_color_variant[$index] ?? null;
+                $data['expiry_date_from'] = $request->loose_expiry_date_from[$index] ?? null;
+                $data['expiry_date_to'] = $request->loose_expiry_date_to[$index] ?? null;
                 $data['measurement'] = $request->loose_measurement[$index];
                 $data['price'] = $request->loose_price[$index];
                 $data['discounted_price'] = $request->loose_discounted_price[$index];
@@ -1326,10 +1367,14 @@ class ProductApisController extends Controller
                     }
                     $variant->product_id = $product->id;
                     $variant->type = $request->type;
+                    $variant->color_variant = $request->packet_color_variant[$index] ?? null;
+                    $variant->expiry_date_from = $request->packet_expiry_date_from[$index] ?? null;
+                    $variant->expiry_date_to = $request->packet_expiry_date_to[$index] ?? null;
                     $variant->measurement = $request->packet_measurement[$index];
                     $variant->price = $request->packet_price[$index];
                     $variant->purchase_price = isset($request->packet_purchase_price[$index]) ? $request->packet_purchase_price[$index] : 0;
                     $variant->discounted_price = isset($request->discounted_price[$index]) ? $request->discounted_price[$index] : 0;
+                    $variant->discount_percentage = isset($request->discount_percentage[$index]) ? $request->discount_percentage[$index] : 0;
                     $variant->status = $request->packet_status[$index];
                     $variant->stock = ($request->is_unlimited_stock == 0) ? $request->packet_stock[$index] : 0;
                     $variant->stock_unit_id = isset($request->packet_stock_unit_id[$index]) ? $request->packet_stock_unit_id[$index] : 0;
@@ -1348,7 +1393,14 @@ class ProductApisController extends Controller
                     }
                     $variant->product_id = $product->id;
                     $variant->type = $request->type;
-                    $variant->stock = ($request->is_unlimited_stock == 0) ? $request->loose_stock : 0;
+                    $variant->color_variant = $request->loose_color_variant[$index] ?? null;
+                    $variant->expiry_date_from = $request->loose_expiry_date_from[$index] ?? null;
+                    $variant->expiry_date_to = $request->loose_expiry_date_to[$index] ?? null;
+                    $looseStock = $request->loose_stock ?? 0;
+                    if (is_array($looseStock)) {
+                        $looseStock = $looseStock[$index] ?? 0;
+                    }
+                    $variant->stock = ($request->is_unlimited_stock == 0) ? $looseStock : 0;
                     $variant->stock_unit_id = $request->loose_stock_unit_id;
                     $variant->status = $request->status;
                     $variant->measurement = $request->loose_measurement[$index];
@@ -1362,6 +1414,7 @@ class ProductApisController extends Controller
 
                     $variant->purchase_price = (float) $purchasePrice;
                     $variant->discounted_price = isset($request->loose_discounted_price[$index]) ? $request->loose_discounted_price[$index] : 0;
+                    $variant->discount_percentage = isset($request->loose_discount_percentage[$index]) ? $request->loose_discount_percentage[$index] : 0;
                     $variant->save();
                     if ($request->hasFile('loose_variant_images_' . $index)) {
                         CommonHelper::uploadProductImages($request->file('loose_variant_images_' . $index), $product->id, $variant->id);

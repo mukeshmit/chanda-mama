@@ -611,7 +611,7 @@
                                 <h4>{{ __('product_variants') }}</h4>
                             </div>
                             <div class="card-body">
-                                <div class="col-md-6">
+                                <div class="col-md-6 d-none">
                                     <div class="row">
                                         <div class="form-group col-md-6">
                                             <label>{{ __('product_variants') }} <i class="text-danger">*</i></label><br>
@@ -651,6 +651,30 @@
                                                 <label>{{ __('measurement') }}</label>
                                                 <input type="number" min="0" step="any" class="form-control"
                                                     placeholder="0" v-model="input.packet_measurement">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-3">
+                                                <label>Color Variant</label>
+                                                <select class="form-control" v-model="input.color_variant">
+                                                    <option value="">Select Color</option>
+                                                    <option v-for="color in colorVariantOptions" :key="color.value"
+                                                        :value="color.value">{{ color.label }}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-3">
+                                                <label>Expiry Date From</label>
+                                                <input type="date" class="form-control"
+                                                    v-model="input.expiry_date_from">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-3">
+                                                <label>Expiry Date To</label>
+                                                <input type="date" class="form-control"
+                                                    v-model="input.expiry_date_to">
                                             </div>
                                         </div>
 
@@ -807,10 +831,34 @@
                                                         placeholder="0" v-model="input.loose_measurement">
                                                 </div>
                                             </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group mb-3 loose_div">
+                                                    <label>Color Variant</label>
+                                                    <select class="form-control" v-model="input.color_variant">
+                                                        <option value="">Select Color</option>
+                                                        <option v-for="color in colorVariantOptions" :key="color.value"
+                                                            :value="color.value">{{ color.label }}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group mb-3 loose_div">
+                                                    <label>Expiry Date From</label>
+                                                    <input type="date" class="form-control"
+                                                        v-model="input.expiry_date_from">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group mb-3 loose_div">
+                                                    <label>Expiry Date To</label>
+                                                    <input type="date" class="form-control"
+                                                        v-model="input.expiry_date_to">
+                                                </div>
+                                            </div>
 
                                             <div class="col-md-4">
                                                 <div class="form-group mb-3 loose_div">
-                                                    <label>MPR ( {{ $currency }} ): <i class="text-danger">*</i></label>
+                                                    <label>MRP ( {{ $currency }} ): <i class="text-danger">*</i></label>
                                                     <input type="number" step="any" min="0" class="form-control"
                                                         placeholder="0.00" v-model="input.loose_price" required>
                                                 </div>
@@ -820,47 +868,47 @@
                                                 <div class="form-group mb-3 loose_div">
                                                     <label>Purchase Price ( {{ $currency }} )</label>
                                                     <input type="number" step="any" min="0" class="form-control"
-                                                        placeholder="0.00" v-model="loose_purchase_price">
+                                                        placeholder="0.00" v-model="input.loose_purchase_price">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group mb-3 loose_div">
                                                     <label>Sale Price ( {{ $currency }} )</label>
                                                     <input type="text" class="form-control bg-light"
-                                                        :value="getLooseSalePrice()" readonly>
+                                                        :value="getLooseSalePrice(input)" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group mb-3 loose_div">
                                                     <label>Discount on MRP(%)</label>
                                                     <input type="number" step="any" min="0" class="form-control"
-                                                        placeholder="0.00" v-model="loose_discount_percentage"
-                                                        @input="setLooseDiscountMode('percent')">
+                                                        placeholder="0.00" v-model="input.loose_discount_percentage"
+                                                        @input="setLooseDiscountMode(input, 'percent')">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group mb-3 loose_div">
                                                     <label>Discount on MRP(Rs)</label>
                                                     <input type="number" step="any" min="0" class="form-control"
-                                                        placeholder="0.00" v-model="inputs[0].loose_discounted_price"
-                                                        @input="setLooseDiscountMode('amount')">
-                                                    <span v-if="inputs[0].validationErrorDiscountedPriceLoose"
+                                                        placeholder="0.00" v-model="input.loose_discounted_price"
+                                                        @input="setLooseDiscountMode(input, 'amount')">
+                                                    <span v-if="input.validationErrorDiscountedPriceLoose"
                                                         class="error">{{
-                                                            inputs[0].validationErrorDiscountedPriceLoose }}</span>
+                                                            input.validationErrorDiscountedPriceLoose }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group mb-3 loose_div">
                                                     <label>Profit(%)</label>
                                                     <input type="text" class="form-control bg-light"
-                                                        :value="getLooseProfitPercentage()" readonly>
+                                                        :value="getLooseProfitPercentage(input)" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group mb-3 loose_div">
                                                     <label>Profit(Rs)</label>
                                                     <input type="text" class="form-control bg-light"
-                                                        :value="getLooseProfit()" readonly>
+                                                        :value="getLooseProfit(input)" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-12 hidden">
@@ -1220,6 +1268,22 @@ export default {
                 'video/mp4',
             ],
             maxOtherMediaSize: 3 * 1024 * 1024,
+            colorVariantOptions: [
+                { value: 'black', label: 'Black' },
+                { value: 'white', label: 'White' },
+                { value: 'red', label: 'Red' },
+                { value: 'blue', label: 'Blue' },
+                { value: 'green', label: 'Green' },
+                { value: 'yellow', label: 'Yellow' },
+                { value: 'orange', label: 'Orange' },
+                { value: 'pink', label: 'Pink' },
+                { value: 'purple', label: 'Purple' },
+                { value: 'brown', label: 'Brown' },
+                { value: 'grey', label: 'Grey' },
+                { value: 'gold', label: 'Gold' },
+                { value: 'silver', label: 'Silver' },
+                { value: 'multi_color', label: 'Multi Color' },
+            ],
 
             return_status: 0,
             return_days: 1,
@@ -1248,7 +1312,22 @@ export default {
             categories: null,
             order_status: null,
 
-            inputs: [{ 'name': '', 'packet_status': 1, 'packet_stock': 0, 'packet_stock_unit_id': '', 'discount_percentage': 0, 'discounted_price': 0, 'discount_mode': 'percent', 'loose_discounted_price': 0, 'loose_discount_mode': 'percent' }],
+            inputs: [{
+                name: '',
+                packet_status: 1,
+                packet_stock: 0,
+                packet_stock_unit_id: '',
+                discount_percentage: 0,
+                discounted_price: 0,
+                discount_mode: 'percent',
+                loose_purchase_price: 0,
+                loose_discount_percentage: 0,
+                loose_discounted_price: 0,
+                loose_discount_mode: 'percent',
+                color_variant: '',
+                expiry_date_from: '',
+                expiry_date_to: '',
+            }],
 
             image: null,
             main_image_path: "",
@@ -1788,11 +1867,29 @@ export default {
                     });
             }
         },
+        getBlankVariantInput() {
+            return {
+                name: '',
+                packet_status: 1,
+                packet_stock: 0,
+                packet_stock_unit_id: '',
+                discount_percentage: 0,
+                discounted_price: 0,
+                discount_mode: 'percent',
+                loose_purchase_price: 0,
+                loose_discount_percentage: 0,
+                loose_discounted_price: 0,
+                loose_discount_mode: 'percent',
+                color_variant: '',
+                expiry_date_from: '',
+                expiry_date_to: '',
+            };
+        },
         addRow() {
             if (this.type === 'packet') {
-                this.inputs.push({ 'name': '', 'packet_status': 1, 'packet_stock': 0, 'packet_stock_unit_id': '', 'discount_percentage': 0, 'discounted_price': 0, 'discount_mode': 'percent' })
+                this.inputs.push(this.getBlankVariantInput())
             } else {
-                this.inputs.push({ 'name': '', 'loose_discounted_price': 0, 'loose_discount_mode': 'percent' })
+                this.inputs.push(this.getBlankVariantInput())
             }
         },
         remove(index) {
@@ -2298,6 +2395,9 @@ export default {
                                     'packet_stock': item.stock,
                                     'packet_stock_unit_id': item.stock_unit_id,
                                     'packet_status': item.status,
+                                    'color_variant': item.color_variant || '',
+                                    'expiry_date_from': item.expiry_date_from || '',
+                                    'expiry_date_to': item.expiry_date_to || '',
                                     'images': item.images,
                                 };
                                 vm.inputs.push(variantData);
@@ -2317,9 +2417,14 @@ export default {
                                     'loose_measurement': item.measurement,
                                     'loose_custom_title': item.custom_title ?? "",
                                     'loose_price': item.price,
+                                    'loose_purchase_price': item.purchase_price || 0,
+                                    'loose_discount_percentage': item.discount_percentage || vm.getDiscountPercentFromSalePrice(item.price, item.discounted_price),
                                     'loose_discounted_price': vm.getDiscountAmountFromSalePrice(item.price, item.discounted_price),
                                     'loose_discount_mode': item.discount_percentage ? 'percent' : 'amount',
                                     'packet_stock': item.stock,
+                                    'color_variant': item.color_variant || '',
+                                    'expiry_date_from': item.expiry_date_from || '',
+                                    'expiry_date_to': item.expiry_date_to || '',
                                     'loose_images': item.images,
                                 };
                                 vm.inputs.push(variantData);
@@ -2403,6 +2508,9 @@ export default {
                 for (let i = 0; i < this.inputs.length; i++) {
 
                     formData.append('variant_id[]', (this.inputs[i].id) ? this.inputs[i].id : "");
+                    formData.append('packet_color_variant[]', this.inputs[i].color_variant || '');
+                    formData.append('packet_expiry_date_from[]', this.inputs[i].expiry_date_from || '');
+                    formData.append('packet_expiry_date_to[]', this.inputs[i].expiry_date_to || '');
                     formData.append('packet_measurement[]', this.inputs[i].packet_measurement || 1);
 
                     formData.append('packet_price[]', (this.inputs[i].packet_price != undefined) ? this.inputs[i].packet_price : 0);
@@ -2429,6 +2537,9 @@ export default {
             if (this.type === 'loose') {
                 for (let i = 0; i < this.inputs.length; i++) {
                     formData.append('variant_id[]', (this.inputs[i].id) ? this.inputs[i].id : "");
+                    formData.append('loose_color_variant[]', this.inputs[i].color_variant || '');
+                    formData.append('loose_expiry_date_from[]', this.inputs[i].expiry_date_from || '');
+                    formData.append('loose_expiry_date_to[]', this.inputs[i].expiry_date_to || '');
                     formData.append('loose_measurement[]', this.inputs[i].loose_measurement || 1);
                     formData.append('loose_custom_title[]', this.inputs[i].loose_custom_title);
 
@@ -2436,6 +2547,7 @@ export default {
 
                     formData.append('loose_discounted_price[]', this.getLooseSalePriceRaw(this.inputs[i]));
                     formData.append('loose_discount_percentage[]', this.getLooseDiscountPercentage(this.inputs[i]));
+                    formData.append('loose_purchase_price[]', this.inputs[i].loose_purchase_price != undefined ? this.inputs[i].loose_purchase_price : 0);
                     formData.append('packet_stock[]', (this.inputs[i].packet_stock != undefined) ? this.inputs[i].packet_stock : 0);
 
                     // Safely handle loose variant images refs (can be undefined when card is hidden in non-default language tab)
@@ -2449,7 +2561,6 @@ export default {
                     }
                 }
                 formData.append('loose_stock', this.loose_stock);
-                formData.append('loose_purchase_price', this.loose_purchase_price != undefined ? this.loose_purchase_price : 0);
                 formData.append('loose_stock_unit_id', this.loose_stock_unit_id);
                 formData.append('status', this.status);
             }
@@ -2719,26 +2830,26 @@ export default {
             return this.getMarginPercent(sellingPrice, input.packet_purchase_price);
         },
 
-        getLooseProfit() {
-            const firstVariant = this.inputs[0] || {};
-            const sellingPrice = this.getLooseSalePriceRaw(firstVariant);
-            const purchasePrice = this.toNumber(this.loose_purchase_price);
+        getLooseProfit(input = null) {
+            const variant = input || this.inputs[0] || {};
+            const sellingPrice = this.getLooseSalePriceRaw(variant);
+            const purchasePrice = this.toNumber(variant.loose_purchase_price ?? this.loose_purchase_price);
             return this.formatMoney(sellingPrice - purchasePrice);
         },
 
         getLooseSalePriceRaw(input) {
-            return this.getSellingPrice(input.loose_price, this.loose_discount_percentage, input.loose_discounted_price, input.loose_discount_mode || 'percent');
+            return this.getSellingPrice(input.loose_price, input.loose_discount_percentage, input.loose_discounted_price, input.loose_discount_mode || 'percent');
         },
 
-        getLooseSalePrice() {
-            const firstVariant = this.inputs[0] || {};
-            return this.formatMoney(this.getLooseSalePriceRaw(firstVariant));
+        getLooseSalePrice(input = null) {
+            const variant = input || this.inputs[0] || {};
+            return this.formatMoney(this.getLooseSalePriceRaw(variant));
         },
 
-        getLooseProfitPercentage() {
-            const firstVariant = this.inputs[0] || {};
-            const sellingPrice = this.getLooseSalePriceRaw(firstVariant);
-            const purchasePrice = this.toNumber(this.loose_purchase_price);
+        getLooseProfitPercentage(input = null) {
+            const variant = input || this.inputs[0] || {};
+            const sellingPrice = this.getLooseSalePriceRaw(variant);
+            const purchasePrice = this.toNumber(variant.loose_purchase_price ?? this.loose_purchase_price);
             if (purchasePrice <= 0) return '0.00';
             return (((sellingPrice - purchasePrice) / purchasePrice) * 100).toFixed(2);
         },
@@ -2751,24 +2862,23 @@ export default {
                 return ((this.toNumber(input.loose_discounted_price) / mrp) * 100).toFixed(2);
             }
 
-            return this.formatMoney(this.loose_discount_percentage);
+            return this.formatMoney(input.loose_discount_percentage);
         },
 
-        setLooseDiscountMode(mode) {
-            const firstVariant = this.inputs[0] || {};
-            firstVariant.loose_discount_mode = mode;
-            firstVariant.validationErrorDiscountedPriceLoose = null;
+        setLooseDiscountMode(input, mode) {
+            input.loose_discount_mode = mode;
+            input.validationErrorDiscountedPriceLoose = null;
 
-            const mrp = this.toNumber(firstVariant.loose_price);
-            if (mode === 'amount' && mrp > 0 && this.toNumber(firstVariant.loose_discounted_price) > mrp) {
-                firstVariant.validationErrorDiscountedPriceLoose = 'Discount amount must be less than MRP';
+            const mrp = this.toNumber(input.loose_price);
+            if (mode === 'amount' && mrp > 0 && this.toNumber(input.loose_discounted_price) > mrp) {
+                input.validationErrorDiscountedPriceLoose = 'Discount amount must be less than MRP';
             }
         },
 
-        getLooseMargin() {
-            const firstVariant = this.inputs[0] || {};
-            const sellingPrice = this.getLooseSalePriceRaw(firstVariant);
-            return this.getMarginPercent(sellingPrice, this.loose_purchase_price);
+        getLooseMargin(input = null) {
+            const variant = input || this.inputs[0] || {};
+            const sellingPrice = this.getLooseSalePriceRaw(variant);
+            return this.getMarginPercent(sellingPrice, variant.loose_purchase_price ?? this.loose_purchase_price);
         },
 
         saveCache: function () {
@@ -2870,7 +2980,7 @@ export default {
                 categoryOptions: '<option value="">' + __('select_category') + '</option>',
                 till_status: '', cod_allowed_status: 1, max_allowed_quantity: 0,
                 is_approved: 1, tax_included_in_price: 0, status: 1, loose_stock: 0,
-                loose_stock_unit_id: '', inputs: [{ 'name': '', 'packet_status': 1, 'packet_stock': 0, 'packet_stock_unit_id': '' }],
+                loose_stock_unit_id: '', inputs: [this.getBlankVariantInput()],
                 image: null, main_image_path: '', main_image_name: '', other_images: null,
                 images: [], variantImages: {}, deleteImageIds: [], useCustomPrompt: false, customPrompt: '',
                 activeLanguageTab: 0

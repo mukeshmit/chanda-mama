@@ -491,12 +491,11 @@ class ReturnRequestsApiController extends Controller
             ->where('order_items.id', $returnRequest->order_item_id)
             ->first();
 
-        // Add tax_amount to price and discounted_price, and calculate amount_to_refund
+        // Prices are tax-inclusive, so do not add tax_amount again.
         if ($returnItem) {
-            $tax_amount = (float) ($returnItem->tax_amount ?? 0);
-            $returnItem->price = (float) CommonHelper::doubleNumber($returnItem->price + $tax_amount);
+            $returnItem->price = (float) CommonHelper::doubleNumber($returnItem->price);
             $returnItem->discounted_price = (float) CommonHelper::doubleNumber(
-                ($returnItem->discounted_price != 0 ? $returnItem->discounted_price + $tax_amount : 0)
+                ($returnItem->discounted_price != 0 ? $returnItem->discounted_price : 0)
             );
 
             $order = Order::find($returnRequest->order_id);

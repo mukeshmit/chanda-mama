@@ -428,8 +428,9 @@ class OrderApiController extends Controller
                     $tax_title = $item->tax_title;
                     $seller_id = (!empty($item->seller_id)) ? $item->seller_id : "";
                     $tax_percentage = (empty($item->tax_percentage) || $item->tax_percentage == "") ? 0 : $item->tax_percentage;
-                    $tax_amt = $discounted_price != 0 ? (($tax_percentage / 100) * $discounted_price) : (($tax_percentage / 100) * $price);
-                    $sub_total = $discounted_price != 0 ? ($discounted_price + ($tax_percentage / 100) * $discounted_price) * $quantity : ($price + ($tax_percentage / 100) * $price) * $quantity;
+                    $base_price = $discounted_price != 0 ? $discounted_price : $price;
+                    $tax_amt = $tax_percentage > 0 ? (($base_price * $tax_percentage) / (100 + $tax_percentage)) : 0;
+                    $sub_total = $base_price * $quantity;
 
                     $neworder_id = $order_id;
                     $tax_amount = $tax_amt;
@@ -2080,11 +2081,10 @@ class OrderApiController extends Controller
                 $items[$subkey]->made_in = $item->country_made_in ?? "";
                 $items[$subkey]->created_at = $item->created_at;
 
-                // Add tax_amount to price and discounted_price
-                $tax_amount = (float) ($item->tax_amount ?? 0);
-                $items[$subkey]->price = (float) CommonHelper::doubleNumber($item->price + $tax_amount);
+                // Prices are tax-inclusive, so do not add tax_amount again for display.
+                $items[$subkey]->price = (float) CommonHelper::doubleNumber($item->price);
                 $items[$subkey]->discounted_price = (float) CommonHelper::doubleNumber(
-                    ($item->discounted_price != 0 ? $item->discounted_price + $tax_amount : 0)
+                    ($item->discounted_price != 0 ? $item->discounted_price : 0)
                 );
 
                 $items[$subkey]->effective_price = (float) CommonHelper::doubleNumber(
