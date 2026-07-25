@@ -182,6 +182,7 @@ class ProductApisController extends Controller
             'p.barcode',
             'p.name',
             'p.seller_id',
+            'p.category_id',
             'p.status',
             'p.tax_id',
             'p.image',
@@ -283,7 +284,7 @@ class ProductApisController extends Controller
                 }
 
                 $categoryTrail = [];
-                $category = $categoryMap->get($productModel->category_id ?? null);
+                $category = $categoryMap->get($product->category_id ?? null);
 
                 while ($category) {
                     array_unshift($categoryTrail, $category);
@@ -298,6 +299,7 @@ class ProductApisController extends Controller
                 $product->category_name = $categoryTrail[0]->name ?? '-';
                 $product->subcategory_name = $categoryTrail[1]->name ?? '-';
                 $product->sub_subcategory_name = $categoryTrail[2]->name ?? '-';
+                $product->sub_sub_subcategory_name = $categoryTrail[3]->name ?? '-';
 
                 return $product;
             });
