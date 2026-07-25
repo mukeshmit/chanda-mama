@@ -33,6 +33,47 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ProductApisController extends Controller
 {
+    private function getCategoryAndDescendantIds($categoryIds)
+    {
+        $ids = collect((array) $categoryIds)
+            ->filter(function ($id) {
+                return $id !== '' && $id !== null && is_numeric($id);
+            })
+            ->map(function ($id) {
+                return (int) $id;
+            })
+            ->unique()
+            ->values();
+
+        if ($ids->isEmpty()) {
+            return [];
+        }
+
+        $childrenByParent = Category::select('id', 'parent_id')
+            ->get()
+            ->groupBy(function ($category) {
+                return (int) $category->parent_id;
+            });
+
+        $allIds = $ids->all();
+        $queue = $ids->all();
+
+        while (!empty($queue)) {
+            $parentId = array_shift($queue);
+            $children = $childrenByParent->get((int) $parentId, collect());
+
+            foreach ($children as $child) {
+                $childId = (int) $child->id;
+                if (!in_array($childId, $allIds, true)) {
+                    $allIds[] = $childId;
+                    $queue[] = $childId;
+                }
+            }
+        }
+
+        return $allIds;
+    }
+
     public function getProducts(Request $request)
     {
         $limit = $request->input('per_page'); // Default items per page
@@ -57,7 +98,7 @@ class ProductApisController extends Controller
 
         // Load categories with ALL translations
         $categories = Category::where('status', 1)
-            ->select('id', 'name')
+            ->select('id', 'name', 'parent_id')
             ->with('translations')
             ->orderBy('id', 'DESC')
             ->get()
@@ -83,10 +124,11 @@ class ProductApisController extends Controller
             $assignedCategories = Seller::where('id', $request->seller)->value('categories');
 
             // Convert the assigned categories into an array
-            $categoryIds = explode(',', $assignedCategories);
+            $categoryIds = $this->getCategoryAndDescendantIds(explode(',', $assignedCategories));
 
             // Query the categories based on the assigned categories from the seller with ALL translations
             $categories = Category::whereIn('id', $categoryIds)
+                ->select('id', 'name', 'parent_id')
                 ->with('translations')
                 ->orderBy('id', 'DESC')
                 ->get()
@@ -100,8 +142,9 @@ class ProductApisController extends Controller
                 ->toArray();
         }
 
+        $selectedCategoryIds = [];
         if (isset($request->category) && $request->category !== "") {
-            $where[] = ['p.category_id', '=', $request->category];
+            $selectedCategoryIds = $this->getCategoryAndDescendantIds([$request->category]);
         }
 
         // Packet products
@@ -171,6 +214,10 @@ class ProductApisController extends Controller
             }
         }
 
+        if (!empty($selectedCategoryIds)) {
+            $products->whereIn('p.category_id', $selectedCategoryIds);
+        }
+
         if ($request->filled('min_price')) {
             $products->whereRaw('IF(pv.discounted_price > 0, pv.discounted_price, pv.price) >= ?', [(float) $request->min_price]);
         }
@@ -219,6 +266,7 @@ class ProductApisController extends Controller
         if ($products->isNotEmpty()) {
             $productIds = $products->pluck('product_id')->unique()->toArray();
             $productsWithTranslations = Product::whereIn('id', $productIds)
+                ->select('id', 'name', 'parent_id')
                 ->with('translations')
                 ->get()
                 ->keyBy('id');

@@ -107,7 +107,7 @@
                                                 class="form-select modern-select">
                                                 <option value="">{{ __('all_categories') }}</option>
                                                 <option v-for="category in translatedCategories" :value="category.id">{{
-                                                    category.name }}</option>
+                                                    getCategoryFilterLabel(category) }}</option>
                                             </select>
                                         </div>
                                     </div>
@@ -431,7 +431,10 @@ export default {
         },
         translatedCategories: function () {
             if (!this.currentLanguageId || this.categories.length === 0) {
-                return this.categories;
+                return this.categories.map(category => ({
+                    ...category,
+                    name: category.name || '-'
+                }));
             }
 
             // Get default language ID for fallback
@@ -574,6 +577,30 @@ export default {
         },
         openLightbox(image) {
             window.open(image, '_blank', 'noopener');
+        },
+        getCategoryFilterLabel(category) {
+            const names = [];
+            const categoryMap = {};
+
+            this.translatedCategories.forEach(item => {
+                categoryMap[Number(item.id)] = item;
+            });
+
+            let current = category;
+            const visited = [];
+
+            while (current && !visited.includes(Number(current.id))) {
+                names.unshift(current.name || '-');
+                visited.push(Number(current.id));
+
+                if (!current.parent_id || Number(current.parent_id) === 0) {
+                    break;
+                }
+
+                current = categoryMap[Number(current.parent_id)];
+            }
+
+            return names.join(' > ');
         },
         getRecords() {
             this.isLoading = true
