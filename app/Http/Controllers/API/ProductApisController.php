@@ -266,7 +266,7 @@ class ProductApisController extends Controller
         if ($products->isNotEmpty()) {
             $productIds = $products->pluck('product_id')->unique()->toArray();
             $productsWithTranslations = Product::whereIn('id', $productIds)
-                ->select('id', 'name', 'parent_id')
+                ->select('id', 'name')
                 ->with('translations')
                 ->get()
                 ->keyBy('id');
