@@ -16,10 +16,9 @@ __webpack_require__.r(__webpack_exports__);
     return {
       isLoading: false,
       fields: [{
-        key: 'id',
-        label: __('id'),
-        sortable: true,
-        sortDirection: 'desc'
+        key: 'sr_no',
+        label: 'Sr. No.',
+        "class": 'text-center'
       }, {
         key: 'name',
         label: __('name'),
@@ -310,6 +309,11 @@ var render = function render() {
         }), _vm._v(" "), _c("strong", [_vm._v(_vm._s(_vm.__("loading")) + "...")])], 1)];
       },
       proxy: true
+    }, {
+      key: "cell(sr_no)",
+      fn: function fn(row) {
+        return [_vm._v("\n                                " + _vm._s((_vm.currentPage - 1) * _vm.perPage + row.index + 1) + "\n                            ")];
+      }
     }, {
       key: "cell(email)",
       fn: function fn(row) {

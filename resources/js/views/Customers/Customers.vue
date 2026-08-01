@@ -50,6 +50,10 @@
                                     </div>
                                 </template>
 
+                                <template #cell(sr_no)="row">
+                                    {{ ((currentPage - 1) * perPage) + row.index + 1 }}
+                                </template>
+
                                 <template #cell(email)="row">
                                     {{ row.item.email | emailMask }}
                                 </template>
@@ -114,7 +118,7 @@ export default {
         return {
             isLoading: false,
             fields: [
-                { key: 'id', label: __('id'), sortable: true, sortDirection: 'desc' },
+                { key: 'sr_no', label: 'Sr. No.', class: 'text-center' },
                 { key: 'name', label: __('name'), sortable: true, class: 'text-center' },
                 { key: 'email', label: __('email'), sortable: true, class: 'text-center' },
                 { key: 'mobile', label: __('mobile_no'), sortable: true, class: 'text-center' },
