@@ -152,24 +152,11 @@ class CustomerAuthController extends Controller
                 ->first();
 
             if ($user) {
-                $verificationCode = rand(100000, 999999);
-                $user->email_verification_code = $verificationCode;
-                $user->is_verified = false; // Initially not verified
-
-                try {
-                    $data = ['type' => 'verify_email', 'code' => $verificationCode];
-                    $subject = 'Mail from ' . env('APP_NAME');
-
-                    commonHelper::sendMail($user->email, $subject, $data);
-                    Log::info('Verification email sent to ' . $user->email);
-
-                    $user->save();
-                } catch (\Exception $e) {
-                    Log::error('Failed to send verification email: ' . $e->getMessage());
-                    return CommonHelper::responseError('Failed to send verification email.');
-                }
-
-                return CommonHelper::responseError('email_not_verified');
+                // Email verification is intentionally disabled for the current
+                // quick-registration flow. Existing pending accounts become usable.
+                $user->is_verified = true;
+                $user->email_verification_code = null;
+                $user->save();
             }
         }
 
@@ -207,8 +194,10 @@ class CustomerAuthController extends Controller
         } elseif ($request->type === 'email') {
             $user = User::select('id', 'name', 'email', 'password', 'country_code', 'mobile', 'profile', 'balance', 'referral_code', 'status', 'type')
                 ->where('type', $request->type)
-                ->where('email', $request->id)
-                ->where('is_verified', 1)
+                ->where(function ($query) use ($request) {
+                    $query->where('email', $request->id)
+                        ->orWhere('name', $request->id);
+                })
                 ->first();
         }
 
@@ -272,35 +261,25 @@ class CustomerAuthController extends Controller
         $requestData = $request->all();
 
         $registerCountryCode = $this->normalizeCountryCode($request->input('country_code'));
-        $mobileRules = ['required_if:type,phone', 'nullable', 'numeric'];
-        // Enforce mobile uniqueness across ALL types (not just same type)
-        if ($request->type === 'phone') {
-            $mobileRules[] = Rule::unique('users', 'mobile')
+        $mobileRules = [
+            'required',
+            'numeric',
+            Rule::unique('users', 'mobile')
                 ->where(function ($query) use ($registerCountryCode) {
                     $query->where('country_code', $registerCountryCode);
                 })
-                ->whereNull('deleted_at');
-        }
+                ->whereNull('deleted_at'),
+        ];
 
         $validator = Validator::make($requestData, [
             'type'            => 'required|in:phone,apple,google,email',
-            'country_code'    => 'required_if:type,phone|nullable|string',
+            'country_code'    => 'required|string',
             'mobile'          => $mobileRules,
-            'email'           => 'required_if:type,apple,google,email|email',
+            'email'           => 'required|email',
             'phone_auth_type' => 'nullable|in:phone_auth_otp,phone_auth_password',
             'password'        => [
                 'nullable',
                 'min:6',
-                function ($attribute, $value, $fail) use ($request) {
-                    if (
-                        ($request->type == 'phone' && $request->phone_auth_type == 'phone_auth_password') ||
-                        $request->type == 'email'
-                    ) {
-                        if (empty($value)) {
-                            $fail('The password field is required.');
-                        }
-                    }
-                }
             ],
         ], [
             'mobile.unique' => 'mobile_number_already_taken',
@@ -321,18 +300,6 @@ class CustomerAuthController extends Controller
                     ->first();
                 if ($user) {
                     return CommonHelper::responseError('user_already_exist');
-                }
-            }
-
-            // Check email uniqueness across ALL types
-            if (in_array($request->type, ['email'])) {
-                $user = User::where('email', $request->email)
-                    ->where('is_verified', 0)
-                    ->where('type', $request->type)
-                    ->first();
-
-                if ($user) {
-                    return CommonHelper::responseError('email_not_verified');
                 }
             }
 
@@ -364,7 +331,6 @@ class CustomerAuthController extends Controller
                     ->first();
             }
 
-            $needsEmailVerificationReturn = false;
             if ($user) {
                 if ($user->status == User::$deactive) {
                     return CommonHelper::responseError(__('this_customer_account_is_deactivated_kindly_contact_admin'));
@@ -374,40 +340,23 @@ class CustomerAuthController extends Controller
                 $referral_code = strtoupper(substr(sha1(microtime()), 0, 6));
 
                 $user = new User();
-                $user->name = $request->get('name', '');
+                $user->name = $request->get('name') ?: strstr($request->email, '@', true);
                 $user->email = $request->get('email', '');
                 $user->referral_code = $referral_code;
                 $user->status = 1;
                 $user->country_code = $registerCountryCode;
                 $user->mobile = $request->get('mobile', '');
-                $user->password = $request->password ? bcrypt($request->password) : null;
+                // Current quick-registration rule: mobile is the initial password.
+                $user->password = bcrypt((string) $request->mobile);
                 $user->type = $request->type;
                 $user->friends_code = $request->friends_code ?? null;
+                $user->is_verified = true;
+                $user->email_verification_code = null;
 
                 // Save user first to get ID (needed for profile filename)
                 $user->save();
                 CommonHelper::setDefaultMailSetting($user->id, 0);
 
-                // Email Verification Process - defer return so profile can be processed first
-                if ($request->type == 'email') {
-                    $verificationCode = rand(100000, 999999);
-                    $user->email_verification_code = $verificationCode;
-                    $user->is_verified = false;
-                    $user->save();
-
-                    try {
-                        $data = [
-                            'type' => 'verify_email',
-                            'code' => $verificationCode,
-                        ];
-                        $subject = 'Mail from ' . Setting::get_value('app_name');
-                        CommonHelper::sendMail($user->email, $subject, $data);
-                        $needsEmailVerificationReturn = true;
-                    } catch (\Exception $e) {
-                        Log::error('Failed to send verification email: ' . $e->getMessage());
-                        return CommonHelper::responseError('Failed to send verification email.');
-                    }
-                }
             }
 
             // Single profile upload block - runs for both new and existing users
@@ -417,10 +366,6 @@ class CustomerAuthController extends Controller
                 $image = Storage::disk('public')->putFileAs('customers', $file, $fileName);
                 $user->profile = $image;
                 $user->save();
-            }
-
-            if ($needsEmailVerificationReturn) {
-                return CommonHelper::responseSuccess('verification_mail_sent_successfully');
             }
 
             // Authenticate user
