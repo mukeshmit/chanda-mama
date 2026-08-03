@@ -194,10 +194,7 @@ class CustomerAuthController extends Controller
         } elseif ($request->type === 'email') {
             $user = User::select('id', 'name', 'email', 'password', 'country_code', 'mobile', 'profile', 'balance', 'referral_code', 'status', 'type')
                 ->where('type', $request->type)
-                ->where(function ($query) use ($request) {
-                    $query->where('email', $request->id)
-                        ->orWhere('name', $request->id);
-                })
+                ->where('email', $request->id)
                 ->first();
         }
 
@@ -261,26 +258,14 @@ class CustomerAuthController extends Controller
         $requestData = $request->all();
 
         $registerCountryCode = $this->normalizeCountryCode($request->input('country_code'));
-        $mobileRules = [
-            'required',
-            'numeric',
-            Rule::unique('users', 'mobile')
-                ->where(function ($query) use ($registerCountryCode) {
-                    $query->where('country_code', $registerCountryCode);
-                })
-                ->whereNull('deleted_at'),
-        ];
 
         $validator = Validator::make($requestData, [
             'type'            => 'required|in:phone,apple,google,email',
-            'country_code'    => 'required|string',
-            'mobile'          => $mobileRules,
+            'country_code'    => 'nullable|string',
+            'mobile'          => 'nullable|numeric',
             'email'           => 'required|email',
             'phone_auth_type' => 'nullable|in:phone_auth_otp,phone_auth_password',
-            'password'        => [
-                'nullable',
-                'min:6',
-            ],
+            'password'        => 'required_if:type,email|min:6|confirmed',
         ], [
             'mobile.unique' => 'mobile_number_already_taken',
             'email.unique' => 'email_already_taken',
@@ -345,9 +330,8 @@ class CustomerAuthController extends Controller
                 $user->referral_code = $referral_code;
                 $user->status = 1;
                 $user->country_code = $registerCountryCode;
-                $user->mobile = $request->get('mobile', '');
-                // Current quick-registration rule: mobile is the initial password.
-                $user->password = bcrypt((string) $request->mobile);
+                $user->mobile = $request->filled('mobile') ? $request->mobile : null;
+                $user->password = bcrypt((string) $request->password);
                 $user->type = $request->type;
                 $user->friends_code = $request->friends_code ?? null;
                 $user->is_verified = true;
