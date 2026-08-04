@@ -509,7 +509,17 @@ class ProductsApiController extends Controller
             }
 
             if (isset($request->barcode) && !empty($request->barcode)) {
-                $products = $products->where('p.barcode', $request->barcode);
+                $barcode = $request->barcode;
+                $products = $products->where(function ($query) use ($barcode) {
+                    $query->where('p.barcode', $barcode)
+                        ->orWhereExists(function ($barcodeQuery) use ($barcode) {
+                            $barcodeQuery->select(DB::raw(1))
+                                ->from('product_variant_barcodes as pvb')
+                                ->join('product_variants as barcode_pv', 'barcode_pv.id', '=', 'pvb.product_variant_id')
+                                ->whereColumn('barcode_pv.product_id', 'p.id')
+                                ->where('pvb.barcode', $barcode);
+                        });
+                });
             }
             if ($where != "") {
                 $products = $products->whereRaw(substr($where, 4));
@@ -547,7 +557,7 @@ class ProductsApiController extends Controller
                 $taxRate = $row->tax_percentage; // % tax
 
                 // Load variants with unit (translations will be resolved automatically via accessor)
-                $variants = ProductVariant::with(['product.tax', 'unit', 'images'])
+                $variants = ProductVariant::with(['product.tax', 'unit', 'images', 'barcodes'])
                     ->where('product_id', $row['id'])
                     ->get();
 
@@ -732,6 +742,7 @@ class ProductsApiController extends Controller
                 );
             },
             'variants.unit',
+            'variants.barcodes',
             'variants.product.tax',
             'brand',
             'category',
@@ -771,7 +782,16 @@ class ProductsApiController extends Controller
                 } elseif (isset($product_slug) && $product_slug != null) {
                     $query->where('p.slug', $product_slug);
                 } elseif (isset($product_barcode) && $product_barcode != null) {
-                    $query->where('p.barcode', $product_barcode);
+                    $query->where(function ($barcodeQuery) use ($product_barcode) {
+                        $barcodeQuery->where('p.barcode', $product_barcode)
+                            ->orWhereExists(function ($variantBarcodeQuery) use ($product_barcode) {
+                                $variantBarcodeQuery->select(DB::raw(1))
+                                    ->from('product_variant_barcodes as pvb')
+                                    ->join('product_variants as barcode_pv', 'barcode_pv.id', '=', 'pvb.product_variant_id')
+                                    ->whereColumn('barcode_pv.product_id', 'p.id')
+                                    ->where('pvb.barcode', $product_barcode);
+                            });
+                    });
                 }
             })
             ->groupBy('p.id');  // Group by product ID to handle the GROUP_CONCAT
@@ -1451,7 +1471,7 @@ class ProductsApiController extends Controller
 
             $i = 0;
             foreach ($products as $row) {
-                $variants = ProductVariant::with(['product.tax', 'unit', 'images'])
+                $variants = ProductVariant::with(['product.tax', 'unit', 'images', 'barcodes'])
                     ->where('product_id', $row['id'])
                     ->get();
 

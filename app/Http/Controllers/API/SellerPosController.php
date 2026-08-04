@@ -312,12 +312,13 @@ class SellerPosController extends Controller
             $sellerId = auth()->user()->seller->id;
             $perPage = $request->per_page ?? 9;
             $page = $request->page ?? 1;
+            $search = trim((string) $request->input('search', ''));
 
             $productQuery = Product::select('products.*')
                 ->where('products.seller_id', $sellerId)
                 ->where('products.status', 1)
                 ->with(['variants' => function ($query) {
-                    $query->with('unit'); // Remove status filter to show all variants including sold out ones
+                    $query->with(['unit', 'barcodes']); // Show all variants, including sold-out variants.
                 }]);
 
             // Apply category filter if provided
@@ -326,12 +327,15 @@ class SellerPosController extends Controller
             }
 
             // Apply search filter if provided
-            if ($request->search) {
-                $search = $request->search;
+            if ($search !== '') {
                 $productQuery->where(function ($query) use ($search) {
                     $query->where('products.name', 'like', '%' . $search . '%')
                         ->orWhere('products.slug', 'like', '%' . $search . '%')
-                        ->orWhere('products.tags', 'like', '%' . $search . '%');
+                        ->orWhere('products.tags', 'like', '%' . $search . '%')
+                        ->orWhere('products.barcode', $search)
+                        ->orWhereHas('variants.barcodes', function ($barcodeQuery) use ($search) {
+                            $barcodeQuery->where('barcode', $search);
+                        });
                 });
             }
 
@@ -340,8 +344,13 @@ class SellerPosController extends Controller
                 ->paginate($perPage, ['*'], 'page', $page);
 
             // Transform products for POS display
-            $transformedProducts = $products->map(function ($product) {
+            $transformedProducts = $products->map(function ($product) use ($search) {
                 $variant = $product->variants->isNotEmpty() ? $product->variants[0] : null;
+                $matchedVariant = $search !== ''
+                    ? $product->variants->first(function ($productVariant) use ($search) {
+                        return $productVariant->barcodes->contains('barcode', $search);
+                    })
+                    : null;
 
                 return [
                     'id' => $product->id,
@@ -349,6 +358,7 @@ class SellerPosController extends Controller
                     'description' => $product->description,
                     'image_url' => CommonHelper::getImage($product->image),
                     'is_unlimited_stock' => (bool)$product->is_unlimited_stock,
+                    'matched_variant_id' => $matchedVariant ? $matchedVariant->id : null,
                     'variants' => $product->variants->map(function ($variant) use ($product) {
                         return [
                             'id' => $variant->id,
@@ -356,6 +366,7 @@ class SellerPosController extends Controller
                             'measurement_unit_name' => $variant->unit ? $variant->unit->short_code : '',
                             'price' => $variant->price,
                             'discounted_price' => $variant->discounted_price,
+                            'barcodes' => $variant->barcodes->pluck('barcode')->values(),
                             'stock' => $variant->stock,
                             'status' => $variant->status
                         ];

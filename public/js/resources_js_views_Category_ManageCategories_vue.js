@@ -65,6 +65,12 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     modal_title: function modal_title() {
       var title = this.id ? __('edit_category') : __('add_category');
       return title;
+    },
+    defaultLanguage: function defaultLanguage() {
+      var _this = this;
+      return this.languages.find(function (language) {
+        return Number(language.id) === Number(_this.defaultLanguageId);
+      }) || null;
     }
   },
   methods: {
@@ -73,42 +79,42 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       return this.validateDefaultLanguage();
     },
     deferDataLoad: function deferDataLoad() {
-      var _this = this;
+      var _this2 = this;
       this.isLoadingData = true;
 
       // Load languages and parent categories in parallel
       Promise.all([this.fetchActiveLanguages(), this.getParentCategories()]).then(function () {
         // Find default language
-        var defaultLang = _this.languages.find(function (lang) {
+        var defaultLang = _this2.languages.find(function (lang) {
           return lang.is_default === 1;
         });
         if (defaultLang) {
-          _this.defaultLanguageId = defaultLang.id;
+          _this2.defaultLanguageId = defaultLang.id;
         }
 
         // Initialize translations efficiently (single operation)
-        _this.initializeTranslations();
+        _this2.initializeTranslations();
 
         // Load translations only if editing
-        if (_this.id) {
-          return _this.loadCategoryWithTranslations();
+        if (_this2.id) {
+          return _this2.loadCategoryWithTranslations();
         } else {
           // For new category, no translations to load
-          _this.isLoadingData = false;
+          _this2.isLoadingData = false;
         }
       })["catch"](function (error) {
         console.error('Error loading data:', error);
-        _this.isLoadingData = false;
+        _this2.isLoadingData = false;
       });
     },
     fetchActiveLanguages: function fetchActiveLanguages() {
-      var _this2 = this;
+      var _this3 = this;
       return new Promise(function (resolve, reject) {
         // Fetch from API directly - no caching
-        axios__WEBPACK_IMPORTED_MODULE_0___default().get(_this2.$apiUrl + '/active_languages').then(function (response) {
+        axios__WEBPACK_IMPORTED_MODULE_0___default().get(_this3.$apiUrl + '/active_languages').then(function (response) {
           if (response.data.data) {
-            _this2.languages = response.data.data;
-            resolve(_this2.languages);
+            _this3.languages = response.data.data;
+            resolve(_this3.languages);
           } else {
             reject(new Error('No languages found'));
           }
@@ -133,7 +139,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       this.translations = allTranslations;
     },
     loadCategoryWithTranslations: function loadCategoryWithTranslations() {
-      var _this3 = this;
+      var _this4 = this;
       return axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/categories', {
         params: {
           id: this.id
@@ -144,18 +150,18 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           var categories = Array.isArray(response.data.data) ? response.data.data : [response.data.data];
           var category = categories.length > 0 ? categories[0] : null;
           if (!category) {
-            _this3.isLoadingData = false;
+            _this4.isLoadingData = false;
             return;
           }
 
           // Load base data
-          _this3.slug = category.slug;
-          _this3.parent_id = category.parent_id;
-          _this3.image_url = category.image_url;
-          _this3.status = category.status;
+          _this4.slug = category.slug;
+          _this4.parent_id = category.parent_id;
+          _this4.image_url = category.image_url;
+          _this4.status = category.status;
 
           // Load translations from the category object
-          var updatedTranslations = _objectSpread({}, _this3.translations);
+          var updatedTranslations = _objectSpread({}, _this4.translations);
           if (category.translations && Array.isArray(category.translations)) {
             category.translations.forEach(function (trans) {
               var langId = trans.language_id;
@@ -168,7 +174,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               };
             });
           }
-          _this3.languages.forEach(function (language) {
+          _this4.languages.forEach(function (language) {
             if (!updatedTranslations[language.id] || !updatedTranslations[language.id].name) {
               if (language.is_default) {
                 updatedTranslations[language.id] = {
@@ -183,16 +189,16 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           });
 
           // Single assignment for reactivity
-          _this3.translations = updatedTranslations;
+          _this4.translations = updatedTranslations;
         }
-        _this3.isLoadingData = false;
+        _this4.isLoadingData = false;
       })["catch"](function (error) {
-        _this3.isLoadingData = false;
+        _this4.isLoadingData = false;
         throw error;
       });
     },
     createSlug: function createSlug() {
-      var _this4 = this;
+      var _this5 = this;
       if (!this.defaultLanguageId) return;
       var name = this.translations[this.defaultLanguageId].name;
       if (name !== "") {
@@ -201,9 +207,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         // Check for uniqueness
         axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + "/categories/check-slug/".concat(slug)).then(function (response) {
           if (response.data.unique) {
-            _this4.slug = slug;
+            _this5.slug = slug;
           } else {
-            _this4.slug = slug + '-' + response.data.count;
+            _this5.slug = slug + '-' + response.data.count;
           }
         })["catch"](function (error) {
           console.error('Error checking slug uniqueness: ' + error);
@@ -211,13 +217,13 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }
     },
     getParentCategories: function getParentCategories() {
-      var _this5 = this;
+      var _this6 = this;
       return axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/categories/options', {
         params: {
           exclude_id: this.record ? this.record.id : 0
         }
       }).then(function (response) {
-        _this5.parent_categories = response.data;
+        _this6.parent_categories = response.data;
       });
     },
     showModal: function showModal() {
@@ -304,10 +310,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       return true;
     },
     triggerFileInput: function triggerFileInput() {
-      var _this6 = this;
+      var _this7 = this;
       // Use nextTick to ensure DOM is ready
       this.$nextTick(function () {
-        var fileInput = _this6.$refs.file_image;
+        var fileInput = _this7.$refs.file_image;
         if (fileInput) {
           // Handle both direct element and array of elements
           var element = Array.isArray(fileInput) ? fileInput[0] : fileInput;
@@ -319,16 +325,16 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     },
     // Switches to default language tab so user sees the required fields. Caller shows the specific error.
     switchToDefaultLanguageTab: function switchToDefaultLanguageTab() {
-      var _this7 = this;
+      var _this8 = this;
       var defaultLangIndex = this.languages.findIndex(function (lang) {
-        return lang.id === _this7.defaultLanguageId;
+        return lang.id === _this8.defaultLanguageId;
       });
       if (defaultLangIndex !== -1) {
         this.activeLanguageTab = defaultLangIndex;
       }
     },
     saveRecord: function saveRecord() {
-      var _this8 = this;
+      var _this9 = this;
       if (!this.validateDefaultLanguage()) return;
       var vm = this;
       this.isLoading = true;
@@ -346,12 +352,12 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       this.languages.forEach(function (language) {
         if (language.is_default) return; // Skip default, already added
 
-        var translation = _this8.translations[language.id];
-        var hasData = _this8.translatableFields.some(function (field) {
+        var translation = _this9.translations[language.id];
+        var hasData = _this9.translatableFields.some(function (field) {
           var val = translation[field];
           return val != null && String(val).trim() !== '';
         });
-        if (hasData || _this8.id) {
+        if (hasData || _this9.id) {
           languagesToSave.push(language);
         }
       });
@@ -363,7 +369,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           return _regenerator().w(function (_context) {
             while (1) switch (_context.p = _context.n) {
               case 0:
-                categoryId = _this8.id; // For edit mode
+                categoryId = _this9.id; // For edit mode
                 i = 0;
               case 1:
                 if (!(i < languagesToSave.length)) {
@@ -371,15 +377,15 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
                   break;
                 }
                 language = languagesToSave[i];
-                translation = _this8.translations[language.id];
+                translation = _this9.translations[language.id];
                 formData = new FormData(); // Basic fields
                 if (categoryId) {
                   formData.append('id', categoryId);
                 }
                 formData.append('language_id', language.id);
-                formData.append('slug', _this8.slug);
-                formData.append('status', _this8.status);
-                formData.append('parent_id', parseInt(_this8.parent_id) || 0);
+                formData.append('slug', _this9.slug);
+                formData.append('status', _this9.status);
+                formData.append('parent_id', parseInt(_this9.parent_id) || 0);
 
                 // Translatable fields
                 formData.append('name', translation.name || '');
@@ -389,12 +395,12 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
                 formData.append('meta_description', translation.meta_description || '');
 
                 // Image (only send with default language)
-                if (language.is_default && _this8.image) {
-                  formData.append('image', _this8.image);
+                if (language.is_default && _this9.image) {
+                  formData.append('image', _this9.image);
                 }
-                url = _this8.$apiUrl + '/categories/save';
+                url = _this9.$apiUrl + '/categories/save';
                 if (categoryId) {
-                  url = _this8.$apiUrl + '/categories/update';
+                  url = _this9.$apiUrl + '/categories/update';
                 }
                 _context.p = 2;
                 _context.n = 3;
@@ -456,10 +462,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     }
   },
   mounted: function mounted() {
-    var _this9 = this;
+    var _this0 = this;
     this.showModal();
     this.$nextTick(function () {
-      _this9.deferDataLoad();
+      _this0.deferDataLoad();
     });
   }
 });
@@ -809,93 +815,15 @@ var render = function render() {
         return _vm.saveRecord.apply(null, arguments);
       }
     }
-  }, [_vm.languages.length > 0 ? _c("b-tabs", {
-    attrs: {
-      "content-class": "mt-3",
-      "nav-class": _vm.languages.length === 1 ? "d-none" : ""
-    },
-    model: {
-      value: _vm.activeLanguageTab,
-      callback: function callback($$v) {
-        _vm.activeLanguageTab = $$v;
-      },
-      expression: "activeLanguageTab"
-    }
-  }, _vm._l(_vm.languages, function (language) {
-    return _c("b-tab", {
-      key: language.id,
-      attrs: {
-        title: language.name,
-        lazy: ""
-      },
-      scopedSlots: _vm._u([{
-        key: "title",
-        fn: function fn() {
-          return [_c("span", {
-            "class": {
-              "text-primary font-weight-bold": language.is_default
-            }
-          }, [_vm._v("\n                        " + _vm._s(language.name) + "\n                    ")])];
-        },
-        proxy: true
-      }], null, true)
-    }, [_vm._v(" "), language.is_default && _vm.languages.length > 1 ? _c("div", {
-      staticClass: "mb-3"
-    }, [_c("b-button", {
-      directives: [{
-        name: "b-tooltip",
-        rawName: "v-b-tooltip.hover",
-        modifiers: {
-          hover: true
-        }
-      }],
-      staticClass: "mr-2",
-      attrs: {
-        size: "sm",
-        variant: "outline-primary",
-        title: _vm.__("only_empty_fields_will_be_translated_existing_content_will_not_be_changed"),
-        disabled: _vm.loadingEmpty
-      },
-      on: {
-        click: function click($event) {
-          return _vm.translateEmpty(language);
-        }
-      }
-    }, [!_vm.loadingEmpty ? _c("span", [_vm._v(_vm._s(_vm.__("translate_empty_fields")))]) : _c("b-spinner", {
-      attrs: {
-        small: ""
-      }
-    })], 1), _vm._v(" "), _c("b-button", {
-      directives: [{
-        name: "b-tooltip",
-        rawName: "v-b-tooltip.hover",
-        modifiers: {
-          hover: true
-        }
-      }],
-      attrs: {
-        size: "sm",
-        variant: "outline-danger",
-        title: _vm.__("all_fields_will_be_translated_and_existing_content_will_be_overwritten"),
-        disabled: _vm.loadingOverwrite
-      },
-      on: {
-        click: function click($event) {
-          return _vm.translateOverwrite(language);
-        }
-      }
-    }, [!_vm.loadingOverwrite ? _c("span", [_vm._v(_vm._s(_vm.__("translate_and_overwrite")))]) : _c("b-spinner", {
-      attrs: {
-        small: ""
-      }
-    })], 1)], 1) : _vm._e(), _vm._v(" "), _c("div", {
+  }, [_vm.defaultLanguage ? _c("div", [_vm._l([_vm.defaultLanguage], function (language) {
+    return [_c("div", {
       staticClass: "row"
     }, [_c("div", {
       staticClass: "form-group",
       "class": {
         required: language.is_default
       }
-    }, [_c("label", [_vm._v(_vm._s(_vm.parent_id > 0 ? _vm.__("subcategory_name") : _vm.__("category_name")))]), _vm._v(" "), language.is_default ? _c("i", {
+    }, [_c("label", [_vm._v(_vm._s(_vm.parent_id > 0 ? _vm.__("sub category name") : _vm.__("category name")))]), _vm._v(" "), language.is_default ? _c("i", {
       staticClass: "text-danger"
     }, [_vm._v("*")]) : _vm._e(), _vm._v(" "), _c("input", {
       directives: [{
@@ -907,7 +835,7 @@ var render = function render() {
       staticClass: "form-control",
       attrs: {
         type: "text",
-        placeholder: _vm.parent_id > 0 ? _vm.__("enter_subcategory_name") : _vm.__("enter_category_name")
+        placeholder: _vm.parent_id > 0 ? _vm.__("enter sub category name") : _vm.__("enter_category_name")
       },
       domProps: {
         value: _vm.translations[language.id].name
@@ -1096,8 +1024,8 @@ var render = function render() {
         },
         expression: "status"
       }
-    })], 1)]) : _vm._e()])]);
-  }), 1) : _c("div", {
+    })], 1)]) : _vm._e()])];
+  })], 2) : _c("div", {
     staticClass: "text-center p-5"
   }, [_c("b-spinner", {
     attrs: {
@@ -1110,7 +1038,7 @@ var render = function render() {
     staticStyle: {
       display: "none"
     }
-  })], 1)]);
+  })])]);
 };
 var staticRenderFns = [];
 render._withStripped = true;

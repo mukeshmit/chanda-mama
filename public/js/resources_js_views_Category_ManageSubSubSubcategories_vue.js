@@ -67,7 +67,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   },
   computed: {
     modal_title: function modal_title() {
-      var title = this.id ? 'Edit Sub Sub SubCategory' : 'Add Sub Sub SubCategory';
+      var title = this.id ? 'Edit Sub Sub Sub Category' : 'Add Sub Sub Sub Category';
       return title;
     },
     defaultLanguage: function defaultLanguage() {
@@ -376,17 +376,17 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }
       if (Number(this.parent_category_id) === 0) {
         this.switchToDefaultLanguageTab();
-        this.showError(__('please_select_parent_category'));
+        this.showError(__('please select parent category'));
         return false;
       }
       if (Number(this.parent_subcategory_id) === 0) {
         this.switchToDefaultLanguageTab();
-        this.showError('Please select SubCategory');
+        this.showError('Please select Sub Category');
         return false;
       }
       if (Number(this.parent_id) === 0) {
         this.switchToDefaultLanguageTab();
-        this.showError('Please select Sub SubCategory');
+        this.showError('Please select Sub Sub Category');
         return false;
       }
       return true;
@@ -536,7 +536,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
                 };
               }(); // Execute sequential save
               saveSequentially().then(function () {
-                var message = 'Sub Sub SubCategory saved successfully';
+                var message = 'Sub Sub Sub Category saved successfully';
                 // Emit to parent only (parent shows toast once)
                 vm.$emit('saved', message);
                 // Notify other pages to refresh list only (no toast)
@@ -620,11 +620,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         "class": 'text-center'
       }, {
         key: 'parent_subcategory',
-        label: this.$titleLabel('parent_subcategory'),
+        label: 'Sub Category',
         "class": 'text-center'
       }, {
         key: 'parent_sub_subcategory',
-        label: this.$titleLabel('parent_sub_subcategory'),
+        label: 'Sub Sub Category',
         "class": 'text-center'
       }, {
         key: 'image',
@@ -1048,7 +1048,7 @@ var render = function render() {
       attrs: {
         value: "0"
       }
-    }, [_vm._v(_vm._s(_vm.__("select_parent_category")))]), _vm._v(" "), _vm._l(_vm.parent_categories, function (category) {
+    }, [_vm._v(_vm._s(_vm.__("select parent category")))]), _vm._v(" "), _vm._l(_vm.parent_categories, function (category) {
       return _c("option", {
         key: category.id,
         domProps: {
@@ -1057,7 +1057,7 @@ var render = function render() {
       }, [_vm._v("\n                                " + _vm._s(category.name) + "\n                            ")]);
     })], 2)]) : _vm._e(), _vm._v(" "), language.is_default ? _c("div", {
       staticClass: "form-group"
-    }, [_c("label", [_vm._v("SubCategory"), _c("i", {
+    }, [_c("label", [_vm._v("Sub Category"), _c("i", {
       staticClass: "text-danger"
     }, [_vm._v("*")])]), _vm._v(" "), _c("select", {
       directives: [{
@@ -1085,7 +1085,7 @@ var render = function render() {
       attrs: {
         value: "0"
       }
-    }, [_vm._v("Select SubCategory")]), _vm._v(" "), _vm._l(_vm.filteredParentSubcategories, function (subcategory) {
+    }, [_vm._v("Select Sub Category")]), _vm._v(" "), _vm._l(_vm.filteredParentSubcategories, function (subcategory) {
       return _c("option", {
         key: subcategory.id,
         domProps: {
@@ -1094,7 +1094,7 @@ var render = function render() {
       }, [_vm._v("\n                                " + _vm._s(subcategory.name) + "\n                            ")]);
     })], 2)]) : _vm._e(), _vm._v(" "), language.is_default ? _c("div", {
       staticClass: "form-group"
-    }, [_c("label", [_vm._v("Sub SubCategory"), _c("i", {
+    }, [_c("label", [_vm._v("Sub Sub Category"), _c("i", {
       staticClass: "text-danger"
     }, [_vm._v("*")])]), _vm._v(" "), _c("select", {
       directives: [{
@@ -1122,7 +1122,7 @@ var render = function render() {
       attrs: {
         value: "0"
       }
-    }, [_vm._v("Select Sub SubCategory")]), _vm._v(" "), _vm._l(_vm.filteredParentSubSubcategories, function (subSubcategory) {
+    }, [_vm._v("Select Sub Sub Category")]), _vm._v(" "), _vm._l(_vm.filteredParentSubSubcategories, function (subSubcategory) {
       return _c("option", {
         key: subSubcategory.id,
         domProps: {
@@ -1134,7 +1134,7 @@ var render = function render() {
       "class": {
         required: language.is_default
       }
-    }, [_c("label", [_vm._v("Sub Sub SubCategory Name")]), _vm._v(" "), language.is_default ? _c("i", {
+    }, [_c("label", [_vm._v("Sub Sub Sub Category Name")]), _vm._v(" "), language.is_default ? _c("i", {
       staticClass: "text-danger"
     }, [_vm._v("*")]) : _vm._e(), _vm._v(" "), _c("input", {
       directives: [{
@@ -1146,7 +1146,7 @@ var render = function render() {
       staticClass: "form-control",
       attrs: {
         type: "text",
-        placeholder: "Enter Sub Sub SubCategory Name"
+        placeholder: "Enter Sub Sub Sub Category Name"
       },
       domProps: {
         value: _vm.translations[language.id].name
@@ -1401,34 +1401,7 @@ var render = function render() {
     staticClass: "figma-main-section-card"
   }, [_c("div", {
     staticClass: "card-body p-0"
-  }, [!_vm.hasParentCategories ? _c("div", {
-    staticClass: "alert alert-warning m-3"
-  }, [_c("i", {
-    staticClass: "fa fa-exclamation-triangle"
-  }), _vm._v(" "), _c("router-link", {
-    staticClass: "btn btn-primary btn-sm ml-2",
-    attrs: {
-      to: "/manage_categories/create"
-    }
-  }, [_vm._v("\n                            " + _vm._s(_vm.__("create_category_first")) + "\n                        ")])], 1) : !_vm.hasSubcategories ? _c("div", {
-    staticClass: "alert alert-warning m-3"
-  }, [_c("i", {
-    staticClass: "fa fa-exclamation-triangle"
-  }), _vm._v("\n                        " + _vm._s(_vm.__("no_subcategories_found")) + "\n                        "), _c("router-link", {
-    staticClass: "btn btn-primary btn-sm ml-2",
-    attrs: {
-      to: "/manage_subcategories/create"
-    }
-  }, [_vm._v("\n                            " + _vm._s(_vm.__("create_subcategory_first")) + "\n                        ")])], 1) : !_vm.hasSubSubcategories ? _c("div", {
-    staticClass: "alert alert-warning m-3"
-  }, [_c("i", {
-    staticClass: "fa fa-exclamation-triangle"
-  }), _vm._v("\n                        " + _vm._s(_vm.__("no_sub_subcategories_found")) + "\n                        "), _c("router-link", {
-    staticClass: "btn btn-primary btn-sm ml-2",
-    attrs: {
-      to: "/manage_sub_subcategories/create"
-    }
-  }, [_vm._v("\n                            " + _vm._s(_vm.__("create_sub_subcategory_first")) + "\n                        ")])], 1) : _vm._e(), _vm._v(" "), _c("div", {
+  }, [_c("div", {
     staticClass: "d-flex justify-content-between align-items-center flex-wrap gap-2 figma-action-bar-row"
   }, [_c("div", {
     staticClass: "flex-grow-1"

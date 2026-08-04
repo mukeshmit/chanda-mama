@@ -866,7 +866,7 @@ export default {
                         // Initialize selectedVariantId for each product
                         products.forEach(product => {
                             if (product.variants && product.variants.length > 0) {
-                                product.selectedVariantId = product.variants[0].id;
+                                product.selectedVariantId = product.matched_variant_id || product.variants[0].id;
                             }
                         });
 

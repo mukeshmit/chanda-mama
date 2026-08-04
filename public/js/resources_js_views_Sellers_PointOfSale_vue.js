@@ -291,7 +291,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           // Initialize selectedVariantId for each product
           products.forEach(function (product) {
             if (product.variants && product.variants.length > 0) {
-              product.selectedVariantId = product.variants[0].id;
+              product.selectedVariantId = product.matched_variant_id || product.variants[0].id;
             }
           });
           _this3.products = products;

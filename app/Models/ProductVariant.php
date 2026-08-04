@@ -41,6 +41,11 @@ class ProductVariant extends Model
         return $this->hasMany(ProductImages::class, 'product_variant_id', 'id');
     }
 
+    public function barcodes()
+    {
+        return $this->hasMany(ProductVariantBarcode::class, 'product_variant_id', 'id');
+    }
+
     public function unit()
     {
 

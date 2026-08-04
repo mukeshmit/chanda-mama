@@ -186,7 +186,7 @@
                                 </template>
 
                                 <template #cell(barcode)="row">
-                                    {{ row.item.barcode || '-' }}
+                                    {{ row.item.variant_barcodes || row.item.barcode || '-' }}
                                 </template>
 
                                 <template #cell(category_name)="row">

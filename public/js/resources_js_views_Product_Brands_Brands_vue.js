@@ -247,11 +247,17 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
   computed: {
     modal_title: function modal_title() {
       return this.id ? __('edit_brand') : __('add_brand');
+    },
+    defaultLanguage: function defaultLanguage() {
+      var _this = this;
+      return this.languages.find(function (language) {
+        return Number(language.id) === Number(_this.defaultLanguageId);
+      }) || null;
     }
   },
   methods: {
     resetForm: function resetForm() {
-      var _this = this;
+      var _this2 = this;
       this.form = {};
       this.image = "";
       this.image_url = "";
@@ -260,7 +266,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 
       // re-init empty translations
       this.languages.forEach(function (lang) {
-        _this.$set(_this.form, lang.id, {
+        _this2.$set(_this2.form, lang.id, {
           name: ''
         });
       });
@@ -295,35 +301,35 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.image_url = URL.createObjectURL(file);
     },
     initializeForm: function initializeForm() {
-      var _this2 = this;
+      var _this3 = this;
       this.languages.forEach(function (lang) {
-        if (!_this2.form[lang.id]) {
-          _this2.$set(_this2.form, lang.id, {
+        if (!_this3.form[lang.id]) {
+          _this3.$set(_this3.form, lang.id, {
             name: ''
           });
         }
       });
     },
     loadLanguages: function loadLanguages() {
-      var _this3 = this;
+      var _this4 = this;
       return axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/active_languages').then(function (res) {
-        _this3.languages = res.data.data;
-        var defaultLang = _this3.languages.find(function (l) {
+        _this4.languages = res.data.data;
+        var defaultLang = _this4.languages.find(function (l) {
           return l.is_default;
         });
-        _this3.defaultLanguageId = (defaultLang === null || defaultLang === void 0 ? void 0 : defaultLang.id) || null;
+        _this4.defaultLanguageId = (defaultLang === null || defaultLang === void 0 ? void 0 : defaultLang.id) || null;
 
         // Initialize form for all languages
-        _this3.initializeForm();
+        _this4.initializeForm();
 
         // Load brand data if id exists (after languages are loaded)
-        if (_this3.id) {
-          return _this3.loadBrandWithTranslations();
+        if (_this4.id) {
+          return _this4.loadBrandWithTranslations();
         }
       });
     },
     loadBrandWithTranslations: function loadBrandWithTranslations() {
-      var _this4 = this;
+      var _this5 = this;
       if (!this.id) return;
 
       // Ensure languages are loaded first - if not, wait for them
@@ -340,30 +346,30 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           console.error('Brand not found');
           return;
         }
-        _this4.status = brand.status;
-        _this4.image_url = brand.image_url || "";
+        _this5.status = brand.status;
+        _this5.image_url = brand.image_url || "";
 
         // Ensure all languages are initialized first
-        _this4.initializeForm();
+        _this5.initializeForm();
 
         // Process translations with fallback logic
-        _this4.languages.forEach(function (lang) {
+        _this5.languages.forEach(function (lang) {
           var translation = Array.isArray(brand.translations) ? brand.translations.find(function (t) {
             return t.language_id === lang.id;
           }) : null;
           if (lang.is_default) {
             // For default language, use translation if exists, otherwise fallback to main table data
-            _this4.$set(_this4.form, lang.id, {
+            _this5.$set(_this5.form, lang.id, {
               name: translation && translation.name && translation.name.trim() !== '' ? translation.name : brand.name || ''
             });
           } else {
             // For other languages, use translation if exists, otherwise empty
-            _this4.$set(_this4.form, lang.id, {
+            _this5.$set(_this5.form, lang.id, {
               name: translation && translation.name ? translation.name : ''
             });
           }
         });
-        _this4.tabsKey++;
+        _this5.tabsKey++;
       });
     },
     validateDefaultLanguage: function validateDefaultLanguage() {
@@ -389,20 +395,20 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return true;
     },
     validateDefaultLanguageForTranslation: function validateDefaultLanguageForTranslation() {
-      var _this5 = this;
+      var _this6 = this;
       var form = this.$refs['my-form'];
       if (form && !form.reportValidity()) {
         this.$nextTick(function () {
-          return _this5.switchToDefaultLanguageTab();
+          return _this6.switchToDefaultLanguageTab();
         });
         return false;
       }
       return this.validateDefaultLanguage();
     },
     switchToDefaultLanguageTab: function switchToDefaultLanguageTab() {
-      var _this6 = this;
+      var _this7 = this;
       var defaultLangIndex = this.languages.findIndex(function (lang) {
-        return lang.id === _this6.defaultLanguageId;
+        return lang.id === _this7.defaultLanguageId;
       });
       if (defaultLangIndex !== -1) {
         this.showError(__('please_fill_default_language_required_fields'));
@@ -410,7 +416,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }
     },
     saveRecord: function saveRecord() {
-      var _this7 = this;
+      var _this8 = this;
       if (!this.validateDefaultLanguage()) return;
       var isUpdate = !!this.id; // check before saving
       this.isLoading = true;
@@ -421,7 +427,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       if (defaultLang) languagesToSave.push(defaultLang);
       this.languages.forEach(function (lang) {
         if (lang.is_default) return;
-        var name = _this7.form[lang.id].name;
+        var name = _this8.form[lang.id].name;
         if (name && name.trim() !== '') languagesToSave.push(lang);
       });
       var saveSequentially = /*#__PURE__*/function () {
@@ -430,7 +436,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           return _regenerator().w(function (_context) {
             while (1) switch (_context.n) {
               case 0:
-                brandId = _this7.id;
+                brandId = _this8.id;
                 _i = 0, _languagesToSave = languagesToSave;
               case 1:
                 if (!(_i < _languagesToSave.length)) {
@@ -441,10 +447,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 fd = new FormData();
                 if (brandId) fd.append('id', brandId);
                 fd.append('language_id', lang.id);
-                fd.append('name', _this7.form[lang.id].name);
-                fd.append('status', _this7.status);
-                if (lang.is_default && _this7.image) fd.append('image', _this7.image);
-                url = brandId ? _this7.$apiUrl + '/products/brands/update' : _this7.$apiUrl + '/products/brands/save';
+                fd.append('name', _this8.form[lang.id].name);
+                fd.append('status', _this8.status);
+                if (lang.is_default && _this8.image) fd.append('image', _this8.image);
+                url = brandId ? _this8.$apiUrl + '/products/brands/update' : _this8.$apiUrl + '/products/brands/save';
                 _context.n = 2;
                 return axios__WEBPACK_IMPORTED_MODULE_0___default().post(url, fd);
               case 2:
@@ -470,13 +476,13 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             while (1) switch (_context2.n) {
               case 0:
                 message = isUpdate ? __('brand_updated_successfully') : __('brand_saved_successfully');
-                _this7.$emit('saved', message);
-                _this7.id = brandId;
+                _this8.$emit('saved', message);
+                _this8.id = brandId;
                 _context2.n = 1;
-                return _this7.loadBrandWithTranslations();
+                return _this8.loadBrandWithTranslations();
               case 1:
-                _this7.tabsKey++;
-                _this7.hideModal();
+                _this8.tabsKey++;
+                _this8.hideModal();
               case 2:
                 return _context2.a(2);
             }
@@ -486,7 +492,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           return _ref2.apply(this, arguments);
         };
       }())["finally"](function () {
-        return _this7.isLoading = false;
+        return _this8.isLoading = false;
       });
     }
   },
@@ -832,75 +838,8 @@ var render = function render() {
         return _vm.saveRecord.apply(null, arguments);
       }
     }
-  }, [_vm.languages.length ? _c("b-tabs", {
-    key: _vm.tabsKey,
-    attrs: {
-      "content-class": "mt-3"
-    },
-    model: {
-      value: _vm.activeTab,
-      callback: function callback($$v) {
-        _vm.activeTab = $$v;
-      },
-      expression: "activeTab"
-    }
-  }, _vm._l(_vm.languages, function (lang, index) {
-    return _c("b-tab", {
-      key: lang.id,
-      attrs: {
-        title: lang.name,
-        active: lang.is_default == 1
-      }
-    }, [lang.is_default && _vm.languages.length > 1 ? _c("div", {
-      staticClass: "mb-3"
-    }, [_c("b-button", {
-      directives: [{
-        name: "b-tooltip",
-        rawName: "v-b-tooltip.hover",
-        modifiers: {
-          hover: true
-        }
-      }],
-      staticClass: "mr-2",
-      attrs: {
-        size: "sm",
-        variant: "outline-primary",
-        title: _vm.__("only_empty_fields_will_be_translated_existing_content_will_not_be_changed"),
-        disabled: _vm.loadingEmpty
-      },
-      on: {
-        click: function click($event) {
-          return _vm.translateEmpty(lang);
-        }
-      }
-    }, [!_vm.loadingEmpty ? _c("span", [_vm._v(_vm._s(_vm.__("translate_empty_fields")))]) : _c("b-spinner", {
-      attrs: {
-        small: ""
-      }
-    })], 1), _vm._v(" "), _c("b-button", {
-      directives: [{
-        name: "b-tooltip",
-        rawName: "v-b-tooltip.hover",
-        modifiers: {
-          hover: true
-        }
-      }],
-      attrs: {
-        size: "sm",
-        variant: "outline-danger",
-        title: _vm.__("all_fields_will_be_translated_and_existing_content_will_be_overwritten"),
-        disabled: _vm.loadingOverwrite
-      },
-      on: {
-        click: function click($event) {
-          return _vm.translateOverwrite(lang);
-        }
-      }
-    }, [!_vm.loadingOverwrite ? _c("span", [_vm._v(_vm._s(_vm.__("translate_and_overwrite")))]) : _c("b-spinner", {
-      attrs: {
-        small: ""
-      }
-    })], 1)], 1) : _vm._e(), _vm._v(" "), _c("div", {
+  }, [_vm.defaultLanguage ? _c("div", [_vm._l([_vm.defaultLanguage], function (lang) {
+    return [_c("div", {
       staticClass: "row"
     }, [_c("div", {
       staticClass: "form-group"
@@ -980,13 +919,13 @@ var render = function render() {
         },
         expression: "status"
       }
-    })], 1)]) : _vm._e()])]);
-  }), 1) : _vm._e(), _vm._v(" "), _c("button", {
+    })], 1)]) : _vm._e()])];
+  })], 2) : _vm._e(), _vm._v(" "), _c("button", {
     ref: "dummy_submit",
     staticStyle: {
       display: "none"
     }
-  })], 1)]);
+  })])]);
 };
 var staticRenderFns = [];
 render._withStripped = true;

@@ -680,9 +680,10 @@
 
                                         <div class="col-md-4">
                                             <div class="form-group mb-3">
-                                                <label>MRP ( {{ $currency }} ) <i class="text-danger">*</i></label>
-                                                <input type="number" min="0" step="any" class="form-control"
-                                                    placeholder="0.00" v-model="input.packet_price" required>
+                                                 <label>MRP ( {{ $currency }} ) <i class="text-danger">*</i></label>
+                                                 <input type="number" min="0" step="any" class="form-control"
+                                                    placeholder="0.00" v-model="input.packet_price"
+                                                    @input="syncPacketSalePriceFromDiscount(input)" required>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -697,9 +698,12 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group mb-3">
-                                                <label>Sale Price ( {{ $currency }} )</label>
-                                                <input type="text" class="form-control bg-light"
-                                                    :value="getPacketSalePrice(input)" readonly>
+                                                 <label>Sale Price ( {{ $currency }} )</label>
+                                                <input type="number" min="0" step="any" class="form-control"
+                                                    placeholder="0.00" v-model="input.packet_sale_price"
+                                                    @input="setPacketSalePrice(input)">
+                                                <span v-if="input.validationErrorSalePrice" class="error">{{
+                                                    input.validationErrorSalePrice }}</span>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -752,14 +756,38 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-12 hidden">
+                                        <div class="col-md-12">
+                                            <div class="form-group mb-3">
+                                                <label>Variant Barcodes <small class="text-muted">(Optional)</small></label>
+                                                <div class="row g-2 mb-2" v-for="(variantBarcode, barcodeIndex) in input.barcodes"
+                                                    :key="'packet_barcode_' + k + '_' + barcodeIndex">
+                                                    <div class="col-md-10">
+                                                        <input type="text" class="form-control" placeholder="Enter barcode"
+                                                            v-model="input.barcodes[barcodeIndex]">
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <button type="button" class="btn btn-danger w-100"
+                                                            @click="removeVariantBarcode(input, barcodeIndex)"
+                                                            :disabled="input.barcodes.length === 1">
+                                                            <i class="fa fa-minus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="btn btn-outline-primary btn-sm"
+                                                    @click="addVariantBarcode(input)">
+                                                    <i class="fa fa-plus"></i> Add Barcode
+                                                </button>
+                                                <p v-if="input.barcodeError" class="error mb-0">{{ input.barcodeError }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
                                             <div class="form-group">
-                                                <label>{{ __('variant_images') }}</label>
+                                                <label>{{ __('variant_images') }} <small class="text-muted">(Multiple allowed)</small></label>
                                                 <input type="file" accept="image/*" :ref="'packet_variant_images_' + k"
                                                     multiple class="file-input" v-on:change="variantImagesChanges(k)">
 
                                                 <div class="file-input-div bg-gray-100"
-                                                    @click="$refs['packet_variant_images_' + k][0].click()"
+                                                    @click="openVariantImagePicker(k, 'packet')"
                                                     @dragover="$dragoverFile" @dragleave="$dragleaveFile">
                                                     <label><i class="fa fa-cloud-upload-alt fa-2x"></i></label>
                                                     <label>{{ __('drop_files_here_or_click_to_upload') }}</label>
@@ -769,7 +797,7 @@
                                                 <p v-if="variantImageerror" class="error">{{ variantImageerror }}</p>
                                                 <div class="row">
                                                     <div class="col-md-2 image-container"
-                                                        v-for="(image, index) in variantImages[k]">
+                                                        v-for="(image, index) in (variantImages[k] || [])" :key="'packet_new_image_' + k + '_' + index">
                                                         <img class="img-thumbnail custom-image" :src="image.url"
                                                             title='Selected Variant Image'
                                                             alt='Selected Variant Image' />
@@ -778,8 +806,7 @@
 
                                                 <div class="row">
                                                     <div class="col-md-2 image-container"
-                                                        v-if="input.images.length !== 0"
-                                                        v-for="(image, index) in input.images">
+                                                        v-for="(image, index) in (input.images || [])" :key="'packet_image_' + image.id">
                                                         <img class="img-thumbnail custom-image"
                                                             :src="$storageUrl + image.image" title='Variant Image'
                                                             alt='Variant Image' />
@@ -858,9 +885,10 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group mb-3 loose_div">
-                                                    <label>MRP ( {{ $currency }} ): <i class="text-danger">*</i></label>
-                                                    <input type="number" step="any" min="0" class="form-control"
-                                                        placeholder="0.00" v-model="input.loose_price" required>
+                                                     <label>MRP ( {{ $currency }} ): <i class="text-danger">*</i></label>
+                                                     <input type="number" step="any" min="0" class="form-control"
+                                                        placeholder="0.00" v-model="input.loose_price"
+                                                        @input="syncLooseSalePriceFromDiscount(input)" required>
                                                 </div>
                                             </div>
 
@@ -873,9 +901,12 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group mb-3 loose_div">
-                                                    <label>Sale Price ( {{ $currency }} )</label>
-                                                    <input type="text" class="form-control bg-light"
-                                                        :value="getLooseSalePrice(input)" readonly>
+                                                     <label>Sale Price ( {{ $currency }} )</label>
+                                                    <input type="number" step="any" min="0" class="form-control"
+                                                        placeholder="0.00" v-model="input.loose_sale_price"
+                                                        @input="setLooseSalePrice(input)">
+                                                    <span v-if="input.validationErrorSalePriceLoose" class="error">{{
+                                                        input.validationErrorSalePriceLoose }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -911,25 +942,48 @@
                                                         :value="getLooseProfit(input)" readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-12 hidden">
+                                            <div class="col-md-12">
+                                                <div class="form-group mb-3 loose_div">
+                                                    <label>Variant Barcodes <small class="text-muted">(Optional)</small></label>
+                                                    <div class="row g-2 mb-2" v-for="(variantBarcode, barcodeIndex) in input.barcodes"
+                                                        :key="'loose_barcode_' + k + '_' + barcodeIndex">
+                                                        <div class="col-md-10">
+                                                            <input type="text" class="form-control" placeholder="Enter barcode"
+                                                                v-model="input.barcodes[barcodeIndex]">
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <button type="button" class="btn btn-danger w-100"
+                                                                @click="removeVariantBarcode(input, barcodeIndex)"
+                                                                :disabled="input.barcodes.length === 1">
+                                                                <i class="fa fa-minus"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <button type="button" class="btn btn-outline-primary btn-sm"
+                                                        @click="addVariantBarcode(input)">
+                                                        <i class="fa fa-plus"></i> Add Barcode
+                                                    </button>
+                                                    <p v-if="input.barcodeError" class="error mb-0">{{ input.barcodeError }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
                                                 <div class="form-group loose_div">
-                                                    <label>{{ __('variant_images') }}</label>
+                                                    <label>{{ __('variant_images') }} <small class="text-muted">(Multiple allowed)</small></label>
                                                     <!--                                                @drop="dropFileStoreLogo"               -->
                                                     <input type="file" accept="image/*"
                                                         :ref="'loose_variant_images_' + k" multiple class="file-input"
                                                         v-on:change="variantImagesChanges(k)" @dragover="$dragoverFile"
                                                         @dragleave="$dragleaveFile">
                                                     <div class="file-input-div bg-gray-100"
-                                                        @click="$refs['loose_variant_images_' + k][0].click()">
+                                                        @click="openVariantImagePicker(k, 'loose')">
                                                         <label><i class="fa fa-cloud-upload-alt fa-2x"></i></label>
                                                         <label>{{ __('drop_files_here_or_click_to_upload') }}</label>
                                                     </div>
                                                     <span class="text text-primary">{{ __('please_choose_square_image_of_larger_than_350px_350px_and_smaller_than_550px_550px') }}</span>
 
                                                     <div class="row">
-                                                        <div class="col-md-2 image-container"
-                                                            v-if="input.loose_images.length !== 0"
-                                                            v-for="(image, index) in input.loose_images">
+                                                    <div class="col-md-2 image-container"
+                                                        v-for="(image, index) in (input.loose_images || [])" :key="'loose_image_' + image.id">
                                                             <img class="img-thumbnail custom-image"
                                                                 :src="$storageUrl + image.image" title='Variant Image'
                                                                 alt='Variant Image' />
@@ -942,9 +996,8 @@
                                                     </div>
 
                                                     <div class="row">
-                                                        <div class="col-md-4 image-container"
-                                                            v-if="variantImages[k].length !== 0"
-                                                            v-for="(image, index) in variantImages[k]">
+                                                    <div class="col-md-4 image-container"
+                                                        v-for="(image, index) in (variantImages[k] || [])" :key="'loose_new_image_' + k + '_' + index">
                                                             <img class="img-thumbnail custom-image" :src="image.url"
                                                                 title='Selected Variant Image'
                                                                 alt='Selected Variant Image' />
@@ -1319,14 +1372,20 @@ export default {
                 packet_stock_unit_id: '',
                 discount_percentage: 0,
                 discounted_price: 0,
+                packet_sale_price: '',
                 discount_mode: 'percent',
                 loose_purchase_price: 0,
                 loose_discount_percentage: 0,
                 loose_discounted_price: 0,
+                loose_sale_price: '',
                 loose_discount_mode: 'percent',
                 color_variant: '',
                 expiry_date_from: '',
                 expiry_date_to: '',
+                barcodes: [''],
+                barcodeError: '',
+                images: [],
+                loose_images: [],
             }],
 
             image: null,
@@ -1875,22 +1934,25 @@ export default {
                 packet_stock_unit_id: '',
                 discount_percentage: 0,
                 discounted_price: 0,
+                packet_sale_price: '',
                 discount_mode: 'percent',
                 loose_purchase_price: 0,
                 loose_discount_percentage: 0,
                 loose_discounted_price: 0,
+                loose_sale_price: '',
                 loose_discount_mode: 'percent',
                 color_variant: '',
                 expiry_date_from: '',
                 expiry_date_to: '',
+                barcodes: [''],
+                barcodeError: '',
+                images: [],
+                loose_images: [],
             };
         },
         addRow() {
-            if (this.type === 'packet') {
-                this.inputs.push(this.getBlankVariantInput())
-            } else {
-                this.inputs.push(this.getBlankVariantInput())
-            }
+            this.inputs.push(this.getBlankVariantInput());
+            Vue.set(this.variantImages, this.inputs.length - 1, []);
         },
         remove(index) {
             let variant_id = (this.inputs[index].id) ? this.inputs[index].id : "";
@@ -2040,46 +2102,102 @@ export default {
             fileInput.value = "";
         },
 
+        openVariantImagePicker(index, type) {
+            const ref = this.$refs[type + '_variant_images_' + index];
+            const input = Array.isArray(ref) ? ref[0] : ref;
+            if (input) input.click();
+        },
         variantImagesChanges(index) {
-            let tempImages = [];
+            const refName = this.type + '_variant_images_' + index;
+            const ref = this.$refs[refName];
+            const fileInput = Array.isArray(ref) ? ref[0] : ref;
+            const files = fileInput && fileInput.files ? Array.from(fileInput.files) : [];
+            const validExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            const maxSizeInBytes = 5 * 1024 * 1024;
+            const tempImages = [];
+
+            this.variantImageerror = null;
             Vue.set(this.variantImages, index, []);
 
-            if (this.type === 'packet') {
-                const validExtensions = ['jpg', 'jpeg', 'png', 'gif']; // Add more valid extensions as needed
-                const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB (adjust the size limit as needed)
+            for (const file of files) {
+                const extension = file.name.split('.').pop().toLowerCase();
 
-                for (var i = 0; i < this.$refs['packet_variant_images_' + index][0].files.length; i++) {
-                    let image = {};
-                    let file = this.$refs['packet_variant_images_' + index][0].files[i];
-                    let extension = file.name.split('.').pop().toLowerCase();
-
-                    // Check if the file extension is valid
-                    if (!validExtensions.includes(extension)) {
-                        this.variantImageerror = "Invalid file type. Please upload a JPEG, PNG, JPG,  GIF or WEBP image.";
-                        return; // Skip this file and proceed to the next one
-                    }
-
-                    // Check if the file size is within the allowed limit
-                    if (file.size > maxSizeInBytes) {
-                        this.variantImageerror = "File size exceeds the limit of 5 MB.";
-                        return; // Skip this file and proceed to the next one
-                    }
-
-                    image.url = URL.createObjectURL(file);
-                    image.name = file.name;
-                    tempImages.push(image);
-                    Vue.set(this.variantImages, index, tempImages);
+                if (!validExtensions.includes(extension)) {
+                    this.variantImageerror = "Invalid file type. Please upload a JPEG, PNG, JPG, GIF or WEBP image.";
+                    fileInput.value = '';
+                    return;
                 }
-            } else {
-                for (var i = 0; i < this.$refs['loose_variant_images_' + index][0].files.length; i++) {
-                    let image = {};
-                    let file = this.$refs['loose_variant_images_' + index][0].files[i];
-                    image.url = URL.createObjectURL(file);
-                    image.name = file.name;
-                    tempImages.push(image);
-                    Vue.set(this.variantImages, index, tempImages);
+
+                if (file.size > maxSizeInBytes) {
+                    this.variantImageerror = "Each variant image must be 5 MB or smaller.";
+                    fileInput.value = '';
+                    return;
+                }
+
+                tempImages.push({
+                    url: URL.createObjectURL(file),
+                    name: file.name,
+                });
+            }
+
+            Vue.set(this.variantImages, index, tempImages);
+        },
+        addVariantBarcode(input) {
+            if (!Array.isArray(input.barcodes)) {
+                Vue.set(input, 'barcodes', ['']);
+                return;
+            }
+            input.barcodes.push('');
+        },
+        removeVariantBarcode(input, index) {
+            if (Array.isArray(input.barcodes) && input.barcodes.length > 1) {
+                input.barcodes.splice(index, 1);
+            }
+        },
+        normalizeVariantBarcodes(input) {
+            return (Array.isArray(input.barcodes) ? input.barcodes : [])
+                .map(barcode => String(barcode || '').trim())
+                .filter(barcode => barcode !== '');
+        },
+        validateVariantDetails() {
+            const barcodePattern = /^[A-Za-z0-9-]+$/;
+            const seenBarcodes = new Set();
+            const productBarcode = String(this.barcode || '').trim().toLowerCase();
+
+            for (const input of this.inputs) {
+                Vue.set(input, 'barcodeError', '');
+
+                const mrp = this.toNumber(this.type === 'packet' ? input.packet_price : input.loose_price);
+                const salePrice = this.toNumber(this.type === 'packet' ? input.packet_sale_price : input.loose_sale_price);
+                const saleErrorKey = this.type === 'packet'
+                    ? 'validationErrorSalePrice'
+                    : 'validationErrorSalePriceLoose';
+
+                if (salePrice < 0 || salePrice > mrp) {
+                    Vue.set(input, saleErrorKey, 'Sale Price must be between 0 and MRP.');
+                    this.showError('Sale Price must be between 0 and MRP.');
+                    return false;
+                }
+
+                Vue.set(input, saleErrorKey, null);
+
+                for (const barcode of this.normalizeVariantBarcodes(input)) {
+                    const normalized = barcode.toLowerCase();
+                    if (!barcodePattern.test(barcode)) {
+                        Vue.set(input, 'barcodeError', 'Use only letters, numbers, and hyphens in barcodes.');
+                        this.showError(input.barcodeError);
+                        return false;
+                    }
+                    if (normalized === productBarcode || seenBarcodes.has(normalized)) {
+                        Vue.set(input, 'barcodeError', 'Every product and variant barcode must be unique.');
+                        this.showError(input.barcodeError);
+                        return false;
+                    }
+                    seenBarcodes.add(normalized);
                 }
             }
+
+            return true;
         },
 
         getSellerCategories() {
@@ -2248,8 +2366,15 @@ export default {
         },
         validateBarcode() {
             const barcodePattern = /^[A-Za-z0-9-]+$/;
+            const barcode = String(this.barcode || '').trim();
 
-            if (barcodePattern.test(this.barcode)) {
+            if (barcode === '') {
+                this.validationBarcodeMessage = '';
+                this.isBarcodeValid = false;
+                return;
+            }
+
+            if (barcodePattern.test(barcode)) {
                 this.validationBarcodeMessage = '';
                 this.isBarcodeValid = true;
             } else {
@@ -2389,6 +2514,7 @@ export default {
                                     'packet_measurement': item.measurement,
                                     'packet_price': item.price,
                                     'packet_purchase_price': item.purchase_price,
+                                    'packet_sale_price': vm.getStoredSalePrice(item.price, item.discounted_price),
                                     'discounted_price': vm.getDiscountAmountFromSalePrice(item.price, item.discounted_price),
                                     'discount_percentage': item.discount_percentage || vm.getDiscountPercentFromSalePrice(item.price, item.discounted_price),
                                     'discount_mode': item.discount_percentage ? 'percent' : 'amount',
@@ -2399,6 +2525,11 @@ export default {
                                     'expiry_date_from': item.expiry_date_from || '',
                                     'expiry_date_to': item.expiry_date_to || '',
                                     'images': item.images,
+                                    'loose_images': [],
+                                    'barcodes': item.barcodes && item.barcodes.length
+                                        ? item.barcodes.map(barcode => barcode.barcode)
+                                        : [''],
+                                    'barcodeError': '',
                                 };
                                 vm.inputs.push(variantData);
                             });
@@ -2418,6 +2549,7 @@ export default {
                                     'loose_custom_title': item.custom_title ?? "",
                                     'loose_price': item.price,
                                     'loose_purchase_price': item.purchase_price || 0,
+                                    'loose_sale_price': vm.getStoredSalePrice(item.price, item.discounted_price),
                                     'loose_discount_percentage': item.discount_percentage || vm.getDiscountPercentFromSalePrice(item.price, item.discounted_price),
                                     'loose_discounted_price': vm.getDiscountAmountFromSalePrice(item.price, item.discounted_price),
                                     'loose_discount_mode': item.discount_percentage ? 'percent' : 'amount',
@@ -2426,6 +2558,11 @@ export default {
                                     'expiry_date_from': item.expiry_date_from || '',
                                     'expiry_date_to': item.expiry_date_to || '',
                                     'loose_images': item.images,
+                                    'images': [],
+                                    'barcodes': item.barcodes && item.barcodes.length
+                                        ? item.barcodes.map(barcode => barcode.barcode)
+                                        : [''],
+                                    'barcodeError': '',
                                 };
                                 vm.inputs.push(variantData);
                                 loose_stock = item.stock;
@@ -2465,8 +2602,8 @@ export default {
                 return;
             }
 
-            // Validate stock vs measurement
-            if (!this.validateStockWithMeasurement()) {
+            // Validate editable sale prices and optional variant barcodes.
+            if (!this.validateVariantDetails()) {
                 return;
             }
 
@@ -2520,6 +2657,7 @@ export default {
                     formData.append('packet_stock[]', (this.inputs[i].packet_stock != undefined) ? this.inputs[i].packet_stock : 0);
                     formData.append('packet_stock_unit_id[]', (this.inputs[i].packet_stock_unit_id != undefined) ? this.inputs[i].packet_stock_unit_id : 0);
                     formData.append('packet_status[]', this.getPacketStatusForSave(this.inputs[i]));
+                    formData.append('variant_barcodes[]', JSON.stringify(this.normalizeVariantBarcodes(this.inputs[i])));
 
                     // Safely handle packet variant images refs (can be undefined when card is hidden in non-default language tab)
                     const packetRef = this.$refs['packet_variant_images_' + i];
@@ -2549,6 +2687,7 @@ export default {
                     formData.append('loose_discount_percentage[]', this.getLooseDiscountPercentage(this.inputs[i]));
                     formData.append('loose_purchase_price[]', this.inputs[i].loose_purchase_price != undefined ? this.inputs[i].loose_purchase_price : 0);
                     formData.append('packet_stock[]', (this.inputs[i].packet_stock != undefined) ? this.inputs[i].packet_stock : 0);
+                    formData.append('variant_barcodes[]', JSON.stringify(this.normalizeVariantBarcodes(this.inputs[i])));
 
                     // Safely handle loose variant images refs (can be undefined when card is hidden in non-default language tab)
                     const looseRef = this.$refs['loose_variant_images_' + i];
@@ -2755,6 +2894,11 @@ export default {
             return (100 - ((sale * 100) / mrp)).toFixed(2);
         },
 
+        getStoredSalePrice(price, salePrice) {
+            const storedSalePrice = this.toNumber(salePrice);
+            return this.formatMoney(storedSalePrice > 0 ? storedSalePrice : price);
+        },
+
         toNumber(value) {
             const number = parseFloat(value);
             return Number.isFinite(number) ? number : 0;
@@ -2790,6 +2934,9 @@ export default {
         },
 
         getPacketSalePriceRaw(input) {
+            if (this.hasValue(input.packet_sale_price)) {
+                return Math.max(this.toNumber(input.packet_sale_price), 0);
+            }
             return this.getSellingPrice(input.packet_price, input.discount_percentage, input.discounted_price, input.discount_mode || 'percent');
         },
 
@@ -2823,6 +2970,32 @@ export default {
             if (mode === 'amount' && mrp > 0 && this.toNumber(input.discounted_price) > mrp) {
                 input.validationErrorDiscountedPrice = 'Discount amount must be less than MRP';
             }
+
+            this.syncPacketSalePriceFromDiscount(input);
+        },
+
+        syncPacketSalePriceFromDiscount(input) {
+            input.packet_sale_price = this.formatMoney(
+                this.getSellingPrice(input.packet_price, input.discount_percentage, input.discounted_price, input.discount_mode || 'percent')
+            );
+            input.validationErrorSalePrice = null;
+        },
+
+        setPacketSalePrice(input) {
+            const mrp = this.toNumber(input.packet_price);
+            const salePrice = this.toNumber(input.packet_sale_price);
+
+            if (salePrice < 0 || salePrice > mrp) {
+                input.validationErrorSalePrice = 'Sale Price must be between 0 and MRP.';
+                return;
+            }
+
+            input.validationErrorSalePrice = null;
+            input.discount_mode = 'amount';
+            input.discounted_price = this.formatMoney(Math.max(mrp - salePrice, 0));
+            input.discount_percentage = mrp > 0
+                ? this.formatMoney(((mrp - salePrice) / mrp) * 100)
+                : '0.00';
         },
 
         getPacketMargin(input) {
@@ -2838,6 +3011,9 @@ export default {
         },
 
         getLooseSalePriceRaw(input) {
+            if (this.hasValue(input.loose_sale_price)) {
+                return Math.max(this.toNumber(input.loose_sale_price), 0);
+            }
             return this.getSellingPrice(input.loose_price, input.loose_discount_percentage, input.loose_discounted_price, input.loose_discount_mode || 'percent');
         },
 
@@ -2873,6 +3049,32 @@ export default {
             if (mode === 'amount' && mrp > 0 && this.toNumber(input.loose_discounted_price) > mrp) {
                 input.validationErrorDiscountedPriceLoose = 'Discount amount must be less than MRP';
             }
+
+            this.syncLooseSalePriceFromDiscount(input);
+        },
+
+        syncLooseSalePriceFromDiscount(input) {
+            input.loose_sale_price = this.formatMoney(
+                this.getSellingPrice(input.loose_price, input.loose_discount_percentage, input.loose_discounted_price, input.loose_discount_mode || 'percent')
+            );
+            input.validationErrorSalePriceLoose = null;
+        },
+
+        setLooseSalePrice(input) {
+            const mrp = this.toNumber(input.loose_price);
+            const salePrice = this.toNumber(input.loose_sale_price);
+
+            if (salePrice < 0 || salePrice > mrp) {
+                input.validationErrorSalePriceLoose = 'Sale Price must be between 0 and MRP.';
+                return;
+            }
+
+            input.validationErrorSalePriceLoose = null;
+            input.loose_discount_mode = 'amount';
+            input.loose_discounted_price = this.formatMoney(Math.max(mrp - salePrice, 0));
+            input.loose_discount_percentage = mrp > 0
+                ? this.formatMoney(((mrp - salePrice) / mrp) * 100)
+                : '0.00';
         },
 
         getLooseMargin(input = null) {

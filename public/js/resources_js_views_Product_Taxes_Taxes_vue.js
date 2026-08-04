@@ -64,6 +64,12 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     modal_title: function modal_title() {
       var title = this.id ? __('edit_tax') : __('add_tax');
       return title;
+    },
+    defaultLanguage: function defaultLanguage() {
+      var _this = this;
+      return this.languages.find(function (language) {
+        return Number(language.id) === Number(_this.defaultLanguageId);
+      }) || null;
     }
   },
   created: function created() {},
@@ -75,7 +81,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.$refs['my-modal'].hide();
     },
     loadTaxWithTranslations: function loadTaxWithTranslations() {
-      var _this = this;
+      var _this2 = this;
       if (!this.id) return;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/products/taxes', {
         params: {
@@ -83,54 +89,54 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         }
       }).then(function (res) {
         var tax = Array.isArray(res.data.data) ? res.data.data[0] : res.data.data;
-        if (_this.defaultLanguageId && _this.form[_this.defaultLanguageId] && !_this.form[_this.defaultLanguageId].title) {
-          _this.form[_this.defaultLanguageId].title = tax.title;
+        if (_this2.defaultLanguageId && _this2.form[_this2.defaultLanguageId] && !_this2.form[_this2.defaultLanguageId].title) {
+          _this2.form[_this2.defaultLanguageId].title = tax.title;
         }
 
         // base fields
-        _this.percentage = tax.percentage;
-        _this.status = tax.status;
+        _this2.percentage = tax.percentage;
+        _this2.status = tax.status;
 
         // translations
         if (tax.translations && tax.translations.length) {
           tax.translations.forEach(function (tr) {
-            if (!_this.form[tr.language_id]) {
-              _this.$set(_this.form, tr.language_id, {
+            if (!_this2.form[tr.language_id]) {
+              _this2.$set(_this2.form, tr.language_id, {
                 title: ''
               });
             }
-            _this.form[tr.language_id].title = tr.title;
+            _this2.form[tr.language_id].title = tr.title;
           });
         }
-        if (_this.defaultLanguageId && !_this.form[_this.defaultLanguageId].title) {
-          _this.form[_this.defaultLanguageId].title = tax.title;
+        if (_this2.defaultLanguageId && !_this2.form[_this2.defaultLanguageId].title) {
+          _this2.form[_this2.defaultLanguageId].title = tax.title;
         }
       });
     },
     // Use active_languages (admin panel only) so language_id matches backend getDefaultLanguage() – same as Brand Edit
     loadLanguages: function loadLanguages() {
-      var _this2 = this;
+      var _this3 = this;
       return axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$apiUrl + '/active_languages').then(function (res) {
-        _this2.languages = res.data.data || [];
-        _this2.languages.sort(function (a, b) {
+        _this3.languages = res.data.data || [];
+        _this3.languages.sort(function (a, b) {
           return (b.is_default || 0) - (a.is_default || 0);
         });
-        var defaultLang = _this2.languages.find(function (l) {
+        var defaultLang = _this3.languages.find(function (l) {
           return l.is_default == 1;
         });
-        _this2.defaultLanguageId = defaultLang ? defaultLang.id : null;
-        _this2.languages.forEach(function (lang) {
+        _this3.defaultLanguageId = defaultLang ? defaultLang.id : null;
+        _this3.languages.forEach(function (lang) {
           var title = '';
-          if (_this2.record && _this2.record.translations && _this2.record.translations.length) {
-            var tr = _this2.record.translations.find(function (t) {
+          if (_this3.record && _this3.record.translations && _this3.record.translations.length) {
+            var tr = _this3.record.translations.find(function (t) {
               return t.language_id === lang.id;
             });
             if (tr && tr.title) title = tr.title;
           }
-          if (!title && lang.is_default == 1 && _this2.record && _this2.record.title) {
-            title = _this2.record.title;
+          if (!title && lang.is_default == 1 && _this3.record && _this3.record.title) {
+            title = _this3.record.title;
           }
-          _this2.$set(_this2.form, lang.id, {
+          _this3.$set(_this3.form, lang.id, {
             title: title
           });
         });
@@ -154,9 +160,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return true;
     },
     switchToDefaultLanguageTab: function switchToDefaultLanguageTab() {
-      var _this3 = this;
+      var _this4 = this;
       var defaultLangIndex = this.languages.findIndex(function (lang) {
-        return lang.id === _this3.defaultLanguageId;
+        return lang.id === _this4.defaultLanguageId;
       });
       if (defaultLangIndex !== -1) {
         this.showError(__('please_fill_default_language_required_fields'));
@@ -164,11 +170,11 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }
     },
     validateDefaultLanguageForTranslation: function validateDefaultLanguageForTranslation() {
-      var _this4 = this;
+      var _this5 = this;
       var form = this.$refs['my-form'];
       if (form && !form.reportValidity()) {
         this.$nextTick(function () {
-          return _this4.switchToDefaultLanguageTab();
+          return _this5.switchToDefaultLanguageTab();
         });
         return false;
       }
@@ -182,7 +188,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }
     },
     saveRecord: function saveRecord() {
-      var _this5 = this;
+      var _this6 = this;
       if (!this.validateDefaultLanguage()) return;
       this.isLoading = true;
       var languagesToSave = [];
@@ -192,7 +198,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       if (defaultLang) languagesToSave.push(defaultLang);
       this.languages.forEach(function (lang) {
         if (lang.is_default) return;
-        var title = _this5.form[lang.id].title;
+        var title = _this6.form[lang.id].title;
         if (title && title.trim() !== '') {
           languagesToSave.push(lang);
         }
@@ -203,7 +209,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           return _regenerator().w(function (_context) {
             while (1) switch (_context.n) {
               case 0:
-                taxId = _this5.id;
+                taxId = _this6.id;
                 _i = 0, _languagesToSave = languagesToSave;
               case 1:
                 if (!(_i < _languagesToSave.length)) {
@@ -214,10 +220,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 fd = new FormData();
                 if (taxId) fd.append('id', taxId);
                 fd.append('language_id', lang.id);
-                fd.append('title', _this5.form[lang.id] && _this5.form[lang.id].title || '');
-                fd.append('percentage', _this5.percentage !== null && _this5.percentage !== '' ? _this5.percentage : 0);
-                fd.append('status', _this5.status != null ? _this5.status : 1);
-                url = taxId ? _this5.$apiUrl + '/products/taxes/update' : _this5.$apiUrl + '/products/taxes/save';
+                fd.append('title', _this6.form[lang.id] && _this6.form[lang.id].title || '');
+                fd.append('percentage', _this6.percentage !== null && _this6.percentage !== '' ? _this6.percentage : 0);
+                fd.append('status', _this6.status != null ? _this6.status : 1);
+                url = taxId ? _this6.$apiUrl + '/products/taxes/update' : _this6.$apiUrl + '/products/taxes/save';
                 _context.n = 2;
                 return axios__WEBPACK_IMPORTED_MODULE_0___default().post(url, fd);
               case 2:
@@ -245,13 +251,13 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         };
       }();
       saveSequentially().then(function () {
-        _this5.$eventBus.$emit("recordSaved", __('tax_saved_successfully') || 'Tax saved successfully');
-        _this5.hideModal();
+        _this6.$eventBus.$emit("recordSaved", __('tax_saved_successfully') || 'Tax saved successfully');
+        _this6.hideModal();
       })["catch"](function (err) {
         var _err$response;
-        _this5.showError(((_err$response = err.response) === null || _err$response === void 0 || (_err$response = _err$response.data) === null || _err$response === void 0 ? void 0 : _err$response.message) || err.message || __('something_went_wrong'));
+        _this6.showError(((_err$response = err.response) === null || _err$response === void 0 || (_err$response = _err$response.data) === null || _err$response === void 0 ? void 0 : _err$response.message) || err.message || __('something_went_wrong'));
       })["finally"](function () {
-        _this5.isLoading = false;
+        _this6.isLoading = false;
       });
     }
   },
@@ -504,74 +510,8 @@ var render = function render() {
         return _vm.saveRecord.apply(null, arguments);
       }
     }
-  }, [_vm.languages.length ? _c("b-tabs", {
-    attrs: {
-      "content-class": "mt-3"
-    },
-    model: {
-      value: _vm.activeTab,
-      callback: function callback($$v) {
-        _vm.activeTab = $$v;
-      },
-      expression: "activeTab"
-    }
-  }, _vm._l(_vm.languages, function (lang, index) {
-    return _c("b-tab", {
-      key: lang.id,
-      attrs: {
-        title: lang.name,
-        active: lang.is_default == 1
-      }
-    }, [lang.is_default && _vm.languages.length > 1 ? _c("div", {
-      staticClass: "mb-3"
-    }, [_c("b-button", {
-      directives: [{
-        name: "b-tooltip",
-        rawName: "v-b-tooltip.hover",
-        modifiers: {
-          hover: true
-        }
-      }],
-      staticClass: "mr-2",
-      attrs: {
-        size: "sm",
-        variant: "outline-primary",
-        title: _vm.__("only_empty_fields_will_be_translated_existing_content_will_not_be_changed"),
-        disabled: _vm.loadingEmpty
-      },
-      on: {
-        click: function click($event) {
-          return _vm.translateEmpty(lang);
-        }
-      }
-    }, [!_vm.loadingEmpty ? _c("span", [_vm._v(_vm._s(_vm.__("translate_empty_fields")))]) : _c("b-spinner", {
-      attrs: {
-        small: ""
-      }
-    })], 1), _vm._v(" "), _c("b-button", {
-      directives: [{
-        name: "b-tooltip",
-        rawName: "v-b-tooltip.hover",
-        modifiers: {
-          hover: true
-        }
-      }],
-      attrs: {
-        size: "sm",
-        variant: "outline-danger",
-        title: _vm.__("all_fields_will_be_translated_and_existing_content_will_be_overwritten"),
-        disabled: _vm.loadingOverwrite
-      },
-      on: {
-        click: function click($event) {
-          return _vm.translateOverwrite(lang);
-        }
-      }
-    }, [!_vm.loadingOverwrite ? _c("span", [_vm._v(_vm._s(_vm.__("translate_and_overwrite")))]) : _c("b-spinner", {
-      attrs: {
-        small: ""
-      }
-    })], 1)], 1) : _vm._e(), _vm._v(" "), _c("div", {
+  }, [_vm.defaultLanguage ? _c("div", [_vm._l([_vm.defaultLanguage], function (lang) {
+    return [_c("div", {
       staticClass: "row"
     }, [_c("div", {
       staticClass: "form-group"
@@ -651,13 +591,13 @@ var render = function render() {
         },
         expression: "status"
       }
-    })], 1)]) : _vm._e()])]);
-  }), 1) : _vm._e(), _vm._v(" "), _c("button", {
+    })], 1)]) : _vm._e()])];
+  })], 2) : _vm._e(), _vm._v(" "), _c("button", {
     ref: "dummy_submit",
     staticStyle: {
       display: "none"
     }
-  })], 1)]);
+  })])]);
 };
 var staticRenderFns = [];
 render._withStripped = true;

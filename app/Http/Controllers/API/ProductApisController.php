@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImages;
 use App\Models\ProductVariant;
+use App\Models\ProductVariantBarcode;
 use App\Models\OrderItem;
 use App\Models\Setting;
 use App\Models\Tax;
@@ -33,6 +34,119 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ProductApisController extends Controller
 {
+    private function validateVariantImages(Request $request)
+    {
+        $rules = [];
+
+        foreach ($request->allFiles() as $key => $files) {
+            if (preg_match('/^(packet|loose)_variant_images_\d+$/', $key)) {
+                $rules[$key . '.*'] = 'file|mimes:jpeg,png,jpg,gif,webp|max:5120';
+            }
+        }
+
+        if (empty($rules)) {
+            return null;
+        }
+
+        $validator = Validator::make($request->all(), $rules, [
+            '*.mimes' => 'Variant images must be JPG, JPEG, PNG, GIF, or WEBP files.',
+            '*.max' => 'Each variant image must be 5 MB or smaller.',
+        ]);
+
+        return $validator->fails() ? $validator->errors()->first() : null;
+    }
+
+    private function validateVariantBarcodes(Request $request, array $ignoredVariantIds = [])
+    {
+        $barcodesByVariant = [];
+        $allBarcodes = [];
+        $seen = [];
+
+        foreach ((array) $request->input('variant_barcodes', []) as $index => $value) {
+            if (is_string($value)) {
+                $decoded = json_decode($value, true);
+                if ($decoded === null && trim($value) !== '' && strtolower(trim($value)) !== 'null') {
+                    return ['error' => 'Variant barcode data is invalid.', 'barcodes' => []];
+                }
+                $value = $decoded ?? [];
+            }
+
+            if (!is_array($value)) {
+                return ['error' => 'Variant barcode data is invalid.', 'barcodes' => []];
+            }
+
+            $barcodesByVariant[$index] = [];
+
+            foreach ($value as $barcodeValue) {
+                $barcode = trim((string) (is_array($barcodeValue) ? ($barcodeValue['barcode'] ?? '') : $barcodeValue));
+                if ($barcode === '') {
+                    continue;
+                }
+
+                if (!preg_match('/^[a-zA-Z0-9-]+$/', $barcode)) {
+                    return ['error' => 'Barcode "' . $barcode . '" is invalid. Use only letters, numbers, and hyphens.', 'barcodes' => []];
+                }
+
+                $key = strtolower($barcode);
+                if (isset($seen[$key])) {
+                    return ['error' => 'Barcode "' . $barcode . '" was entered more than once.', 'barcodes' => []];
+                }
+
+                $seen[$key] = true;
+                $barcodesByVariant[$index][] = $barcode;
+                $allBarcodes[] = $barcode;
+            }
+        }
+
+        $productBarcode = trim((string) $request->input('barcode', ''));
+        if ($productBarcode !== '' && isset($seen[strtolower($productBarcode)])) {
+            return ['error' => 'The product barcode and variant barcodes must be different.', 'barcodes' => []];
+        }
+
+        if (!empty($allBarcodes)) {
+            $productQuery = Product::whereIn('barcode', $allBarcodes);
+            if ($request->filled('id')) {
+                $productQuery->where('id', '!=', $request->id);
+            }
+
+            $existingProductBarcode = $productQuery->value('barcode');
+            if ($existingProductBarcode) {
+                return ['error' => 'Barcode "' . $existingProductBarcode . '" is already assigned to a product.', 'barcodes' => []];
+            }
+
+            $variantQuery = ProductVariantBarcode::whereIn('barcode', $allBarcodes);
+            if (!empty($ignoredVariantIds)) {
+                $variantQuery->whereNotIn('product_variant_id', $ignoredVariantIds);
+            }
+
+            $existingVariantBarcode = $variantQuery->value('barcode');
+            if ($existingVariantBarcode) {
+                return ['error' => 'Barcode "' . $existingVariantBarcode . '" is already assigned to another variant.', 'barcodes' => []];
+            }
+        }
+
+        if ($productBarcode !== '') {
+            $existingVariant = ProductVariantBarcode::where('barcode', $productBarcode)->first();
+            if ($existingVariant) {
+                return ['error' => 'Barcode "' . $productBarcode . '" is already assigned to a product variant.', 'barcodes' => []];
+            }
+        }
+
+        return ['error' => null, 'barcodes' => $barcodesByVariant];
+    }
+
+    private function syncVariantBarcodes($variantId, array $barcodes)
+    {
+        ProductVariantBarcode::where('product_variant_id', $variantId)->delete();
+
+        foreach ($barcodes as $barcode) {
+            ProductVariantBarcode::create([
+                'product_variant_id' => $variantId,
+                'barcode' => $barcode,
+            ]);
+        }
+    }
+
     private function getCategoryAndDescendantIds($categoryIds)
     {
         $ids = collect((array) $categoryIds)
@@ -202,6 +316,7 @@ class ProductApisController extends Controller
             'pv.status as pv_status',
             'pv.stock',
             'pv.stock_unit_id',
+            DB::raw("(select GROUP_CONCAT(pvb.barcode ORDER BY pvb.id SEPARATOR ', ') from product_variant_barcodes as pvb where pvb.product_variant_id = pv.id) as variant_barcodes"),
             DB::raw('(select short_code from units where units.id = pv.stock_unit_id) as stock_unit')
         )
             ->join('sellers as s', 'p.seller_id', '=', 's.id')
@@ -255,6 +370,12 @@ class ProductApisController extends Controller
                 foreach ($columns as $column) {
                     $query->orWhere($column, 'like', "%{$filter}%");
                 }
+                $query->orWhereExists(function ($barcodeQuery) use ($filter) {
+                    $barcodeQuery->select(DB::raw(1))
+                        ->from('product_variant_barcodes as pvb')
+                        ->whereColumn('pvb.product_variant_id', 'pv.id')
+                        ->where('pvb.barcode', 'like', "%{$filter}%");
+                });
             });
         }
         $total = $products->count();
@@ -789,6 +910,18 @@ class ProductApisController extends Controller
 
             'packet_measurement.*' => ['required_if:type,packet', 'numeric', Rule::notIn([0]),],
             'packet_price.*' => ['required_if:type,packet', 'numeric'],
+            'discounted_price.*' => [
+                'required_if:type,packet',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    $index = explode('.', $attribute)[1];
+                    $mrp = (float) $request->input("packet_price.{$index}", 0);
+                    if ((float) $value > $mrp) {
+                        $fail('The Packet Sale Price must not be greater than MRP.');
+                    }
+                },
+            ],
             'packet_stock.*' => [
                 'required_if:type,packet',
                 'numeric',
@@ -805,6 +938,18 @@ class ProductApisController extends Controller
 
             'loose_measurement.*' => ['required_if:type,loose', 'numeric', Rule::notIn([0]),],
             'loose_price.*' => ['required_if:type,loose', 'numeric'],
+            'loose_discounted_price.*' => [
+                'required_if:type,loose',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    $index = explode('.', $attribute)[1];
+                    $mrp = (float) $request->input("loose_price.{$index}", 0);
+                    if ((float) $value > $mrp) {
+                        $fail('The Loose Sale Price must not be greater than MRP.');
+                    }
+                },
+            ],
             'loose_stock.*' => [
                 'required_if:type,loose',
                 'numeric',
@@ -844,6 +989,16 @@ class ProductApisController extends Controller
         if ($validator->fails()) {
             return CommonHelper::responseError($validator->errors()->first());
         }
+
+        if ($variantImageError = $this->validateVariantImages($request)) {
+            return CommonHelper::responseError($variantImageError);
+        }
+
+        $variantBarcodeValidation = $this->validateVariantBarcodes($request);
+        if ($variantBarcodeValidation['error']) {
+            return CommonHelper::responseError($variantBarcodeValidation['error']);
+        }
+        $variantBarcodes = $variantBarcodeValidation['barcodes'];
 
         $variations = array();
         if ($request->type == "packet") {
@@ -988,6 +1143,9 @@ class ProductApisController extends Controller
 
                     ProductVariant::insert($data);
                     $variant_id = DB::getPdo()->lastInsertId();
+                    if ($request->has('variant_barcodes')) {
+                        $this->syncVariantBarcodes($variant_id, $variantBarcodes[$index] ?? []);
+                    }
                     if ($request->hasFile('packet_variant_images_' . $index)) {
                         CommonHelper::uploadProductImages($request->file('packet_variant_images_' . $index), $product->id, $variant_id);
                     }
@@ -1026,6 +1184,9 @@ class ProductApisController extends Controller
 
                     ProductVariant::insert($data);
                     $variant_id = DB::getPdo()->lastInsertId();
+                    if ($request->has('variant_barcodes')) {
+                        $this->syncVariantBarcodes($variant_id, $variantBarcodes[$index] ?? []);
+                    }
                     if ($request->hasFile('loose_variant_images_' . $index)) {
                         CommonHelper::uploadProductImages($request->file('loose_variant_images_' . $index), $product->id, $variant_id);
                     }
@@ -1110,6 +1271,7 @@ class ProductApisController extends Controller
             'seller',
             'images',
             'variants.images',
+            'variants.barcodes',
             'variants.unit',
             'category',
             'tax',
@@ -1206,6 +1368,18 @@ class ProductApisController extends Controller
 
             'packet_measurement.*' => ['required_if:type,packet', 'numeric', Rule::notIn([0]),],
             'packet_price.*' => ['required_if:type,packet', 'numeric'],
+            'discounted_price.*' => [
+                'required_if:type,packet',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    $index = explode('.', $attribute)[1];
+                    $mrp = (float) $request->input("packet_price.{$index}", 0);
+                    if ((float) $value > $mrp) {
+                        $fail('The Packet Sale Price must not be greater than MRP.');
+                    }
+                },
+            ],
             'packet_stock.*' => [
                 'required_if:type,packet',
                 'numeric',
@@ -1222,6 +1396,18 @@ class ProductApisController extends Controller
 
             'loose_measurement.*' => ['required_if:type,loose', 'numeric', Rule::notIn([0]),],
             'loose_price.*' => ['required_if:type,loose', 'numeric'],
+            'loose_discounted_price.*' => [
+                'required_if:type,loose',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    $index = explode('.', $attribute)[1];
+                    $mrp = (float) $request->input("loose_price.{$index}", 0);
+                    if ((float) $value > $mrp) {
+                        $fail('The Loose Sale Price must not be greater than MRP.');
+                    }
+                },
+            ],
             'loose_stock.*' => [
                 'required_if:type,loose',
                 'numeric',
@@ -1267,6 +1453,17 @@ class ProductApisController extends Controller
         if ($validator->fails()) {
             return CommonHelper::responseError($validator->errors()->first());
         }
+
+        if ($variantImageError = $this->validateVariantImages($request)) {
+            return CommonHelper::responseError($variantImageError);
+        }
+
+        $ignoredVariantIds = array_values(array_filter(array_map('intval', (array) $request->input('variant_id', []))));
+        $variantBarcodeValidation = $this->validateVariantBarcodes($request, $ignoredVariantIds);
+        if ($variantBarcodeValidation['error']) {
+            return CommonHelper::responseError($variantBarcodeValidation['error']);
+        }
+        $variantBarcodes = $variantBarcodeValidation['barcodes'];
         $variations = array();
         if ($request->type == "packet") {
             foreach ($request->packet_measurement as $index => $item) {
@@ -1312,6 +1509,11 @@ class ProductApisController extends Controller
 
         DB::beginTransaction();
         try {
+            if ($request->has('variant_barcodes') && !empty($ignoredVariantIds)) {
+                // Clear current rows first so an existing barcode can be moved between this product's variants.
+                ProductVariantBarcode::whereIn('product_variant_id', $ignoredVariantIds)->delete();
+            }
+
             $product_image_ids = json_decode($request->deleteImageIds);
             if (count($product_image_ids) !== 0) {
                 foreach ($product_image_ids as $index => $product_image_id) {
@@ -1429,6 +1631,9 @@ class ProductApisController extends Controller
                     $variant->stock = ($request->is_unlimited_stock == 0) ? $request->packet_stock[$index] : 0;
                     $variant->stock_unit_id = isset($request->packet_stock_unit_id[$index]) ? $request->packet_stock_unit_id[$index] : 0;
                     $variant->save();
+                    if ($request->has('variant_barcodes')) {
+                        $this->syncVariantBarcodes($variant->id, $variantBarcodes[$index] ?? []);
+                    }
                     if ($request->hasFile('packet_variant_images_' . $index)) {
                         CommonHelper::uploadProductImages($request->file('packet_variant_images_' . $index), $product->id, $variant->id);
                     }
@@ -1466,6 +1671,9 @@ class ProductApisController extends Controller
                     $variant->discounted_price = isset($request->loose_discounted_price[$index]) ? $request->loose_discounted_price[$index] : 0;
                     $variant->discount_percentage = isset($request->loose_discount_percentage[$index]) ? $request->loose_discount_percentage[$index] : 0;
                     $variant->save();
+                    if ($request->has('variant_barcodes')) {
+                        $this->syncVariantBarcodes($variant->id, $variantBarcodes[$index] ?? []);
+                    }
                     if ($request->hasFile('loose_variant_images_' . $index)) {
                         CommonHelper::uploadProductImages($request->file('loose_variant_images_' . $index), $product->id, $variant->id);
                     }
