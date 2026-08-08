@@ -131,7 +131,9 @@ Route::middleware('auth:api')->group(function () {
         Route::post('save', [\App\Http\Controllers\API\ProductApisController::class, 'save'])->name('products.save');
         Route::post('update', [\App\Http\Controllers\API\ProductApisController::class, 'update'])->name('products.update');
         Route::post('delete', [\App\Http\Controllers\API\ProductApisController::class, 'delete'])->name('products.delete');
+        Route::post('delete_main', [\App\Http\Controllers\API\ProductApisController::class, 'deleteMain'])->name('products.delete_main');
         Route::post('multiple_delete', [\App\Http\Controllers\API\ProductApisController::class, 'multipleDelete'])->name('products.multiple_delete');
+        Route::post('multiple_delete_main', [\App\Http\Controllers\API\ProductApisController::class, 'multipleDeleteMain'])->name('products.multiple_delete_main');
 
         Route::get('edit/{id}', [\App\Http\Controllers\API\ProductApisController::class, 'edit']);
 
@@ -609,7 +611,9 @@ Route::middleware('auth:api')->group(function () {
             Route::get('edit/{id}', [\App\Http\Controllers\API\ProductApisController::class, 'edit']);
             Route::post('update', [\App\Http\Controllers\API\ProductApisController::class, 'update'])->name('seller.products.update');
             Route::post('delete', [\App\Http\Controllers\API\ProductApisController::class, 'delete'])->name('seller.products.delete');
+            Route::post('delete_main', [\App\Http\Controllers\API\ProductApisController::class, 'deleteMain'])->name('seller.products.delete_main');
             Route::post('multiple_delete', [\App\Http\Controllers\API\ProductApisController::class, 'multipleDelete'])->name('seller.products.multiple_delete');
+            Route::post('multiple_delete_main', [\App\Http\Controllers\API\ProductApisController::class, 'multipleDeleteMain'])->name('seller.products.multiple_delete_main');
             Route::get('/brands', [\App\Http\Controllers\API\BrandsApiController::class, 'index']);
             Route::get('/taxes', [\App\Http\Controllers\API\TaxesApiController::class, 'index']);
             Route::get('ratings_list', [\App\Http\Controllers\API\Customer\ProductsApiController::class, 'productRatingsList']);

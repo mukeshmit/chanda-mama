@@ -102,6 +102,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         value: 'brown',
         label: 'Brown'
       }, {
+        value: 'cream',
+        label: 'Cream'
+      }, {
         value: 'grey',
         label: 'Grey'
       }, {
@@ -121,6 +124,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       cod_allowed_status: 1,
       max_allowed_quantity: 0,
       description: '',
+      highlights: '',
       require_products_approval: 0,
       is_approved: 1,
       loose_stock: 0,
@@ -196,7 +200,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       languages: [],
       currentLanguageId: null,
       activeLanguages: []
-    }, "categories", []), "translatableFields", ['name', 'description', 'meta_title', 'meta_keywords', 'schema_markup', 'meta_description']), "translateSuccessMessage", ''), "loadingEmpty", false), "loadingOverwrite", false), "cacheTimer", null), "cachedData", null), "skipCache", false);
+    }, "categories", []), "translatableFields", ['name', 'description', 'highlights', 'meta_title', 'meta_keywords', 'schema_markup', 'meta_description']), "translateSuccessMessage", ''), "loadingEmpty", false), "loadingOverwrite", false), "cacheTimer", null), "cachedData", null), "skipCache", false);
   },
   computed: {
     isSellerRoute: function isSellerRoute() {
@@ -451,6 +455,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         allTranslations[language.id] = {
           name: '',
           description: '',
+          highlights: '',
           meta_title: '',
           meta_keywords: '',
           schema_markup: '',
@@ -527,6 +532,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         this.switchToDefaultLanguageTab();
         return false;
       }
+      if (!defaultTranslation.highlights || defaultTranslation.highlights.trim() === '') {
+        this.showError('Please fill Product Highlights in the default language.');
+        this.switchToDefaultLanguageTab();
+        return false;
+      }
       if (!this.product_category_id) {
         this.showError(__('please_select_category'));
         this.switchToDefaultLanguageTab();
@@ -570,6 +580,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         if (translation) {
           _this12.$set(_this12.translations[language.id], 'name', translation.name || '');
           _this12.$set(_this12.translations[language.id], 'description', translation.description || '');
+          _this12.$set(_this12.translations[language.id], 'highlights', translation.highlights || '');
           _this12.$set(_this12.translations[language.id], 'meta_title', translation.meta_title || '');
           _this12.$set(_this12.translations[language.id], 'meta_keywords', translation.meta_keywords || '');
           _this12.$set(_this12.translations[language.id], 'schema_markup', translation.schema_markup || '');
@@ -1224,6 +1235,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           _this25.cod_allowed_status = _this25.record.cod_allowed;
           _this25.max_allowed_quantity = _this25.record.total_allowed_quantity;
           _this25.description = _this25.record.description;
+          _this25.highlights = _this25.record.highlights || '';
           _this25.is_approved = _this25.record.is_approved;
           _this25.status = _this25.record.status;
           _this25.is_unlimited_stock = _this25.record.is_unlimited_stock;
@@ -1239,6 +1251,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           if (_this25.defaultLanguageId && _this25.translations[_this25.defaultLanguageId]) {
             _this25.translations[_this25.defaultLanguageId].name = _this25.name;
             _this25.translations[_this25.defaultLanguageId].description = _this25.description;
+            _this25.translations[_this25.defaultLanguageId].highlights = _this25.highlights;
             _this25.translations[_this25.defaultLanguageId].meta_title = _this25.meta_title;
             _this25.translations[_this25.defaultLanguageId].meta_keywords = _this25.meta_keywords;
             _this25.translations[_this25.defaultLanguageId].schema_markup = _this25.schema_markup;
@@ -1368,6 +1381,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       formData.append('tax_id', this.tax_id);
       formData.append('brand_id', this.brand ? this.brand.id : 0);
       formData.append('description', defaultTranslation.description || '');
+      formData.append('highlights', defaultTranslation.highlights || '');
       formData.append('type', this.type);
       formData.append('is_unlimited_stock', this.is_unlimited_stock);
       formData.append('barcode', this.barcode != null && this.barcode !== undefined ? String(this.barcode).trim() : '');
@@ -1470,6 +1484,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           language_id: language.id,
           name: translation.name || '',
           description: translation.description || '',
+          highlights: translation.highlights || '',
           meta_title: translation.meta_title || '',
           meta_keywords: translation.meta_keywords || '',
           schema_markup: translation.schema_markup || '',
@@ -1877,6 +1892,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         tax_id: 0,
         brand: null,
         description: '',
+        highlights: '',
         type: 'packet',
         is_unlimited_stock: 0,
         barcode: '',
@@ -2535,7 +2551,25 @@ var render = function render() {
       },
       expression: "translations[defaultLanguageId].description"
     }
-  })], 1)]) : _vm._e(), _vm._v(" "), _c("div", {
+  })], 1)]) : _vm._e(), _vm._v(" "), _vm.defaultLanguageId ? _c("div", {
+    staticClass: "col-md-12"
+  }, [_c("div", {
+    staticClass: "form-group mb-3"
+  }, [_vm._m(0), _vm._v(" "), _c("editor", {
+    attrs: {
+      placeholder: "Paste or enter product highlights",
+      init: _vm.getEditorConfig()
+    },
+    model: {
+      value: _vm.translations[_vm.defaultLanguageId].highlights,
+      callback: function callback($$v) {
+        _vm.$set(_vm.translations[_vm.defaultLanguageId], "highlights", $$v);
+      },
+      expression: "translations[defaultLanguageId].highlights"
+    }
+  }), _vm._v(" "), _c("small", {
+    staticClass: "text-muted"
+  }, [_vm._v("Pasted formatting, lists and spacing will be preserved.")])], 1)]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group mb-3"
@@ -2562,7 +2596,7 @@ var render = function render() {
       dragover: _vm.$dragoverFile,
       dragleave: _vm.$dragleaveFile
     }
-  }, [_vm.main_image_name == "" ? [_vm._m(0), _vm._v(" "), _c("label", [_vm._v(_vm._s(_vm.__("drop_files_here_or_click_to_upload")))])] : [_c("label", [_vm._v(_vm._s(_vm.__("selected_file_name")) + " " + _vm._s(_vm.main_image_name))])]], 2), _vm._v(" "), _c("span", {
+  }, [_vm.main_image_name == "" ? [_vm._m(1), _vm._v(" "), _c("label", [_vm._v(_vm._s(_vm.__("drop_files_here_or_click_to_upload")))])] : [_c("label", [_vm._v(_vm._s(_vm.__("selected_file_name")) + " " + _vm._s(_vm.main_image_name))])]], 2), _vm._v(" "), _c("span", {
     staticClass: "text text-primary"
   }, [_vm._v(_vm._s(_vm.__("please_choose_square_image_of_larger_than_350px_350px_and_smaller_than_550px_550px")))]), _vm._v(" "), _vm.mainImageerror ? _c("p", {
     staticClass: "error"
@@ -2608,7 +2642,7 @@ var render = function render() {
       dragover: _vm.$dragoverFile,
       dragleave: _vm.$dragleaveFile
     }
-  }, [_vm.images.length === 0 ? [_vm._m(1), _vm._v(" "), _c("label", [_vm._v(_vm._s(_vm.__("drop_files_here_or_click_to_upload")))])] : [_c("label", [_vm._v(_vm._s(_vm.images.length) + " files selected")]), _vm._v(" "), _vm._m(2)]], 2), _vm._v(" "), _c("span", {
+  }, [_vm.images.length === 0 ? [_vm._m(2), _vm._v(" "), _c("label", [_vm._v(_vm._s(_vm.__("drop_files_here_or_click_to_upload")))])] : [_c("label", [_vm._v(_vm._s(_vm.images.length) + " files selected")]), _vm._v(" "), _vm._m(3)]], 2), _vm._v(" "), _c("span", {
     staticClass: "text text-primary"
   }, [_vm._v("Allowed media: JPG, JPEG, PNG, GIF, WEBP images or MP4 videos. Max 3 MB per file.")]), _vm._v(" "), _vm.otherImageerror ? _c("p", {
     staticClass: "error"
@@ -2739,7 +2773,7 @@ var render = function render() {
     }
   })], 1), _vm._v(" "), _c("div", {
     staticClass: "form-group col-md-6"
-  }, [_vm._m(3), _c("br"), _vm._v(" "), _c("b-form-radio-group", {
+  }, [_vm._m(4), _c("br"), _vm._v(" "), _c("b-form-radio-group", {
     attrs: {
       options: [{
         text: _vm.__("limited"),
@@ -3105,7 +3139,7 @@ var render = function render() {
       staticClass: "col-md-4"
     }, [_c("div", {
       staticClass: "form-group mb-3"
-    }, [_vm._m(4, true), _vm._v(" "), _c("input", {
+    }, [_vm._m(5, true), _vm._v(" "), _c("input", {
       directives: [{
         name: "model",
         rawName: "v-model",
@@ -3173,7 +3207,7 @@ var render = function render() {
       staticClass: "col-md-12"
     }, [_c("div", {
       staticClass: "form-group mb-3"
-    }, [_vm._m(5, true), _vm._v(" "), _vm._l(_input.barcodes, function (variantBarcode, barcodeIndex) {
+    }, [_vm._m(6, true), _vm._v(" "), _vm._l(_input.barcodes, function (variantBarcode, barcodeIndex) {
       return _c("div", {
         key: "packet_barcode_" + k + "_" + barcodeIndex,
         staticClass: "row g-2 mb-2"
@@ -3259,7 +3293,7 @@ var render = function render() {
         dragover: _vm.$dragoverFile,
         dragleave: _vm.$dragleaveFile
       }
-    }, [_vm._m(6, true), _vm._v(" "), _c("label", [_vm._v(_vm._s(_vm.__("drop_files_here_or_click_to_upload")))])]), _vm._v(" "), _c("span", {
+    }, [_vm._m(7, true), _vm._v(" "), _c("label", [_vm._v(_vm._s(_vm.__("drop_files_here_or_click_to_upload")))])]), _vm._v(" "), _c("span", {
       staticClass: "text text-primary"
     }, [_vm._v(_vm._s(_vm.__("please_choose_square_image_of_larger_than_350px_350px_and_smaller_than_550px_550px")))]), _vm._v(" "), _vm.variantImageerror ? _c("p", {
       staticClass: "error"
@@ -3687,7 +3721,7 @@ var render = function render() {
       staticClass: "col-md-12"
     }, [_c("div", {
       staticClass: "form-group mb-3 loose_div"
-    }, [_vm._m(7, true), _vm._v(" "), _vm._l(_input2.barcodes, function (variantBarcode, barcodeIndex) {
+    }, [_vm._m(8, true), _vm._v(" "), _vm._l(_input2.barcodes, function (variantBarcode, barcodeIndex) {
       return _c("div", {
         key: "loose_barcode_" + k + "_" + barcodeIndex,
         staticClass: "row g-2 mb-2"
@@ -3773,7 +3807,7 @@ var render = function render() {
           return _vm.openVariantImagePicker(k, "loose");
         }
       }
-    }, [_vm._m(8, true), _vm._v(" "), _c("label", [_vm._v(_vm._s(_vm.__("drop_files_here_or_click_to_upload")))])]), _vm._v(" "), _c("span", {
+    }, [_vm._m(9, true), _vm._v(" "), _c("label", [_vm._v(_vm._s(_vm.__("drop_files_here_or_click_to_upload")))])]), _vm._v(" "), _c("span", {
       staticClass: "text text-primary"
     }, [_vm._v(_vm._s(_vm.__("please_choose_square_image_of_larger_than_350px_350px_and_smaller_than_550px_550px")))]), _vm._v(" "), _c("div", {
       staticClass: "row"
@@ -3936,7 +3970,7 @@ var render = function render() {
     staticClass: "col-md-4"
   }, [_vm.is_unlimited_stock != 1 ? _c("div", {
     staticClass: "form-group mb-3"
-  }, [_vm._m(9), _vm._v(" "), _c("input", {
+  }, [_vm._m(10), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -4570,6 +4604,12 @@ var render = function render() {
   }, [_vm._v(_vm._s(_vm.__("clear")))])], 1)]) : _vm._e()])])])])]);
 };
 var staticRenderFns = [function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("label", [_vm._v("Product Highlights "), _c("i", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")])]);
+}, function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("label", [_c("i", {

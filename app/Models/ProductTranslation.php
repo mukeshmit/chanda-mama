@@ -18,6 +18,7 @@ class ProductTranslation extends Model
         'tags',
         'manufacturer',
         'description',
+        'highlights',
         'meta_title',
         'meta_keywords',
         'schema_markup',
@@ -39,4 +40,3 @@ class ProductTranslation extends Model
         return $this->belongsTo(Language::class);
     }
 }
-

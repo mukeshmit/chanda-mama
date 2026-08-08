@@ -36,6 +36,7 @@ const CategoriesOrder = () => import("../views/Category/CategoriesOrder");
 // Products
 const EditProduct = () => import("../views/Product/EditProduct");
 const CloneProduct = () => import("../views/Product/EditProduct");
+const ProductVariants = () => import("../views/Product/ProductVariants");
 const ApproveRequests = () => import("../views/Product/ApproveRequests");
 const ViewProduct = () => import("../views/Product/ViewProduct");
 const Taxes = () => import("../views/Product/Taxes/Taxes");
@@ -577,6 +578,17 @@ function configRoutes() {
                         role: adminRoles,
                         title: 'Manage Products'
 
+                    },
+                },
+                {
+                    path: "manage_products/:product_id/variants",
+                    name: "ProductVariants",
+                    component: ProductVariants,
+                    props: true,
+                    meta: {
+                        permission: 'product_list',
+                        role: adminRoles,
+                        title: 'Product Variants'
                     },
                 },
                 {
@@ -1664,6 +1676,17 @@ function configRoutes() {
                         permission: 'product_list',
                         role: sellerRoles,
                         title: 'Products'
+                    },
+                },
+                {
+                    path: "manage_products/:product_id/variants",
+                    name: "SellerProductVariants",
+                    component: ProductVariants,
+                    props: true,
+                    meta: {
+                        permission: 'product_list',
+                        role: sellerRoles,
+                        title: 'Product Variants'
                     },
                 },
 

@@ -193,6 +193,7 @@ class ProductApisController extends Controller
         $limit = $request->input('per_page'); // Default items per page
         $offset = (($request->input('page')) - 1) * $limit; // Default page
         $filter = $request->input('filter', ''); // Filter query
+        $groupByProduct = $request->boolean('group_by_product');
 
         if (!isset($request->type)) {
             $sellers = Seller::where('status', 1)
@@ -290,7 +291,7 @@ class ProductApisController extends Controller
             }
         }
 
-        $products = DB::table('products as p')->select(
+        $selectColumns = [
             'p.id as id',
             'p.id as product_id',
             'p.barcode',
@@ -300,8 +301,8 @@ class ProductApisController extends Controller
             'p.status',
             'p.tax_id',
             'p.image',
+            'p.type',
             's.name as seller_name',
-            's.id as seller_id',
             'p.indicator',
             'p.is_approved',
             DB::raw("'' as manufacturer"),
@@ -309,16 +310,48 @@ class ProductApisController extends Controller
             'p.return_status',
             'p.cancelable_status',
             'p.till_status',
-            'pv.id as product_variant_id',
-            'pv.price',
-            'pv.discounted_price',
-            'pv.measurement',
-            'pv.status as pv_status',
-            'pv.stock',
-            'pv.stock_unit_id',
-            DB::raw("(select GROUP_CONCAT(pvb.barcode ORDER BY pvb.id SEPARATOR ', ') from product_variant_barcodes as pvb where pvb.product_variant_id = pv.id) as variant_barcodes"),
-            DB::raw('(select short_code from units where units.id = pv.stock_unit_id) as stock_unit')
-        )
+        ];
+
+        if ($groupByProduct) {
+            $selectColumns = array_merge($selectColumns, [
+                DB::raw('MIN(pv.id) as product_variant_id'),
+                DB::raw("GROUP_CONCAT(DISTINCT pv.id ORDER BY pv.id SEPARATOR ',') as variant_ids"),
+                DB::raw('COUNT(DISTINCT pv.id) as variant_count'),
+                DB::raw('MIN(pv.price) as price'),
+                DB::raw('MAX(pv.price) as max_price'),
+                DB::raw('MIN(pv.discounted_price) as discounted_price'),
+                DB::raw('MAX(pv.discounted_price) as max_discounted_price'),
+                DB::raw('MIN(pv.measurement) as measurement'),
+                DB::raw('MAX(pv.status) as pv_status'),
+                DB::raw('SUM(pv.stock) as stock'),
+                DB::raw('MIN(pv.stock_unit_id) as stock_unit_id'),
+                DB::raw("(select GROUP_CONCAT(pvb.barcode ORDER BY pvb.id SEPARATOR ', ') from product_variant_barcodes as pvb inner join product_variants as barcode_pv on barcode_pv.id = pvb.product_variant_id where barcode_pv.product_id = p.id) as variant_barcodes"),
+                DB::raw("'' as stock_unit"),
+            ]);
+        } else {
+            $selectColumns = array_merge($selectColumns, [
+                'pv.id as product_variant_id',
+                DB::raw('CAST(pv.id AS CHAR) as variant_ids'),
+                DB::raw('1 as variant_count'),
+                'pv.color_variant',
+                'pv.expiry_date_from',
+                'pv.expiry_date_to',
+                'pv.price',
+                DB::raw('pv.price as max_price'),
+                'pv.purchase_price',
+                'pv.discounted_price',
+                DB::raw('pv.discounted_price as max_discounted_price'),
+                'pv.measurement',
+                'pv.status as pv_status',
+                'pv.stock',
+                'pv.stock_unit_id',
+                DB::raw("(select GROUP_CONCAT(pvb.barcode ORDER BY pvb.id SEPARATOR ', ') from product_variant_barcodes as pvb where pvb.product_variant_id = pv.id) as variant_barcodes"),
+                DB::raw('(select image from product_images where product_images.product_variant_id = pv.id order by product_images.id asc limit 1) as variant_image'),
+                DB::raw('(select short_code from units where units.id = pv.stock_unit_id) as stock_unit'),
+            ]);
+        }
+
+        $products = DB::table('products as p')->select($selectColumns)
             ->join('sellers as s', 'p.seller_id', '=', 's.id')
             ->join('product_variants as pv', 'p.id', '=', 'pv.product_id')
             ->join('units as u', 'pv.stock_unit_id', '=', 'u.id');
@@ -332,6 +365,10 @@ class ProductApisController extends Controller
 
         if (!empty($selectedCategoryIds)) {
             $products->whereIn('p.category_id', $selectedCategoryIds);
+        }
+
+        if ($request->filled('product_id')) {
+            $products->where('p.id', (int) $request->product_id);
         }
 
         if ($request->filled('min_price')) {
@@ -350,8 +387,6 @@ class ProductApisController extends Controller
             $products->whereDate('p.created_at', '<=', $request->entry_date_to);
         }
 
-        $products = $products->orderBy('pv.id', 'desc');
-
         // Apply filter to all columns in all joined tables
         if ($filter) {
             $columns = [
@@ -364,6 +399,10 @@ class ProductApisController extends Controller
                 'pv.discounted_price',
                 'pv.measurement',
                 'pv.stock',
+                'pv.color_variant',
+                'pv.expiry_date_from',
+                'pv.expiry_date_to',
+                'u.short_code',
             ];
 
             $products = $products->where(function ($query) use ($filter, $columns) {
@@ -378,7 +417,30 @@ class ProductApisController extends Controller
                 });
             });
         }
-        $total = $products->count();
+        if ($groupByProduct) {
+            $total = (clone $products)->distinct()->count('p.id');
+            $products->groupBy(
+                'p.id',
+                'p.barcode',
+                'p.name',
+                'p.seller_id',
+                'p.category_id',
+                'p.status',
+                'p.tax_id',
+                'p.image',
+                'p.type',
+                's.name',
+                'p.indicator',
+                'p.is_approved',
+                'p.made_in',
+                'p.return_status',
+                'p.cancelable_status',
+                'p.till_status'
+            )->orderBy('p.id', 'desc');
+        } else {
+            $total = $products->count();
+            $products->orderBy('pv.id', 'desc');
+        }
         if (isset($limit)) {
             $products->limit($limit)->offset($offset);
         }
@@ -904,6 +966,7 @@ class ProductApisController extends Controller
                 : 'required|image|mimes:jpeg,png,jpg,gif,webp|max:3072',
             'other_images.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,mp4|max:3072',
             'description' => 'required',
+            'highlights' => 'required|string',
 
             'type' => 'required',
             'is_unlimited_stock' => 'required',
@@ -1076,6 +1139,7 @@ class ProductApisController extends Controller
             $product->cod_allowed = $request->cod_allowed_status;
             $product->total_allowed_quantity = $max_allowed_quantity;
             $product->description = $request->description;
+            $product->highlights = $request->highlights;
             $product->is_unlimited_stock = $request->is_unlimited_stock;
             $require_products_approval = Seller::where('id', $product->seller_id)->pluck('require_products_approval')->first();
             if ($require_products_approval == 1) {
@@ -1243,6 +1307,7 @@ class ProductApisController extends Controller
                                 'tags' => '',
                                 'manufacturer' => '',
                                 'description' => $translation['description'] ?? '',
+                                'highlights' => $translation['highlights'] ?? '',
                                 'meta_title' => $translation['meta_title'] ?? '',
                                 'meta_keywords' => $translation['meta_keywords'] ?? '',
                                 'schema_markup' => $translation['schema_markup'] ?? '',
@@ -1319,6 +1384,7 @@ class ProductApisController extends Controller
                 'tags' => $trans->tags ?? '',
                 'manufacturer' => $trans->manufacturer ?? '',
                 'description' => CommonHelper::fixAdminImagePaths($trans->description ?? ''),
+                'highlights' => $trans->highlights ?? '',
                 'meta_keywords' => $trans->meta_keywords ?? '',
                 'schema_markup' => $trans->schema_markup ?? '',
                 'meta_description' => $trans->meta_description ?? '',
@@ -1334,6 +1400,7 @@ class ProductApisController extends Controller
                 'tags' => '',
                 'manufacturer' => $product->manufacturer ?? '',
                 'description' => \App\Helpers\CommonHelper::fixAdminImagePaths($product->description ?? ''),
+                'highlights' => $product->highlights ?? '',
                 'meta_title' => $product->meta_title ?? '',
                 'meta_keywords' => $product->meta_keywords ?? $product->meta_keyword ?? '',
                 'schema_markup' => $product->schema_markup ?? '',
@@ -1361,6 +1428,7 @@ class ProductApisController extends Controller
 
             'seller_id' => 'required',
             'description' => 'required',
+            'highlights' => 'required|string',
             'type' => 'required',
             'is_unlimited_stock' => 'required',
             'image' => $request->hasFile('image') ? 'image|mimes:jpeg,png,jpg,gif,webp|max:3072' : 'nullable',
@@ -1558,6 +1626,7 @@ class ProductApisController extends Controller
             $product->cod_allowed = $request->cod_allowed_status;
             $product->total_allowed_quantity = $max_allowed_quantity;
             $product->description = $request->description;
+            $product->highlights = $request->highlights;
             $product->is_unlimited_stock = $request->is_unlimited_stock;
             if (isset($request->is_approved)) {
                 $product->is_approved = $request->is_approved;
@@ -1730,6 +1799,7 @@ class ProductApisController extends Controller
                                 'tags' => '',
                                 'manufacturer' => '',
                                 'description' => $translation['description'] ?? '',
+                                'highlights' => $translation['highlights'] ?? '',
                                 'meta_title' => $translation['meta_title'] ?? '',
                                 'meta_keywords' => $translation['meta_keywords'] ?? '',
                                 'schema_markup' => $translation['schema_markup'] ?? '',
@@ -1783,6 +1853,90 @@ class ProductApisController extends Controller
         }
 
         return CommonHelper::responseError('invalid_request');
+    }
+
+    public function deleteMain(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|integer|exists:products,id',
+        ]);
+
+        if ($validator->fails()) {
+            return CommonHelper::responseError($validator->errors()->first());
+        }
+
+        return $this->deleteMainProducts([(int) $request->id]);
+    }
+
+    public function multipleDeleteMain(Request $request)
+    {
+        $ids = collect(explode(',', (string) $request->ids))
+            ->filter(function ($id) {
+                return ctype_digit(trim($id)) && (int) $id > 0;
+            })
+            ->map(function ($id) {
+                return (int) $id;
+            })
+            ->unique()
+            ->values()
+            ->all();
+
+        if (empty($ids)) {
+            return CommonHelper::responseError('invalid_request');
+        }
+
+        return $this->deleteMainProducts($ids);
+    }
+
+    private function deleteMainProducts(array $productIds)
+    {
+        $productsQuery = Product::whereIn('id', $productIds);
+        if (auth()->check() && auth()->user()->role_id == Role::$roleSeller && auth()->user()->seller) {
+            $productsQuery->where('seller_id', auth()->user()->seller->id);
+        }
+
+        $products = $productsQuery->get();
+        if ($products->isEmpty()) {
+            return CommonHelper::responseError('product_already_deleted');
+        }
+
+        $variantIds = ProductVariant::whereIn('product_id', $products->pluck('id'))
+            ->pluck('id');
+
+        if ($variantIds->isNotEmpty() && OrderItem::whereIn('product_variant_id', $variantIds)->exists()) {
+            return CommonHelper::responseError('this_product_variant_cannot_be_deleted_as_it_exists_in_orders');
+        }
+
+        DB::beginTransaction();
+        try {
+            $images = ProductImages::whereIn('product_id', $products->pluck('id'))->get();
+            foreach ($images as $image) {
+                if (!empty($image->image)) {
+                    Storage::disk('public')->delete($image->image);
+                }
+                $image->delete();
+            }
+
+            if ($variantIds->isNotEmpty()) {
+                ProductVariantBarcode::whereIn('product_variant_id', $variantIds)->delete();
+                ProductVariant::whereIn('id', $variantIds)->delete();
+            }
+
+            foreach ($products as $product) {
+                if (!empty($product->image)) {
+                    Storage::disk('public')->delete($product->image);
+                }
+                $product->delete();
+            }
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Unable to delete products from manage-products page: ' . $e->getMessage());
+            return CommonHelper::responseError('something_went_wrong');
+        }
+
+        return CommonHelper::responseSuccess('product_deleted_successfully');
     }
 
     public function multipleDelete(Request $request)

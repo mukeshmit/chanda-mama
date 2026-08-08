@@ -237,6 +237,18 @@
                                                         </div>
                                                     </div>
 
+                                                    <div class="col-md-12">
+                                                        <div class="form-group mb-3">
+                                                            <label>Product Highlights <i class="text-danger"
+                                                                    v-if="language.is_default">*</i></label>
+                                                            <editor placeholder="Paste or enter product highlights"
+                                                                v-model="translations[language.id].highlights"
+                                                                :init="getEditorConfig()"
+                                                                @input="handleDefaultLanguageInput('highlights', language)" />
+                                                            <small class="text-muted">Pasted formatting, lists and spacing will be preserved.</small>
+                                                        </div>
+                                                    </div>
+
 
                                                     <!-- Non-translatable Fields: Images (only shown in default language tab) -->
                                                     <template v-if="language.is_default">
@@ -479,6 +491,16 @@
                                             <editor :placeholder="__('enter_product_description')"
                                                 v-model="translations[defaultLanguageId].description"
                                                 :init="getEditorConfig()" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12" v-if="defaultLanguageId">
+                                        <div class="form-group mb-3">
+                                            <label>Product Highlights <i class="text-danger">*</i></label>
+                                            <editor placeholder="Paste or enter product highlights"
+                                                v-model="translations[defaultLanguageId].highlights"
+                                                :init="getEditorConfig()" />
+                                            <small class="text-muted">Pasted formatting, lists and spacing will be preserved.</small>
                                         </div>
                                     </div>
 
@@ -1332,6 +1354,7 @@ export default {
                 { value: 'pink', label: 'Pink' },
                 { value: 'purple', label: 'Purple' },
                 { value: 'brown', label: 'Brown' },
+                { value: 'cream', label: 'Cream' },
                 { value: 'grey', label: 'Grey' },
                 { value: 'gold', label: 'Gold' },
                 { value: 'silver', label: 'Silver' },
@@ -1345,6 +1368,7 @@ export default {
             cod_allowed_status: 1,
             max_allowed_quantity: 0,
             description: '',
+            highlights: '',
             require_products_approval: 0,
             is_approved: 1,
             loose_stock: 0,
@@ -1429,7 +1453,7 @@ export default {
             categories: [], // Store categories data for translation
 
             // Translate buttons
-            translatableFields: ['name', 'description', 'meta_title', 'meta_keywords', 'schema_markup', 'meta_description'],
+            translatableFields: ['name', 'description', 'highlights', 'meta_title', 'meta_keywords', 'schema_markup', 'meta_description'],
             translateSuccessMessage: '',
             loadingEmpty: false,
             loadingOverwrite: false,
@@ -1702,6 +1726,7 @@ export default {
                 allTranslations[language.id] = {
                     name: '',
                     description: '',
+                    highlights: '',
                     meta_title: '',
                     meta_keywords: '',
                     schema_markup: '',
@@ -1792,6 +1817,12 @@ export default {
                 return false;
             }
 
+            if (!defaultTranslation.highlights || defaultTranslation.highlights.trim() === '') {
+                this.showError('Please fill Product Highlights in the default language.');
+                this.switchToDefaultLanguageTab();
+                return false;
+            }
+
             if (!this.product_category_id) {
                 this.showError(__('please_select_category'));
                 this.switchToDefaultLanguageTab();
@@ -1835,6 +1866,7 @@ export default {
                 if (translation) {
                     this.$set(this.translations[language.id], 'name', translation.name || '');
                     this.$set(this.translations[language.id], 'description', translation.description || '');
+                    this.$set(this.translations[language.id], 'highlights', translation.highlights || '');
                     this.$set(this.translations[language.id], 'meta_title', translation.meta_title || '');
                     this.$set(this.translations[language.id], 'meta_keywords', translation.meta_keywords || '');
                     this.$set(this.translations[language.id], 'schema_markup', translation.schema_markup || '');
@@ -2484,6 +2516,7 @@ export default {
                         this.cod_allowed_status = this.record.cod_allowed;
                         this.max_allowed_quantity = this.record.total_allowed_quantity;
                         this.description = this.record.description;
+                        this.highlights = this.record.highlights || '';
                         this.is_approved = this.record.is_approved;
                         this.status = this.record.status;
                         this.is_unlimited_stock = this.record.is_unlimited_stock;
@@ -2499,6 +2532,7 @@ export default {
                         if (this.defaultLanguageId && this.translations[this.defaultLanguageId]) {
                             this.translations[this.defaultLanguageId].name = this.name;
                             this.translations[this.defaultLanguageId].description = this.description;
+                            this.translations[this.defaultLanguageId].highlights = this.highlights;
                             this.translations[this.defaultLanguageId].meta_title = this.meta_title;
                             this.translations[this.defaultLanguageId].meta_keywords = this.meta_keywords;
                             this.translations[this.defaultLanguageId].schema_markup = this.schema_markup;
@@ -2632,6 +2666,7 @@ export default {
             formData.append('tax_id', this.tax_id);
             formData.append('brand_id', this.brand ? this.brand.id : 0);
             formData.append('description', defaultTranslation.description || '');
+            formData.append('highlights', defaultTranslation.highlights || '');
             formData.append('type', this.type);
             formData.append('is_unlimited_stock', this.is_unlimited_stock);
             formData.append('barcode', (this.barcode != null && this.barcode !== undefined) ? String(this.barcode).trim() : '');
@@ -2747,6 +2782,7 @@ export default {
                     language_id: language.id,
                     name: translation.name || '',
                     description: translation.description || '',
+                    highlights: translation.highlights || '',
                     meta_title: translation.meta_title || '',
                     meta_keywords: translation.meta_keywords || '',
                     schema_markup: translation.schema_markup || '',
@@ -3174,7 +3210,7 @@ export default {
             if (this.$refs['my-form']) this.$refs['my-form'].reset();
             Object.assign(this, {
                 name: '', slug: '', seller_id: 0, tax_id: 0, brand: null,
-                description: '', type: 'packet', is_unlimited_stock: 0,
+                description: '', highlights: '', type: 'packet', is_unlimited_stock: 0,
                 barcode: '', meta_title: '', meta_keywords: '', schema_markup: '',
                 meta_description: '', category_id: '', product_category_id: '', product_subcategory_id: '',
                 product_sub_subcategory_id: '', product_sub_sub_subcategory_id: '', product_type: '',

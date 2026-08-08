@@ -35,11 +35,18 @@
                             </span>
                         </div>
                     </div>
-                    <button @click="downloadInvoice"
-                        class="btn btn-dark rounded-3 px-4 py-2 d-flex align-items-center gap-2"
-                        style="font-weight: 500;">
-                        <i class="fa fa-print"></i> {{ __('Print Order') || 'Print Order' }}
-                    </button>
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <router-link v-if="invoiceRoute" :to="invoiceRoute" target="_blank"
+                            class="btn btn-dark rounded-3 px-4 py-2 d-flex align-items-center gap-2"
+                            style="font-weight: 500;">
+                            <i class="fa fa-print"></i> {{ __('Print Order') || 'Print Order' }}
+                        </router-link>
+                        <button @click="downloadInvoice"
+                            class="btn btn-outline-dark rounded-3 px-4 py-2 d-flex align-items-center gap-2"
+                            style="font-weight: 500;">
+                            <i class="fa fa-download"></i> Download Invoice
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Bottom Row (Date & Seller) -->
@@ -595,7 +602,7 @@ export default {
             statuses: '',
             status_id: '',
 
-            deliveryBoys: '',
+            deliveryBoys: [],
             delivery_boy_id: '',
             itemModalShow: false,
             item: '',
@@ -856,6 +863,7 @@ export default {
         },
 
         assignDeliveryBoy() {
+            let vm = this;
             this.isLoadingDboy = true
             let postData = {
                 order_id: this.id,
@@ -865,8 +873,6 @@ export default {
                 this.isLoadingDboy = false
                 let data = response.data;
                 if (data.status === 1) {
-
-                    this.delivery_boy_id = '';
                     this.getOrder();
                     this.showMessage("success", data.message);
                     setTimeout(
@@ -894,13 +900,28 @@ export default {
                 responseType: 'blob',
 
                 data: postData
-            }).then((response) => {
+            }).then(async (response) => {
+                const contentType = response.headers['content-type'] || '';
+                if (!contentType.includes('application/pdf')) {
+                    let message = 'Unable to generate order invoice.';
+                    try {
+                        const errorPayload = JSON.parse(await response.data.text());
+                        message = errorPayload.message || message;
+                    } catch (e) {
+                        // Keep the default message when the server response is not JSON.
+                    }
+                    this.showError(message);
+                    this.isLoading = false;
+                    return;
+                }
                 var fileURL = window.URL.createObjectURL(new Blob([response.data]));
                 var fileLink = document.createElement('a');
                 fileLink.href = fileURL;
-                fileLink.setAttribute('download', 'Invoice-No:#' + this.id + '.pdf');
+                fileLink.setAttribute('download', 'Invoice-No-' + this.id + '.pdf');
                 document.body.appendChild(fileLink);
                 fileLink.click();
+                document.body.removeChild(fileLink);
+                window.URL.revokeObjectURL(fileURL);
                 this.isLoading = false;
             }).catch(error => {
                 if (error.request.statusText) {

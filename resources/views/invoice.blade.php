@@ -16,7 +16,7 @@
     $currency = \App\Models\Setting::get_value('currency') ?? '$';
 @endphp
 
-@if(\Request::route()->getName() == "customerInvoice")
+@if(optional(\Request::route())->getName() == "customerInvoice")
 <html>
     <head>
         <title>Invoice Order - {{ $appName }}</title>
@@ -283,7 +283,7 @@
         </div>
     </div>
 </section>
-@if(\Request::route()->getName() == "customerInvoice")
+@if(optional(\Request::route())->getName() == "customerInvoice")
     </body>
 </html>
 @endif

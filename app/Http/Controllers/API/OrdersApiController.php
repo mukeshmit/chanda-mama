@@ -334,22 +334,48 @@ class OrdersApiController extends Controller
 
     public function generateOrderInvoice(Request $request)
     {
-        $data = CommonHelper::getOrderDetails($request->order_id, true);
-        if (!$data["order"]) {
-            return CommonHelper::responseError("Order Not found!");
+        $validator = Validator::make($request->all(), [
+            'order_id' => 'required|integer|exists:orders,id',
+        ]);
+        if ($validator->fails()) {
+            return CommonHelper::responseError($validator->errors()->first());
         }
-        CommonHelper::AdditionalChargesArray($data['order']);
-        $invoice = CommonHelper::generateOrderInvoice($data);
-        return CommonHelper::responseWithData($invoice);
+
+        try {
+            $data = CommonHelper::getOrderDetails($request->order_id, true);
+            if (!$data["order"]) {
+                return CommonHelper::responseError("Order Not found!");
+            }
+            CommonHelper::AdditionalChargesArray($data['order']);
+            $invoice = CommonHelper::generateOrderInvoice($data);
+            return CommonHelper::responseWithData($invoice);
+        } catch (\Throwable $e) {
+            Log::error('Order invoice preview failed', [
+                'order_id' => $request->order_id,
+                'error' => $e->getMessage(),
+            ]);
+            return CommonHelper::responseError('unable_to_generate_order_invoice');
+        }
     }
+
     public function downloadOrderInvoice(Request $request)
     {
-        $data = CommonHelper::getOrderDetails($request->order_id, true);
-        if (!$data["order"]) {
-            return CommonHelper::responseError("Order Not found!");
+        $validator = Validator::make($request->all(), [
+            'order_id' => 'required|integer|exists:orders,id',
+        ]);
+        if ($validator->fails()) {
+            return CommonHelper::responseError($validator->errors()->first());
         }
-        CommonHelper::AdditionalChargesArray($data['order']);
-        return CommonHelper::downloadOrderInvoice($request->order_id);
+
+        try {
+            return CommonHelper::downloadOrderInvoice($request->order_id);
+        } catch (\Throwable $e) {
+            Log::error('Order invoice download failed', [
+                'order_id' => $request->order_id,
+                'error' => $e->getMessage(),
+            ]);
+            return CommonHelper::responseError('unable_to_generate_order_invoice');
+        }
     }
 
     public function delete(Request $request)
@@ -615,9 +641,11 @@ class OrdersApiController extends Controller
             return CommonHelper::responseError($validator->errors()->first());
         }
 
-        $deliveryBoy = DeliveryBoy::find($request->delivery_boy_id);
+        $deliveryBoy = DeliveryBoy::where('id', $request->delivery_boy_id)
+            ->where('status', DeliveryBoy::$statusActive)
+            ->first();
         if (empty($deliveryBoy)) {
-            return CommonHelper::responseSuccess('delivery_boy_not_found');
+            return CommonHelper::responseError('delivery_boy_not_found_or_inactive');
         }
         $order = Order::find($request->order_id);
 
@@ -1131,11 +1159,20 @@ class OrdersApiController extends Controller
         $defaultCode = $defaultLang ? $languageService->getLanguageCode($defaultLang->id) : 'en';
         $activeLangCodes = collect($languageService->getActiveLanguages())->pluck('code')->filter()->values()->all();
 
-        $query = DeliveryBoy::where('status', 1);
+        $query = DeliveryBoy::where('status', DeliveryBoy::$statusActive);
         if ($cityId !== null) {
             $query->where('city_id', $cityId);
         }
         $deliveryBoys = $query->with('translations')->orderBy('id', 'DESC')->get();
+
+        // Older orders and migrated delivery-boy records can contain different city IDs.
+        // Prefer same-city partners, but keep assignment usable when no exact match exists.
+        if ($deliveryBoys->isEmpty() && $cityId !== null) {
+            $deliveryBoys = DeliveryBoy::where('status', DeliveryBoy::$statusActive)
+                ->with('translations')
+                ->orderBy('id', 'DESC')
+                ->get();
+        }
 
         $result = [];
         foreach ($deliveryBoys as $db) {

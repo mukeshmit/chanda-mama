@@ -179,7 +179,7 @@
                                 </template>
                                 <template #cell(select)="row">
                                     <input type="checkbox" v-model="selectedItems" @change="selectCheckBox"
-                                        :value="`${row.item.product_variant_id}`" class="form-check-input">
+                                        :value="`${row.item.product_id}`" class="form-check-input">
                                 </template>
                                 <template #cell(product_variant_id)="row">
                                     {{ pageStart + row.index }}
@@ -187,6 +187,23 @@
 
                                 <template #cell(barcode)="row">
                                     {{ row.item.variant_barcodes || row.item.barcode || '-' }}
+                                </template>
+
+                                <template #cell(name)="row">
+                                    <router-link v-if="Number(row.item.variant_count) > 1"
+                                        :to="{ name: variantRouteName, params: { product_id: row.item.product_id } }"
+                                        class="text-primary fw-semibold">
+                                        {{ row.item.name }}
+                                    </router-link>
+                                    <span v-else>{{ row.item.name }}</span>
+                                </template>
+
+                                <template #cell(price)="row">
+                                    {{ formatPriceRange(row.item.price, row.item.max_price) }}
+                                </template>
+
+                                <template #cell(discounted_price)="row">
+                                    {{ formatPriceRange(row.item.discounted_price, row.item.max_discounted_price) }}
                                 </template>
 
                                 <template #cell(category_name)="row">
@@ -294,7 +311,7 @@
                                         </template>
 
                                         <button class="figma-action-btn"
-                                            @click="deleteRecord(row.index, row.item.product_variant_id)"
+                                            @click="deleteRecord(row.index, row.item.product_id)"
                                             v-if="$can('product_delete')" v-b-tooltip.hover :title="__('delete')">
                                             <base-icon name="Type=Default" hoverName="Type=Hover" width="24"
                                                 height="24" />
@@ -393,6 +410,9 @@ export default {
         isSellerRoute() {
             // Use this.$route to access the current route
             return this.$route.path.startsWith('/seller/');
+        },
+        variantRouteName() {
+            return this.isSellerRoute ? 'SellerProductVariants' : 'ProductVariants';
         },
         translatedProducts: function () {
             if (!this.currentLanguageId || this.products.length === 0) {
@@ -614,7 +634,8 @@ export default {
                 "entry_date_to": this.entry_date_to,
                 page: this.currentPage,
                 per_page: this.perPage,
-                filter: this.filter
+                filter: this.filter,
+                group_by_product: 1
             }
             axios.get(this.$apiUrl + '/products', {
                 params: param
@@ -645,13 +666,17 @@ export default {
                     let postData = {
                         id: id
                     }
-                    axios.post(this.$apiUrl + '/products/delete', postData)
+                    axios.post(this.$apiUrl + '/products/delete_main', postData)
                         .then((response) => {
                             this.isLoading = false
                             let data = response.data;
-                            this.products.splice(index, 1)
-                            //this.showSuccess(data.message);
-                            this.showMessage("success", data.message);
+                            if (data.status === 1) {
+                                this.products.splice(index, 1)
+                                this.totalRows = Math.max(0, this.totalRows - 1);
+                                this.showMessage("success", data.message);
+                            } else {
+                                this.showError(data.message);
+                            }
                         });
                 }
             });
@@ -663,21 +688,22 @@ export default {
                 // Get all products from current page (considering filters)
                 this.products.forEach(product => {
                     // Only add if not already selected to avoid duplicates
-                    if (!this.selectedItems.includes(product.product_variant_id)) {
-                        this.selectedItems.push(product.product_variant_id);
+                    const productId = String(product.product_id);
+                    if (!this.selectedItems.includes(productId)) {
+                        this.selectedItems.push(productId);
                     }
                 });
             } else {
                 this.all_select = false;
                 // Remove only the products from current page from selected items
-                const currentPageProductIds = this.products.map(product => product.product_variant_id);
+                const currentPageProductIds = this.products.map(product => String(product.product_id));
                 this.selectedItems = this.selectedItems.filter(id => !currentPageProductIds.includes(id));
             }
         },
         selectCheckBox() {
             let uniqueSelectedItems = [...new Set(this.selectedItems)];
             // Get current page product IDs
-            const currentPageProductIds = this.products.map(product => product.product_variant_id);
+            const currentPageProductIds = this.products.map(product => String(product.product_id));
             // Check if all current page products are selected
             const allCurrentPageSelected = currentPageProductIds.every(id => uniqueSelectedItems.includes(id));
             this.all_select = allCurrentPageSelected && currentPageProductIds.length > 0;
@@ -720,14 +746,18 @@ export default {
                         let postData = {
                             ids: ids
                         }
-                        axios.post(this.$apiUrl + '/products/multiple_delete', postData)
+                        axios.post(this.$apiUrl + '/products/multiple_delete_main', postData)
                             .then((response) => {
                                 this.isLoading = false
                                 let data = response.data;
-                                this.getRecords();
-                                this.selectedItems = [];
-                                this.all_select = false;
-                                this.showMessage("success", data.message);
+                                if (data.status === 1) {
+                                    this.getRecords();
+                                    this.selectedItems = [];
+                                    this.all_select = false;
+                                    this.showMessage("success", data.message);
+                                } else {
+                                    this.showError(data.message);
+                                }
 
                             });
                     }
@@ -735,6 +765,11 @@ export default {
             } else {
                 this.showWarning("Select at least one record!");
             }
+        },
+        formatPriceRange(minValue, maxValue) {
+            const min = Number(minValue || 0);
+            const max = Number(maxValue || 0);
+            return min !== max ? `${min} - ${max}` : `${min}`;
         }
     }
 };

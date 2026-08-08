@@ -13,19 +13,16 @@
         $supportNumber = "";
     }
     $logo = \App\Models\Setting::get_value('logo') ?? "";
-    if($logo!==""){
-        $logo_full_path =  url('/').'/storage/'.$logo;
-    }else{
-        $logo_full_path =  asset('images/favicon.png');
-    }
+    $storedLogoPath = $logo !== "" ? storage_path('app/public/' . ltrim($logo, '/')) : '';
+    $logo_full_path = ($storedLogoPath !== '' && file_exists($storedLogoPath))
+        ? $storedLogoPath
+        : public_path('images/favicon.png');
     $currency = \App\Models\Setting::get_value('currency') ?? '$';
 @endphp
 <html>
     <head>
         <title>Invoice Order - {{ $appName }}</title>
-        <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="{{ asset('assets/css/custom/common.css') }}">
         <style>
             body {
                 font-family: 'Nunito', sans-serif;

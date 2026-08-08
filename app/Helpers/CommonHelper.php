@@ -2535,13 +2535,26 @@ class CommonHelper
         if (!$data["order"]) {
             return CommonHelper::responseError("Order Not found!");
         }
+        self::AdditionalChargesArray($data['order']);
         $invoice = view('invoiceMpdf', $data)->render();
 
-        $mpdf = new Mpdf();
-        $stylesheet = file_get_contents(asset('assets/css/custom/bootstrap/bootstrap.min.css')); // external css
-        $mpdf->WriteHTML($stylesheet, 1);
+        $tempDirectory = storage_path('app/mpdf');
+        File::ensureDirectoryExists($tempDirectory);
+        $mpdf = new Mpdf(['tempDir' => $tempDirectory]);
+
+        $stylesheetPath = public_path('assets/css/custom/bootstrap/bootstrap.min.css');
+        if (File::exists($stylesheetPath)) {
+            $mpdf->WriteHTML(File::get($stylesheetPath), 1);
+        }
         $mpdf->WriteHTML($invoice);
-        return $mpdf->Output("Invoice-No:#" . $order_id . '.pdf', Destination::INLINE);
+        $filename = 'Invoice-No-' . $order_id . '.pdf';
+        $pdf = $mpdf->Output($filename, Destination::STRING_RETURN);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Length' => strlen($pdf),
+        ]);
     }
 
     public static function getFirebaseKeys()
