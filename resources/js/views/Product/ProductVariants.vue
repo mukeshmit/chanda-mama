@@ -120,6 +120,7 @@ export default {
         return {
             fields: [
                 { key: 'sr_no', label: 'Sr. No.', class: 'text-center' },
+                { key: 'variant_name', label: 'Variant Name', class: 'text-center', formatter: value => value || '-' },
                 { key: 'barcode', label: 'Barcode', class: 'text-center' },
                 { key: 'image', label: this.$titleLabel('image'), class: 'text-center' },
                 { key: 'color_variant', label: 'Colour', class: 'text-center' },

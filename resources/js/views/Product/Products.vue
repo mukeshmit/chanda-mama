@@ -328,6 +328,11 @@
                                     }}</span>
                             </div>
                             <div class="d-flex align-items-center gap-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <label class="mb-0 text-nowrap">Products per page</label>
+                                    <b-form-select v-model="perPage" :options="pageOptions"
+                                        class="form-select form-select-sm" style="width: 90px;"></b-form-select>
+                                </div>
                                 <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage"
                                     align="right" class="figma-pagination mb-0" hide-goto-end-buttons hide-ellipsis
                                     prev-text="<" next-text=">"></b-pagination>
@@ -367,8 +372,8 @@ export default {
             ],
             totalRows: 1,
             currentPage: 1,
-            perPage: this.$perPage,
-            pageOptions: this.$pageOptions,
+            perPage: 20,
+            pageOptions: [20, 50, 100, 200, 500],
             sortBy: '',
             sortDesc: false,
             sortDirection: 'asc',
@@ -551,7 +556,11 @@ export default {
             this.getRecords();
         },
         perPage() {
-            this.getRecords();
+            if (this.currentPage !== 1) {
+                this.currentPage = 1;
+            } else {
+                this.getRecords();
+            }
         },
         category() {
             this.resetSelection();

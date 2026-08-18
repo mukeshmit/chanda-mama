@@ -358,7 +358,7 @@ class CommonHelper
     {
         if (self::$cachedDateFormat === null) {
             $format = Setting::get_value('date_format');
-            self::$cachedDateFormat = !empty($format) ? $format : 'd-m-Y';
+            self::$cachedDateFormat = !empty($format) ? $format : 'm/d/Y';
         }
         return self::$cachedDateFormat;
     }
@@ -546,6 +546,10 @@ class CommonHelper
 
     public static function uploadProductImages($images, $product_id, $variant_id = 0)
     {
+        $nextSortOrder = (int) ProductImages::where('product_id', $product_id)
+            ->where('product_variant_id', $variant_id)
+            ->max('sort_order') + 1;
+
         foreach ($images as $file) {
             $fileName = time() . '_' . rand(1111, 99999) . '.' . $file->getClientOriginalExtension();
             $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4'];
@@ -555,8 +559,29 @@ class CommonHelper
                 $productImages = new ProductImages();
                 $productImages->product_id = $product_id;
                 $productImages->product_variant_id = $variant_id;
+                $productImages->sort_order = $nextSortOrder++;
                 $productImages->image = $image;
                 $productImages->save();
+            }
+        }
+    }
+
+    public static function normalizeProductImageSortOrders($product_id): void
+    {
+        $variantIds = ProductImages::where('product_id', $product_id)
+            ->select('product_variant_id')
+            ->distinct()
+            ->pluck('product_variant_id');
+
+        foreach ($variantIds as $variantId) {
+            $imageIds = ProductImages::where('product_id', $product_id)
+                ->where('product_variant_id', $variantId)
+                ->orderBy('sort_order')
+                ->orderBy('id')
+                ->pluck('id');
+
+            foreach ($imageIds as $index => $imageId) {
+                ProductImages::where('id', $imageId)->update(['sort_order' => $index + 1]);
             }
         }
     }
@@ -586,12 +611,12 @@ class CommonHelper
         $date = date('Y-m-d');
         if ($date < $start_date) {
             $response['is_applicable'] = 0;
-            $response['message'] = "This promo code can't be used before " . date('d-m-Y', strtotime($start_date));
+            $response['message'] = "This promo code can't be used before " . date('m/d/Y', strtotime($start_date));
             return $response;
         }
         if ($date > $end_date) {
             $response['is_applicable'] = 0;
-            $response['message'] = "This promo code can't be used after " . date('d-m-Y', strtotime($end_date));
+            $response['message'] = "This promo code can't be used after " . date('m/d/Y', strtotime($end_date));
             return $response;
         }
         if ($total < $code->minimum_order_amount) {
@@ -1079,6 +1104,8 @@ class CommonHelper
     {
         $productImages = ProductImages::where('product_id', $product_id)
             ->where('product_variant_id', $variant_id)
+            ->orderBy('sort_order')
+            ->orderBy('id')
             ->get()->pluck('image_url')->toArray();
         return $productImages;
     }

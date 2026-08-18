@@ -218,7 +218,7 @@ export default {
     methods: {
         formatDateBold(date) {
             if (!date) return '';
-            return moment(date).format('DD MMM YYYY');
+            return moment(date).format('MM/DD/YYYY');
         },
 
         formatTimeLight(date) {

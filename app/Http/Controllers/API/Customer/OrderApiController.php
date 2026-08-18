@@ -256,7 +256,7 @@ class OrderApiController extends Controller
             }
             $order_from = (isset($request->order_from) && !empty($request->order_from)) ? $request->order_from : 0;
 
-            $status[] = array($active_status, date("d-m-Y h:i:sa"));
+            $status[] = array($active_status, date("m/d/Y h:i:sa"));
 
             $quantity = $request->quantity;
 

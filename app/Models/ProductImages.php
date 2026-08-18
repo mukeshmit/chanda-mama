@@ -10,6 +10,13 @@ class ProductImages extends Model
     use HasFactory;
     public $timestamps = false;
 
+    protected $fillable = [
+        'product_id',
+        'product_variant_id',
+        'sort_order',
+        'image',
+    ];
+
     protected $hidden = [];
     protected $appends = ['image_url'];
 

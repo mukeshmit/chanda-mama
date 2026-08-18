@@ -53,7 +53,7 @@ class StoreSettingsApiController extends Controller
             "low_stock_limit" => "",
             "product_rating" => 0,
             "few_quantity_left_alert" => "",
-            "date_format" => "d-m-Y",
+            "date_format" => "m/d/Y",
             "time_format" => "h:i A",
 
 

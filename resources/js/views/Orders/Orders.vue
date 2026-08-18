@@ -748,7 +748,7 @@ export default {
         },
         formatDateBold(date) {
             if (!date) return 'N/A';
-            return moment(date).format('DD, MMM YYYY');
+            return moment(date).format('MM/DD/YYYY');
         },
         getPeriodLabel(date) {
             if (!date) return '';

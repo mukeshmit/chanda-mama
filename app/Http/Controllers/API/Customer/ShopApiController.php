@@ -168,6 +168,9 @@ class ShopApiController extends Controller
             $countries = $countries->makeHidden(['created_at', 'updated_at', 'status']);
             $output['countries'] = $countries->toArray();
         }
-        return CommonHelper::responseWithData($output);
+        return CommonHelper::responseWithData($output)
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
 }

@@ -63,7 +63,9 @@ class Product extends Model
     public function images(){
 
         return $this->hasMany(ProductImages::class,'product_id','id')
-            ->where('product_variant_id',0);
+            ->where('product_variant_id',0)
+            ->orderBy('sort_order')
+            ->orderBy('id');
     }
 
     public function brand(){

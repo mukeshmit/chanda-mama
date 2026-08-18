@@ -190,8 +190,9 @@ class ProductApisController extends Controller
 
     public function getProducts(Request $request)
     {
-        $limit = $request->input('per_page'); // Default items per page
-        $offset = (($request->input('page')) - 1) * $limit; // Default page
+        $limit = max(1, min(500, (int) $request->input('per_page', 20)));
+        $page = max(1, (int) $request->input('page', 1));
+        $offset = ($page - 1) * $limit;
         $filter = $request->input('filter', ''); // Filter query
         $groupByProduct = $request->boolean('group_by_product');
 
@@ -333,6 +334,7 @@ class ProductApisController extends Controller
                 'pv.id as product_variant_id',
                 DB::raw('CAST(pv.id AS CHAR) as variant_ids'),
                 DB::raw('1 as variant_count'),
+                'pv.variant_name',
                 'pv.color_variant',
                 'pv.expiry_date_from',
                 'pv.expiry_date_to',
@@ -346,7 +348,7 @@ class ProductApisController extends Controller
                 'pv.stock',
                 'pv.stock_unit_id',
                 DB::raw("(select GROUP_CONCAT(pvb.barcode ORDER BY pvb.id SEPARATOR ', ') from product_variant_barcodes as pvb where pvb.product_variant_id = pv.id) as variant_barcodes"),
-                DB::raw('(select image from product_images where product_images.product_variant_id = pv.id order by product_images.id asc limit 1) as variant_image'),
+                DB::raw('(select image from product_images where product_images.product_variant_id = pv.id order by product_images.sort_order asc, product_images.id asc limit 1) as variant_image'),
                 DB::raw('(select short_code from units where units.id = pv.stock_unit_id) as stock_unit'),
             ]);
         }
@@ -399,6 +401,7 @@ class ProductApisController extends Controller
                 'pv.discounted_price',
                 'pv.measurement',
                 'pv.stock',
+                'pv.variant_name',
                 'pv.color_variant',
                 'pv.expiry_date_from',
                 'pv.expiry_date_to',
@@ -966,7 +969,9 @@ class ProductApisController extends Controller
                 : 'required|image|mimes:jpeg,png,jpg,gif,webp|max:3072',
             'other_images.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,mp4|max:3072',
             'description' => 'required',
-            'highlights' => 'required|string',
+            'highlights' => 'nullable|string',
+            'packet_variant_name.*' => 'nullable|string|max:255',
+            'loose_variant_name.*' => 'nullable|string|max:255',
 
             'type' => 'required',
             'is_unlimited_stock' => 'required',
@@ -1067,6 +1072,7 @@ class ProductApisController extends Controller
         if ($request->type == "packet") {
             foreach ($request->packet_measurement as $index => $item) {
                 $data = array();
+                $data['variant_name'] = $request->packet_variant_name[$index] ?? null;
                 $data['color_variant'] = $request->packet_color_variant[$index] ?? null;
                 $data['expiry_date_from'] = $request->packet_expiry_date_from[$index] ?? null;
                 $data['expiry_date_to'] = $request->packet_expiry_date_to[$index] ?? null;
@@ -1082,6 +1088,7 @@ class ProductApisController extends Controller
         } else {
             foreach ($request->loose_measurement as $index => $item) {
                 $data = array();
+                $data['variant_name'] = $request->loose_variant_name[$index] ?? null;
                 $data['color_variant'] = $request->loose_color_variant[$index] ?? null;
                 $data['expiry_date_from'] = $request->loose_expiry_date_from[$index] ?? null;
                 $data['expiry_date_to'] = $request->loose_expiry_date_to[$index] ?? null;
@@ -1193,6 +1200,7 @@ class ProductApisController extends Controller
                     $data = array();
                     $data['product_id'] = $product->id;
                     $data['type'] = $request->type;
+                    $data['variant_name'] = $request->packet_variant_name[$index] ?? null;
                     $data['color_variant'] = $request->packet_color_variant[$index] ?? null;
                     $data['expiry_date_from'] = $request->packet_expiry_date_from[$index] ?? null;
                     $data['expiry_date_to'] = $request->packet_expiry_date_to[$index] ?? null;
@@ -1226,6 +1234,7 @@ class ProductApisController extends Controller
                     $data = array();
                     $data['product_id'] = $product->id;
                     $data['type'] = $request->type;
+                    $data['variant_name'] = $request->loose_variant_name[$index] ?? null;
                     $data['color_variant'] = $request->loose_color_variant[$index] ?? null;
                     $data['expiry_date_from'] = $request->loose_expiry_date_from[$index] ?? null;
                     $data['expiry_date_to'] = $request->loose_expiry_date_to[$index] ?? null;
@@ -1428,7 +1437,9 @@ class ProductApisController extends Controller
 
             'seller_id' => 'required',
             'description' => 'required',
-            'highlights' => 'required|string',
+            'highlights' => 'nullable|string',
+            'packet_variant_name.*' => 'nullable|string|max:255',
+            'loose_variant_name.*' => 'nullable|string|max:255',
             'type' => 'required',
             'is_unlimited_stock' => 'required',
             'image' => $request->hasFile('image') ? 'image|mimes:jpeg,png,jpg,gif,webp|max:3072' : 'nullable',
@@ -1536,6 +1547,7 @@ class ProductApisController extends Controller
         if ($request->type == "packet") {
             foreach ($request->packet_measurement as $index => $item) {
                 $data = array();
+                $data['variant_name'] = $request->packet_variant_name[$index] ?? null;
                 $data['color_variant'] = $request->packet_color_variant[$index] ?? null;
                 $data['expiry_date_from'] = $request->packet_expiry_date_from[$index] ?? null;
                 $data['expiry_date_to'] = $request->packet_expiry_date_to[$index] ?? null;
@@ -1553,6 +1565,7 @@ class ProductApisController extends Controller
                     return CommonHelper::responseError("Variant " . ($index + 1) . " measurement cannot exceed total stock");
                 }
                 $data = array();
+                $data['variant_name'] = $request->loose_variant_name[$index] ?? null;
                 $data['color_variant'] = $request->loose_color_variant[$index] ?? null;
                 $data['expiry_date_from'] = $request->loose_expiry_date_from[$index] ?? null;
                 $data['expiry_date_to'] = $request->loose_expiry_date_to[$index] ?? null;
@@ -1590,6 +1603,7 @@ class ProductApisController extends Controller
                         $image->delete();
                     }
                 }
+                CommonHelper::normalizeProductImageSortOrders($request->id);
             }
 
             $product = Product::find($request->id);
@@ -1688,6 +1702,7 @@ class ProductApisController extends Controller
                     }
                     $variant->product_id = $product->id;
                     $variant->type = $request->type;
+                    $variant->variant_name = $request->packet_variant_name[$index] ?? null;
                     $variant->color_variant = $request->packet_color_variant[$index] ?? null;
                     $variant->expiry_date_from = $request->packet_expiry_date_from[$index] ?? null;
                     $variant->expiry_date_to = $request->packet_expiry_date_to[$index] ?? null;
@@ -1717,6 +1732,7 @@ class ProductApisController extends Controller
                     }
                     $variant->product_id = $product->id;
                     $variant->type = $request->type;
+                    $variant->variant_name = $request->loose_variant_name[$index] ?? null;
                     $variant->color_variant = $request->loose_color_variant[$index] ?? null;
                     $variant->expiry_date_from = $request->loose_expiry_date_from[$index] ?? null;
                     $variant->expiry_date_to = $request->loose_expiry_date_to[$index] ?? null;

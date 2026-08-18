@@ -1924,7 +1924,9 @@ export default {
         formatDate(dateString) {
             if (!dateString) return '';
             const date = new Date(dateString);
-            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            return date.toLocaleDateString('en-US', {
+                month: '2-digit', day: '2-digit', year: 'numeric'
+            }) + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         },
         printInvoice(orderId) {
             const baseUrl = window.location.origin;

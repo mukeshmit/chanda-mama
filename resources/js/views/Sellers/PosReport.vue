@@ -328,7 +328,7 @@ export default {
         },
 
         formatDateTime(date) {
-            return moment(date).format('DD-MM-YY hh:mm A');
+            return moment(date).format('MM/DD/YYYY hh:mm A');
         },
 
         getPosOrders() {
@@ -367,7 +367,7 @@ export default {
         },
 
         formatDate(dateString) {
-            return moment(dateString).format('DD/MM/YYYY');
+            return moment(dateString).format('MM/DD/YYYY');
         },
 
         viewInvoice(orderId) {

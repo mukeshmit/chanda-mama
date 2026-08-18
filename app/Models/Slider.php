@@ -33,7 +33,8 @@ class Slider extends Model
 
     public function getImageUrlAttribute(){
         if($this->image){
-            $image_url = asset('storage/'.$this->image);
+            $version = $this->updated_at ? strtotime((string) $this->updated_at) : time();
+            $image_url = asset('storage/'.$this->image) . '?v=' . $version;
             return $image_url;
         }
         return $this->image;

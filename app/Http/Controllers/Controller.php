@@ -300,7 +300,7 @@ class Controller extends BaseController
     {
         $notificationsQuery = PanelNotification::where('notifiable_id', auth()->user()->id);
         $unReadCount = (clone $notificationsQuery)->where('read_at', NULL)->count();
-        $notifications = $notificationsQuery->orderBy('created_at', 'DESC')->limit(10)->get();
+        $notifications = $notificationsQuery->orderBy('created_at', 'DESC')->limit(20)->get();
 
         $orderIds = $notifications->map(function($notification) {
             return $notification->data['order_id'] ?? null;

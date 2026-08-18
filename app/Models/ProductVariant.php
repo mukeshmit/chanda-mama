@@ -13,6 +13,7 @@ class ProductVariant extends Model
         'id',
         'product_id',
         'type',
+        'variant_name',
         'color_variant',
         'expiry_date_from',
         'expiry_date_to',
@@ -38,7 +39,9 @@ class ProductVariant extends Model
     public function images()
     {
 
-        return $this->hasMany(ProductImages::class, 'product_variant_id', 'id');
+        return $this->hasMany(ProductImages::class, 'product_variant_id', 'id')
+            ->orderBy('sort_order')
+            ->orderBy('id');
     }
 
     public function barcodes()

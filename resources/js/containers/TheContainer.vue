@@ -320,18 +320,6 @@ export default {
                             permission: 'manage_media',
                         },
                         {
-                            name: __('bulk_upload'),
-                            icon: 'grid-fill',
-                            url: '/bulk_upload',
-                            permission: 'manage_product_bulk_upload',
-                        },
-                        {
-                            name: __('bulk_update'),
-                            icon: 'grid-fill',
-                            url: '/bulk_update',
-                            permission: 'manage_product_bulk_upload',
-                        },
-                        {
                             name: __('taxes'),
                             icon: 'grid-fill',
                             url: '/taxes',

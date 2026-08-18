@@ -77,7 +77,7 @@
                             <!-- List -->
                             <div class="notification-list-scroll" style="max-height: 464px; overflow-y: auto;">
                                 <li class="notification-item-custom"
-                                    v-for="notification of notifications.slice(0, 4)" :key="notification.id"
+                                    v-for="notification of notifications.slice(0, 20)" :key="notification.id"
                                     @click="handleNotificationClick(notification)">
                                     
                                     <div class="d-flex align-items-start w-100" style="gap: 16px;">
@@ -259,6 +259,10 @@ export default {
                     Role === 'Delivery Boy' ? this.$baseUrl + '/images/admin_logo.png' :
                         this.$baseUrl + '/images/admin_logo.png',
             notifications: [],
+            knownNotificationIds: [],
+            notificationsInitialized: false,
+            notificationAudio: null,
+            notificationSoundUnlockHandler: null,
 
             userTheme: "theme-light",
             isToggle: false,
@@ -346,6 +350,10 @@ export default {
     beforeDestroy() {
         window.removeEventListener('resize', this.onResize);
         window.removeEventListener('DOMContentLoaded', this.onResize);
+        if (this.timer) clearInterval(this.timer);
+        if (this.notificationSoundUnlockHandler) {
+            document.removeEventListener('click', this.notificationSoundUnlockHandler);
+        }
     },
     mounted: function () {
         // Fetch initial seller status if the user is a seller
@@ -366,9 +374,10 @@ export default {
 
         this.timer = setInterval(() => {
             this.getNotifications();
-        }, 40000); // 40 seconds
+        }, 15000);
 
         this.getLanguage();
+        this.initializeNotificationSound();
     },
     created() {
         this.getNotifications();
@@ -642,9 +651,56 @@ export default {
         getNotifications(event) {
             axios.get(this.$apiUrl + '/get_top_notifications')
                 .then((response) => {
-                    this.notifications = response.data.data.notifications;
+                    const notifications = response.data.data.notifications || [];
+                    if (this.notificationsInitialized) {
+                        const receivedNewOrder = notifications.some(notification =>
+                            !this.knownNotificationIds.includes(String(notification.id)) &&
+                            this.isNewOrderNotification(notification)
+                        );
+                        if (receivedNewOrder) this.playOrderNotificationSound();
+                    }
+
+                    this.notifications = notifications;
                     this.notifications_unread_count = response.data.data.unread;
+                    this.knownNotificationIds = notifications.map(notification => String(notification.id));
+                    this.notificationsInitialized = true;
                 });
+        },
+        initializeNotificationSound() {
+            this.notificationAudio = new Audio(this.$baseUrl + '/assets/order_sound.wav');
+            this.notificationAudio.preload = 'auto';
+            this.notificationSoundUnlockHandler = () => {
+                if (!this.notificationAudio) return;
+                this.notificationAudio.volume = 0;
+                const playPromise = this.notificationAudio.play();
+                if (playPromise) {
+                    playPromise.then(() => {
+                        this.notificationAudio.pause();
+                        this.notificationAudio.currentTime = 0;
+                        this.notificationAudio.volume = 1;
+                    }).catch(() => {});
+                }
+            };
+            document.addEventListener('click', this.notificationSoundUnlockHandler, { once: true });
+        },
+        isNewOrderNotification(notification) {
+            const data = notification && notification.data ? notification.data : {};
+            const text = String(data.text || '').toLowerCase();
+            const type = String(data.type || '').toLowerCase();
+            return Boolean(data.order_id) && (
+                type === 'new' ||
+                type === 'new_order' ||
+                text.includes('new order') ||
+                text.includes('placed') ||
+                text.includes('received')
+            );
+        },
+        playOrderNotificationSound() {
+            if (!this.notificationAudio) return;
+            this.notificationAudio.volume = 1;
+            this.notificationAudio.currentTime = 0;
+            const playPromise = this.notificationAudio.play();
+            if (playPromise) playPromise.catch(() => {});
         },
         markAsReadNotification(notification) {
             if (notification.read_at == null) {
@@ -764,6 +820,10 @@ export default {
             this.markAsReadNotification(notification);
 
             const orderId = notification.data.order_id;
+            if (!orderId) {
+                this.$router.push(this.isSellerRoute ? '/seller/notification_panel' : '/notification_panel');
+                return;
+            }
 
             axios.get(this.$apiUrl + '/orders/view/' + orderId)
                 .then((response) => {
