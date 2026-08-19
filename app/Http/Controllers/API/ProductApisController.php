@@ -1339,6 +1339,52 @@ class ProductApisController extends Controller
         return CommonHelper::responseSuccess('product_saved_successfully');
     }
 
+    /** Persist the display order for product or variant media. */
+    public function reorderImages(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required|integer|exists:products,id',
+            'variant_id' => 'nullable|integer',
+            'image_ids' => 'required|array|min:1',
+            'image_ids.*' => 'integer|distinct',
+        ]);
+
+        if ($validator->fails()) {
+            return CommonHelper::responseError($validator->errors()->first());
+        }
+
+        $product = Product::findOrFail($request->product_id);
+        if (auth()->check() && auth()->user()->seller && (int) auth()->user()->seller->id !== (int) $product->seller_id) {
+            return CommonHelper::responseError('You are not allowed to reorder these images.');
+        }
+
+        $variantId = $request->filled('variant_id') ? (int) $request->variant_id : null;
+        if ($variantId && !ProductVariant::where('id', $variantId)->where('product_id', $product->id)->exists()) {
+            return CommonHelper::responseError('The selected variant does not belong to this product.');
+        }
+
+        $images = ProductImages::where('product_id', $product->id)
+            ->where(function ($query) use ($variantId) {
+                $variantId === null
+                    ? $query->where('product_variant_id', 0)
+                    : $query->where('product_variant_id', $variantId);
+            })
+            ->whereIn('id', $request->image_ids)
+            ->get();
+
+        if ($images->count() !== count($request->image_ids)) {
+            return CommonHelper::responseError('One or more images could not be found.');
+        }
+
+        DB::transaction(function () use ($request) {
+            foreach ($request->image_ids as $index => $imageId) {
+                ProductImages::where('id', $imageId)->update(['sort_order' => $index + 1]);
+            }
+        });
+
+        return CommonHelper::responseSuccess('Image order updated successfully.');
+    }
+
     public function edit($id)
     {
         $product = Product::with([

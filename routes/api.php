@@ -130,6 +130,7 @@ Route::middleware('auth:api')->group(function () {
 
         Route::post('save', [\App\Http\Controllers\API\ProductApisController::class, 'save'])->name('products.save');
         Route::post('update', [\App\Http\Controllers\API\ProductApisController::class, 'update'])->name('products.update');
+        Route::post('reorder_images', [\App\Http\Controllers\API\ProductApisController::class, 'reorderImages'])->name('products.reorder_images');
         Route::post('delete', [\App\Http\Controllers\API\ProductApisController::class, 'delete'])->name('products.delete');
         Route::post('delete_main', [\App\Http\Controllers\API\ProductApisController::class, 'deleteMain'])->name('products.delete_main');
         Route::post('multiple_delete', [\App\Http\Controllers\API\ProductApisController::class, 'multipleDelete'])->name('products.multiple_delete');
@@ -610,6 +611,7 @@ Route::middleware('auth:api')->group(function () {
             Route::post('save', [\App\Http\Controllers\API\ProductApisController::class, 'save'])->name('seller.products.save');
             Route::get('edit/{id}', [\App\Http\Controllers\API\ProductApisController::class, 'edit']);
             Route::post('update', [\App\Http\Controllers\API\ProductApisController::class, 'update'])->name('seller.products.update');
+            Route::post('reorder_images', [\App\Http\Controllers\API\ProductApisController::class, 'reorderImages'])->name('seller.products.reorder_images');
             Route::post('delete', [\App\Http\Controllers\API\ProductApisController::class, 'delete'])->name('seller.products.delete');
             Route::post('delete_main', [\App\Http\Controllers\API\ProductApisController::class, 'deleteMain'])->name('seller.products.delete_main');
             Route::post('multiple_delete', [\App\Http\Controllers\API\ProductApisController::class, 'multipleDelete'])->name('seller.products.multiple_delete');

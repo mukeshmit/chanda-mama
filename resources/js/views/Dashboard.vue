@@ -1,5 +1,5 @@
 <template>
-    <div class="p-2">
+    <div class="p-2 dashboard-content">
         <!-- Section 1: Welcome Header -->
         <div class="page-heading mb-4">
             <h2 class="h4 font-weight-bold text-dark mb-1">{{ __('Welcome') }}, {{ userName }}</h2>
@@ -7,7 +7,7 @@
         </div>
 
         <!-- Section 2: Today's Stats Cards -->
-        <div class="row g-3 mb-4 row-cols-1 row-cols-sm-2 row-cols-md-4">
+        <div class="row g-3 mb-4 row-cols-1 row-cols-sm-2 row-cols-md-4 dashboard-stat-cards">
             <div class="col" v-for="(stat, index) in todayStats" :key="'today-' + index">
                 <div class="figma-kpi-card-v2 w-100">
                     <div class="d-flex align-items-center gap-2">
@@ -347,7 +347,7 @@
         </div>
 
         <!-- Section 8: Latest Orders -->
-        <div class="card figma-card text-dark mt-4">
+        <div class="card figma-card text-dark mt-4 dashboard-recent-orders">
             <div class="card-header">
                 <h4 class="text-dark">{{ __('recent_orders') || 'Recent Orders' }}</h4>
                 <div class="d-flex align-items-center gap-2">
@@ -1178,5 +1178,26 @@ export default {
 </script>
 
 <style scoped>
+.dashboard-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-content > * {
+    order: 3;
+}
+
+.dashboard-content > .page-heading {
+    order: 0;
+}
+
+.dashboard-content > .dashboard-recent-orders {
+    order: 1;
+}
+
+.dashboard-content > .dashboard-stat-cards {
+    order: 2;
+}
+
 /* Modernized styles are now central in global SCSS */
 </style>

@@ -320,7 +320,9 @@
                                                                     <h6 class="mt-3">Selected Other Image List.</h6>
                                                                     <div class="col-md-4 image-container"
                                                                         v-if="images.length !== 0"
-                                                                        v-for="(image, index) in images">
+                                                                        v-for="(image, index) in images" :key="'other_new_' + index"
+                                                                        draggable="true" @dragstart="startMediaDrag('other-new', index)"
+                                                                        @dragover.prevent @drop.prevent="dropMedia('other-new', index)" @dragend="endMediaDrag">
                                                                         <span class="media-order-badge">{{ (other_images || []).length + index + 1 }}</span>
                                                                         <video v-if="image.isVideo" class="img-thumbnail custom-image"
                                                                             :src="image.url" controls muted playsinline
@@ -350,7 +352,9 @@
                                                                     <h6 class="mt-3">Uploaded Other Image List.</h6>
                                                                     <div class="col-md-4 image-container"
                                                                         v-if="other_images.length !== 0"
-                                                                        v-for="(image, index) in other_images">
+                                                                        v-for="(image, index) in other_images" :key="'other_existing_' + image.id"
+                                                                        draggable="true" @dragstart="startMediaDrag('other-existing', index)"
+                                                                        @dragover.prevent @drop.prevent="dropMedia('other-existing', index)" @dragend="endMediaDrag">
                                                                         <span class="media-order-badge">{{ image.sort_order || index + 1 }}</span>
                                                                         <video v-if="isVideoMedia(image.image)" class="img-thumbnail custom-image"
                                                                             :src="$storageUrl + image.image" controls muted playsinline
@@ -574,7 +578,9 @@
                                                 <h6 class="mt-3">Selected Other Image List.</h6>
                                                 <div class="col-md-4 image-container"
                                                     v-if="images.length !== 0"
-                                                    v-for="(image, index) in images">
+                                                    v-for="(image, index) in images" :key="'other_new_direct_' + index"
+                                                    draggable="true" @dragstart="startMediaDrag('other-new', index)"
+                                                    @dragover.prevent @drop.prevent="dropMedia('other-new', index)" @dragend="endMediaDrag">
                                                     <span class="media-order-badge">{{ (other_images || []).length + index + 1 }}</span>
                                                     <video v-if="image.isVideo" class="img-thumbnail custom-image"
                                                         :src="image.url" controls muted playsinline
@@ -604,7 +610,9 @@
                                                 <h6 class="mt-3">Uploaded Other Image List.</h6>
                                                 <div class="col-md-4 image-container"
                                                     v-if="other_images.length !== 0"
-                                                    v-for="(image, index) in other_images">
+                                                    v-for="(image, index) in other_images" :key="'other_existing_direct_' + image.id"
+                                                    draggable="true" @dragstart="startMediaDrag('other-existing', index)"
+                                                    @dragover.prevent @drop.prevent="dropMedia('other-existing', index)" @dragend="endMediaDrag">
                                                     <span class="media-order-badge">{{ image.sort_order || index + 1 }}</span>
                                                     <video v-if="isVideoMedia(image.image)" class="img-thumbnail custom-image"
                                                         :src="$storageUrl + image.image" controls muted playsinline
@@ -824,7 +832,9 @@
                                                 <p v-if="variantImageerror" class="error">{{ variantImageerror }}</p>
                                                 <div class="row">
                                                      <div class="col-md-2 image-container"
-                                                         v-for="(image, index) in (variantImages[k] || [])" :key="'packet_new_image_' + k + '_' + index">
+                                                         v-for="(image, index) in (variantImages[k] || [])" :key="'packet_new_image_' + k + '_' + index"
+                                                         draggable="true" @dragstart="startMediaDrag('packet-new', index, k)"
+                                                         @dragover.prevent @drop.prevent="dropMedia('packet-new', index, k)" @dragend="endMediaDrag">
                                                         <span class="media-order-badge">{{ (input.images || []).length + index + 1 }}</span>
                                                          <img class="img-thumbnail custom-image" :src="image.url"
                                                             title='Selected Variant Image'
@@ -834,7 +844,9 @@
 
                                                 <div class="row">
                                                      <div class="col-md-2 image-container"
-                                                         v-for="(image, index) in (input.images || [])" :key="'packet_image_' + image.id">
+                                                         v-for="(image, index) in (input.images || [])" :key="'packet_image_' + image.id"
+                                                         draggable="true" @dragstart="startMediaDrag('packet-existing', index, k)"
+                                                         @dragover.prevent @drop.prevent="dropMedia('packet-existing', index, k)" @dragend="endMediaDrag">
                                                         <span class="media-order-badge">{{ image.sort_order || index + 1 }}</span>
                                                          <img class="img-thumbnail custom-image"
                                                             :src="$storageUrl + image.image" title='Variant Image'
@@ -1004,7 +1016,9 @@
 
                                                     <div class="row">
                                                     <div class="col-md-2 image-container"
-                                                        v-for="(image, index) in (input.loose_images || [])" :key="'loose_image_' + image.id">
+                                                        v-for="(image, index) in (input.loose_images || [])" :key="'loose_image_' + image.id"
+                                                        draggable="true" @dragstart="startMediaDrag('loose-existing', index, k)"
+                                                        @dragover.prevent @drop.prevent="dropMedia('loose-existing', index, k)" @dragend="endMediaDrag">
                                                             <span class="media-order-badge">{{ image.sort_order || index + 1 }}</span>
                                                             <img class="img-thumbnail custom-image"
                                                                 :src="$storageUrl + image.image" title='Variant Image'
@@ -1019,7 +1033,9 @@
 
                                                     <div class="row">
                                                     <div class="col-md-4 image-container"
-                                                        v-for="(image, index) in (variantImages[k] || [])" :key="'loose_new_image_' + k + '_' + index">
+                                                        v-for="(image, index) in (variantImages[k] || [])" :key="'loose_new_image_' + k + '_' + index"
+                                                        draggable="true" @dragstart="startMediaDrag('loose-new', index, k)"
+                                                        @dragover.prevent @drop.prevent="dropMedia('loose-new', index, k)" @dragend="endMediaDrag">
                                                             <span class="media-order-badge">{{ (input.loose_images || []).length + index + 1 }}</span>
                                                             <img class="img-thumbnail custom-image" :src="image.url"
                                                                 title='Selected Variant Image'
@@ -1438,6 +1454,7 @@ export default {
             other_images: null,
             images: [],
             variantImages: {},
+            draggedMedia: null,
             id: null,
             record: null,
             clone: false,
@@ -2193,10 +2210,55 @@ export default {
                 tempImages.push({
                     url: URL.createObjectURL(file),
                     name: file.name,
+                    file: file,
                 });
             }
 
             Vue.set(this.variantImages, index, tempImages);
+        },
+        getMediaList(group, variantIndex = null) {
+            if (group === 'other-new') return this.images;
+            if (group === 'other-existing') return this.other_images || [];
+            if (group === 'packet-new' || group === 'loose-new') return this.variantImages[variantIndex] || [];
+            if (group === 'packet-existing') return this.inputs[variantIndex].images || [];
+            if (group === 'loose-existing') return this.inputs[variantIndex].loose_images || [];
+            return [];
+        },
+        startMediaDrag(group, index, variantIndex = null) {
+            this.draggedMedia = { group, index, variantIndex };
+        },
+        endMediaDrag() {
+            this.draggedMedia = null;
+        },
+        dropMedia(group, targetIndex, variantIndex = null) {
+            const dragged = this.draggedMedia;
+            if (!dragged || dragged.group !== group || dragged.variantIndex !== variantIndex || dragged.index === targetIndex) {
+                return this.endMediaDrag();
+            }
+
+            const images = this.getMediaList(group, variantIndex);
+            const movedImage = images.splice(dragged.index, 1)[0];
+            images.splice(targetIndex, 0, movedImage);
+            images.forEach((image, index) => { image.sort_order = index + 1; });
+
+            if (group.indexOf('existing') !== -1) {
+                this.saveMediaOrder(group, variantIndex, images);
+            }
+            this.endMediaDrag();
+        },
+        saveMediaOrder(group, variantIndex, images) {
+            if (!this.id || !images.length) return;
+
+            const variantId = group === 'other-existing' ? null : this.inputs[variantIndex].id;
+            axios.post(this.$apiUrl + '/products/reorder_images', {
+                product_id: this.id,
+                variant_id: variantId,
+                image_ids: images.map(image => image.id),
+            }).then((response) => {
+                if (!response.data || response.data.status !== 1) {
+                    this.showError((response.data && response.data.message) || 'Unable to save image order.');
+                }
+            }).catch(() => this.showError('Unable to save image order.'));
         },
         addVariantBarcode(input) {
             if (!Array.isArray(input.barcodes)) {
@@ -2721,15 +2783,9 @@ export default {
                     formData.append('packet_status[]', this.getPacketStatusForSave(this.inputs[i]));
                     formData.append('variant_barcodes[]', JSON.stringify(this.normalizeVariantBarcodes(this.inputs[i])));
 
-                    // Safely handle packet variant images refs (can be undefined when card is hidden in non-default language tab)
-                    const packetRef = this.$refs['packet_variant_images_' + i];
-                    const packetInput = Array.isArray(packetRef) ? packetRef && packetRef[0] : packetRef;
-                    if (packetInput && packetInput.files) {
-                        for (let j = 0; j < packetInput.files.length; j++) {
-                            let file = packetInput.files[j];
-                            formData.append('packet_variant_images_' + i + '[]', file);
-                        }
-                    }
+                    (this.variantImages[i] || []).forEach(image => {
+                        formData.append('packet_variant_images_' + i + '[]', image.file);
+                    });
                 }
             }
 
@@ -2752,15 +2808,9 @@ export default {
                     formData.append('packet_stock[]', (this.inputs[i].packet_stock != undefined) ? this.inputs[i].packet_stock : 0);
                     formData.append('variant_barcodes[]', JSON.stringify(this.normalizeVariantBarcodes(this.inputs[i])));
 
-                    // Safely handle loose variant images refs (can be undefined when card is hidden in non-default language tab)
-                    const looseRef = this.$refs['loose_variant_images_' + i];
-                    const looseInput = Array.isArray(looseRef) ? looseRef && looseRef[0] : looseRef;
-                    if (looseInput && looseInput.files) {
-                        for (let j = 0; j < looseInput.files.length; j++) {
-                            let file = looseInput.files[j];
-                            formData.append('loose_variant_images_' + i + '[]', file);
-                        }
-                    }
+                    (this.variantImages[i] || []).forEach(image => {
+                        formData.append('loose_variant_images_' + i + '[]', image.file);
+                    });
                 }
                 formData.append('loose_stock', this.loose_stock);
                 formData.append('loose_stock_unit_id', this.loose_stock_unit_id);
@@ -3416,6 +3466,15 @@ export default {
 
 .image-container {
     position: relative;
+}
+
+.image-container[draggable="true"] {
+    cursor: grab;
+}
+
+.image-container[draggable="true"]:active {
+    cursor: grabbing;
+    opacity: 0.7;
 }
 
 .media-order-badge {
