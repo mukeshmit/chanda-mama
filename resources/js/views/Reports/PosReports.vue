@@ -257,7 +257,7 @@ export default {
         },
 
         formatDate(dateString) {
-            return moment(dateString).format('MM/DD/YYYY');
+            return moment(dateString).format('DD/MM/YYYY');
         },
 
         calculateTotalAmount() {

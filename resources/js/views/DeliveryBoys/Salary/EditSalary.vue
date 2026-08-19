@@ -79,7 +79,7 @@ export default {
     methods: {
         formatDate(date) {
             if (!date) return '';
-            return moment(date).format(this.$parent.dateFormat || 'MM/DD/YYYY');
+            return moment(date).format(this.$parent.dateFormat || 'DD/MM/YYYY');
         },
         showModal() {
             this.$refs['my-modal'].show()

@@ -694,11 +694,14 @@
                                         <div class="col-md-4">
                                             <div class="form-group mb-3">
                                                 <label>Color Variant</label>
-                                                <select class="form-control" v-model="input.color_variant">
+                                                <select class="form-control" :value="getPresetColor(input.color_variant)"
+                                                    @change="setVariantColor(input, $event.target.value)">
                                                     <option value="">Select Color</option>
                                                     <option v-for="color in colorVariantOptions" :key="color.value"
                                                         :value="color.value">{{ color.label }}</option>
                                                 </select>
+                                                <input type="text" class="form-control mt-2" maxlength="100"
+                                                    placeholder="Or enter a custom color" v-model.trim="input.color_variant">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -781,13 +784,13 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group mb-3">
-                                                <label>Expiry Date From <small class="text-muted">(MM/DD/YYYY)</small></label>
+                                                <label>Expiry Date From <small class="text-muted">(DD/MM/YYYY)</small></label>
                                                 <input type="date" class="form-control" v-model="input.expiry_date_from">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group mb-3">
-                                                <label>Expiry Date To <small class="text-muted">(MM/DD/YYYY)</small></label>
+                                                <label>Expiry Date To <small class="text-muted">(DD/MM/YYYY)</small></label>
                                                 <input type="date" class="form-control" v-model="input.expiry_date_to">
                                             </div>
                                         </div>
@@ -909,11 +912,14 @@
                                             <div class="col-md-4">
                                                 <div class="form-group mb-3 loose_div">
                                                     <label>Color Variant</label>
-                                                    <select class="form-control" v-model="input.color_variant">
+                                                    <select class="form-control" :value="getPresetColor(input.color_variant)"
+                                                        @change="setVariantColor(input, $event.target.value)">
                                                         <option value="">Select Color</option>
                                                         <option v-for="color in colorVariantOptions" :key="color.value"
                                                             :value="color.value">{{ color.label }}</option>
                                                     </select>
+                                                    <input type="text" class="form-control mt-2" maxlength="100"
+                                                        placeholder="Or enter a custom color" v-model.trim="input.color_variant">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -1120,14 +1126,14 @@
                                         <div class="col-md-4" :key="'loose_expiry_from_' + k">
                                             <div class="form-group mb-3 loose_div">
                                                 <label>Expiry Date From - Variant {{ k + 1 }}
-                                                    <small class="text-muted">(MM/DD/YYYY)</small></label>
+                                                    <small class="text-muted">(DD/MM/YYYY)</small></label>
                                                 <input type="date" class="form-control" v-model="input.expiry_date_from">
                                             </div>
                                         </div>
                                         <div class="col-md-4" :key="'loose_expiry_to_' + k">
                                             <div class="form-group mb-3 loose_div">
                                                 <label>Expiry Date To - Variant {{ k + 1 }}
-                                                    <small class="text-muted">(MM/DD/YYYY)</small></label>
+                                                    <small class="text-muted">(DD/MM/YYYY)</small></label>
                                                 <input type="date" class="form-control" v-model="input.expiry_date_to">
                                             </div>
                                         </div>
@@ -2223,6 +2229,12 @@ export default {
             if (group === 'packet-existing') return this.inputs[variantIndex].images || [];
             if (group === 'loose-existing') return this.inputs[variantIndex].loose_images || [];
             return [];
+        },
+        getPresetColor(color) {
+            return this.colorVariantOptions.some(option => option.value === color) ? color : '';
+        },
+        setVariantColor(input, color) {
+            input.color_variant = color;
         },
         startMediaDrag(group, index, variantIndex = null) {
             this.draggedMedia = { group, index, variantIndex };

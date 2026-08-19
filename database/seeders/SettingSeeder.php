@@ -83,7 +83,7 @@ class SettingSeeder extends Seeder
             ],
             [
                 'variable' => 'date_format',
-                'value' => 'm/d/Y',
+                'value' => 'd/m/Y',
             ],
             [
                 'variable' => 'time_format',

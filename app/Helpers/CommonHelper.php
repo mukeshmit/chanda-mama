@@ -358,7 +358,7 @@ class CommonHelper
     {
         if (self::$cachedDateFormat === null) {
             $format = Setting::get_value('date_format');
-            self::$cachedDateFormat = !empty($format) ? $format : 'm/d/Y';
+            self::$cachedDateFormat = !empty($format) ? $format : 'd/m/Y';
         }
         return self::$cachedDateFormat;
     }
@@ -611,12 +611,12 @@ class CommonHelper
         $date = date('Y-m-d');
         if ($date < $start_date) {
             $response['is_applicable'] = 0;
-            $response['message'] = "This promo code can't be used before " . date('m/d/Y', strtotime($start_date));
+            $response['message'] = "This promo code can't be used before " . date('d/m/Y', strtotime($start_date));
             return $response;
         }
         if ($date > $end_date) {
             $response['is_applicable'] = 0;
-            $response['message'] = "This promo code can't be used after " . date('m/d/Y', strtotime($end_date));
+            $response['message'] = "This promo code can't be used after " . date('d/m/Y', strtotime($end_date));
             return $response;
         }
         if ($total < $code->minimum_order_amount) {

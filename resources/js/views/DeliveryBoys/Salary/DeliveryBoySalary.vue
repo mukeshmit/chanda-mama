@@ -145,7 +145,7 @@ export default {
             edit_record: null,
             salaries: [],
             showFilters: false,
-            dateFormat: 'MM/DD/YYYY',
+            dateFormat: 'DD/MM/YYYY',
         }
     },
     computed: {
@@ -166,7 +166,7 @@ export default {
     },
     methods: {
         convertFormat(format) {
-            if (!format) return 'MM/DD/YYYY';
+            if (!format) return 'DD/MM/YYYY';
             const map = { 'd': 'DD', 'm': 'MM', 'M': 'MMM', 'Y': 'YYYY' };
             return format.replace(/d|m|M|Y/g, match => map[match] || match);
         },

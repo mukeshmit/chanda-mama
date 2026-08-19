@@ -722,7 +722,7 @@ export default {
             return classMap[id] || 'status-default';
         },
         formatDateBold(date) {
-            return moment(date).format('MM/DD/YYYY');
+            return moment(date).format('DD/MM/YYYY');
         },
         getPeriodLabel(date) {
             if (!date) return '';
